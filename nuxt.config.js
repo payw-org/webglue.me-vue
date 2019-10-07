@@ -1,8 +1,11 @@
 export default {
+  // Custom global id of html dom
+  globalName: 'webglue',
+
+  // Single Page Application mode
   mode: 'spa',
-  /*
-   ** Headers of the page
-   */
+
+  // Global head
   head: {
     title: process.env.npm_package_name || '',
     meta: [
@@ -16,36 +19,22 @@ export default {
     ],
     link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }]
   },
-  /*
-   ** Customize the progress-bar color
-   */
-  loading: { color: '#fff' },
-  /*
-   ** Global CSS
-   */
-  css: [],
-  /*
-   ** Plugins to load before mounting the App
-   */
-  plugins: [],
-  /*
-   ** Nuxt.js dev-modules
-   */
-  buildModules: [
-    // Doc: https://github.com/nuxt-community/eslint-module
-    '@nuxtjs/eslint-module'
-  ],
-  /*
-   ** Nuxt.js modules
-   */
-  modules: [],
-  /*
-   ** Build configuration
-   */
+
+  // Source directory
+  srcDir: 'src/',
+
+  // Router config
+  router: {
+    // Custom link class names
+    linkActiveClass: 'active-link',
+    linkExactActiveClass: 'exact-active-link'
+  },
+
+  // Custom build path name
   build: {
-    /*
-     ** You can extend webpack config here
-     */
-    extend(config, ctx) {}
-  }
+    publicPath: '/dist/'
+  },
+
+  // Build modules
+  buildModules: ['@nuxtjs/eslint-module']
 }
