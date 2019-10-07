@@ -1,0 +1,41 @@
+// background colors
+// #fff for over white, #000 over black
+$base-white-blue: #f5f5f7;
+$base-black-soft: #181818;
+
+// text colors
+$base-white: #f0f0f0;
+$base-black: #222;
+$base-gray: #808080;
+
+// translucent colors
+$t-white: rgba(255, 255, 255, 0.035);
+$t-black: rgba(0, 0, 0, 0.035);
+
+// high contrast colors
+// @deprecated
+$light-blue: #009eff;
+$light-yellow: #ffb109;
+
+// responsive width steps
+$width-step--1: 700px;
+$width-step--1_: 699px;
+$width-step--2: 1400px;
+$width-step--2_: 1401px;
+
+// button
+$btn-height: 3rem;
+
+// border radius
+$border-radius: 0.7rem;
+
+// spring animation time
+$spring-time: 1000ms;
+
+// light mode <-> dark mode transition time
+$color-scheme-transition-time: 300ms;
+
+// fonts
+$ui-font: 'PAYW Pro', 'PAYW Pro KR', -apple-system, BlinkMacSystemFont,
+  'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue',
+  sans-serif;

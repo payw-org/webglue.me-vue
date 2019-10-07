@@ -1,0 +1,166 @@
+@import '~/assets/scss/main';
+
+html {
+  -ms-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  font-size: 85%;
+  overflow: auto;
+  -ms-overflow-style: none; /* Edge */
+  scrollbar-width: none; /* Firefox */
+
+  &.dark-mode {
+    .mode--light {
+      display: none !important;
+    }
+
+    [data-color-scheme='light'] {
+      display: none !important;
+    }
+  }
+  @media (prefers-color-scheme: dark) {
+    &.auto-color-scheme {
+      background-color: #000;
+
+      .mode--light {
+        display: none !important;
+      }
+
+      [data-color-scheme='light'] {
+        display: none !important;
+      }
+    }
+  }
+
+  &.light-mode {
+    background-color: #fff;
+
+    .mode--dark {
+      display: none !important;
+    }
+
+    [data-color-scheme='dark'] {
+      display: none !important;
+    }
+  }
+  @media (prefers-color-scheme: light) {
+    &.auto-color-scheme {
+      background-color: #fff;
+
+      .mode--dark {
+        display: none !important;
+      }
+
+      [data-color-scheme='dark'] {
+        display: none !important;
+      }
+    }
+  }
+}
+
+@media only screen and (min-width: 700px) {
+  html {
+    font-size: 95%;
+  }
+}
+@media only screen and (min-width: 1400px) {
+  html {
+    font-size: 105%;
+  }
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+  -o-font-smoothing: antialiased;
+  font-family: $ui-font;
+  margin: 0;
+  padding: 0;
+  word-wrap: break-word;
+  word-break: keep-all;
+  font-size: 16px;
+  user-select: none;
+  @include bg;
+  @include text-color;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 700;
+}
+
+h1 {
+  @include heading1;
+}
+
+h2 {
+  @include heading2;
+}
+
+h3 {
+  @include heading3;
+}
+
+p,
+a,
+textarea,
+span,
+div,
+input {
+  font-family: $ui-font;
+  font-weight: 400;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+p {
+  @include paragraph;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  -webkit-touch-callout: none !important;
+
+  &.absolute-link {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 3;
+  }
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: $ui-font;
+  font-size: 1rem;
+  color: $base-gray;
+}
+
+img {
+  user-select: none;
+  pointer-events: none;
+}
+
+ul,
+ol {
+  list-style: none;
+}
