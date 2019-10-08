@@ -2,12 +2,11 @@ export default {
   // Custom global id of html dom
   globalName: 'webglue',
 
-  // Single Page Application mode
-  mode: 'spa',
+  mode: 'universal',
 
   // Global head
   head: {
-    title: process.env.npm_package_name || '',
+    title: 'webglue',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
@@ -36,5 +35,5 @@ export default {
   },
 
   // Build modules
-  buildModules: ['@nuxtjs/eslint-module']
+  buildModules: ['@nuxtjs/eslint-module', '@nuxt/typescript-build']
 }
