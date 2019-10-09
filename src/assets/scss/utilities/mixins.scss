@@ -211,3 +211,8 @@ $input-border-radius: radius(4);
 
   @include input-text;
 }
+
+// backdrop blur + saturate
+@mixin bgBlur {
+  backdrop-filter: blur(20px) saturate(1.7);
+}
