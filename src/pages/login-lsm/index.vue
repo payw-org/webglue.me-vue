@@ -8,7 +8,9 @@
             <input class="lic-id" type="text" placeholder="아이디" />
             <input class="lic-pw" type="password" placeholder="비밀번호" />
           </div>
-          <button class="login-btn">로그인</button>
+          <button class="login-btn">
+            로그인
+          </button>
         </div>
         <NuxtLink to="/register" class="register-link">
           회원가입
