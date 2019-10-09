@@ -13,8 +13,8 @@
         />
         <div class="pw-check">
           <div class="cross-container">
-            <div class="cross-left"></div>
-            <div class="cross-right"></div>
+            <div class="cross-left" />
+            <div class="cross-right" />
           </div>
           <input
             class="ric-pw-check"
@@ -25,7 +25,9 @@
           />
         </div>
 
-        <button class="register-btn">회원가입</button>
+        <button class="register-btn">
+          회원가입
+        </button>
       </div>
     </div>
   </div>

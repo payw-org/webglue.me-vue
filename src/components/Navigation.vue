@@ -1,20 +1,36 @@
 <template>
   <nav class="webglue-navigation">
     <div class="gn-menu-container">
-      <div class="logo-container">
-        <img
-          src="~/assets/images/logo-simplified.svg"
-          alt="logo"
-          class="logo-img"
-        />
+      <div class="logo-wrapper">
+        <div class="logo-box">
+          <div class="logo-container">
+            <img src="~/assets/images/logo-simplified.svg" alt="logo" class="logo-img" />
+          </div>
+        </div>
+        <h1 class="name">webglue</h1>
       </div>
-      <button class="add-btn">
-        <div class="bar-horizontal" />
-        <div class="bar-vertical" />
-      </button>
+      <div v-if="$route.params.category">
+        <button class="add-btn" @click="onClickAddBtn">
+          <IconPlus class="add-icon" color="#ff176b" />
+        </button>
+      </div>
     </div>
   </nav>
 </template>
+
+<script lang="ts">
+import Vue from 'vue'
+import IconPlus from '~/components/icons/IconPlus.vue'
+
+export default Vue.extend({
+  components: { IconPlus },
+  methods: {
+    onClickAddBtn() {
+      this.$store.commit('glueBoard/SET_URL_BAR_ACTIVE', true)
+    }
+  }
+})
+</script>
 
 <style lang="scss">
 @import '~/assets/scss/main';
@@ -44,28 +60,36 @@ $nav-height: 3.5rem;
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    max-width: 50rem;
+    // max-width: 50rem;
     margin: auto;
     padding: 0 1rem;
 
-    .logo-container {
+    .logo-wrapper {
       display: flex;
       align-items: center;
-      height: 100%;
-      animation-name: rotation;
-      animation-duration: 5s;
-      animation-timing-function: linear;
-      animation-iteration-count: infinite;
 
-      .logo-img {
-        width: $nav-height * 0.6;
-        height: auto;
+      .logo-box {
+        padding-right: 0.5rem;
+        .logo-container {
+          display: flex;
+          align-items: center;
+          width: $nav-height * 0.6;
+          height: $nav-height * 0.6;
+          animation-name: rotation;
+          animation-duration: 5s;
+          animation-timing-function: linear;
+          animation-iteration-count: infinite;
+
+          .logo-img {
+            width: $nav-height * 0.6;
+            height: auto;
+          }
+        }
       }
 
       .name {
-        font-weight: 600;
+        font-weight: 700;
         font-size: $nav-height * 0.45;
-        margin-left: 0.5rem;
         user-select: none;
       }
     }
@@ -90,17 +114,8 @@ $nav-height: 3.5rem;
         background-color: #e8e8e8;
       }
 
-      .bar-horizontal,
-      .bar-vertical {
-        position: absolute;
-        width: 50%;
-        height: $nav-height * 0.07;
-        background-color: #000;
-        border-radius: 50px;
-      }
-
-      .bar-vertical {
-        transform: rotate(90deg);
+      .add-icon {
+        width: 55%;
       }
     }
   }
