@@ -166,8 +166,7 @@
   }
 }
 
-// background image utils
-@mixin bgImg($url, $position: center, $size: 'contain') {
+@mixin bgImg($url, $size: 'contain', $position: center) {
   background-image: url($url);
   background-repeat: no-repeat;
   background-position: unquote($position);
@@ -211,4 +210,9 @@ $input-border-radius: radius(4);
   resize: none;
 
   @include input-text;
+}
+
+// backdrop blur + saturate
+@mixin bgBlur {
+  backdrop-filter: blur(20px) saturate(1.7);
 }

@@ -1,12 +1,14 @@
 <template>
   <div class="home">
-    <div class="g-signin2" data-onsuccess="onSignIn"></div>
+    <div class="g-signin2" data-onsuccess="onSignIn" />
+    <button @click="googleLogin">
+      <a href="https://api.dev-hch.webglue.me/v1/oauth2/google">Google Login</a>
+    </button>
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-export default Vue.extend({
+<script>
+export default {
   head() {
     return {
       title: 'webglue',
@@ -26,5 +28,5 @@ export default Vue.extend({
       ]
     }
   }
-})
+}
 </script>
