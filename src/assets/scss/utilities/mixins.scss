@@ -166,8 +166,7 @@
   }
 }
 
-// background image utils
-@mixin bgImg($url, $position: center, $size: 'contain') {
+@mixin bgImg($url, $size: 'contain', $position: center) {
   background-image: url($url);
   background-repeat: no-repeat;
   background-position: unquote($position);
