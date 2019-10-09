@@ -1,12 +1,13 @@
 <template>
   <nav class="webglue-navigation">
     <div class="gn-menu-container">
-      <div class="logo-container">
-        <img
-          src="~/assets/images/logo-simplified.svg"
-          alt="logo"
-          class="logo-img"
-        />
+      <div class="logo-wrapper">
+        <div class="logo-box">
+          <div class="logo-container">
+            <img src="~/assets/images/logo-simplified.svg" alt="logo" class="logo-img" />
+          </div>
+        </div>
+        <h1 class="name">webglue</h1>
       </div>
       <div v-if="$route.params.category">
         <button class="add-btn" @click="onClickAddBtn">
@@ -63,24 +64,32 @@ $nav-height: 3.5rem;
     margin: auto;
     padding: 0 1rem;
 
-    .logo-container {
+    .logo-wrapper {
       display: flex;
       align-items: center;
-      height: 100%;
-      animation-name: rotation;
-      animation-duration: 5s;
-      animation-timing-function: linear;
-      animation-iteration-count: infinite;
 
-      .logo-img {
-        width: $nav-height * 0.6;
-        height: auto;
+      .logo-box {
+        padding-right: 0.5rem;
+        .logo-container {
+          display: flex;
+          align-items: center;
+          width: $nav-height * 0.6;
+          height: $nav-height * 0.6;
+          animation-name: rotation;
+          animation-duration: 5s;
+          animation-timing-function: linear;
+          animation-iteration-count: infinite;
+
+          .logo-img {
+            width: $nav-height * 0.6;
+            height: auto;
+          }
+        }
       }
 
       .name {
-        font-weight: 600;
+        font-weight: 700;
         font-size: $nav-height * 0.45;
-        margin-left: 0.5rem;
         user-select: none;
       }
     }
