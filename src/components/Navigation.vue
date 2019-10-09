@@ -8,13 +8,28 @@
           class="logo-img"
         />
       </div>
-      <button class="add-btn">
-        <div class="bar-horizontal" />
-        <div class="bar-vertical" />
-      </button>
+      <div v-if="$route.params.category">
+        <button class="add-btn" @click="onClickAddBtn">
+          <IconPlus class="add-icon" color="#ff176b" />
+        </button>
+      </div>
     </div>
   </nav>
 </template>
+
+<script lang="ts">
+import Vue from 'vue'
+import IconPlus from '~/components/icons/IconPlus.vue'
+
+export default Vue.extend({
+  components: { IconPlus },
+  methods: {
+    onClickAddBtn() {
+      this.$store.commit('glueBoard/SET_URL_BAR_ACTIVE', true)
+    }
+  }
+})
+</script>
 
 <style lang="scss">
 @import '~/assets/scss/main';
@@ -44,7 +59,7 @@ $nav-height: 3.5rem;
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    max-width: 50rem;
+    // max-width: 50rem;
     margin: auto;
     padding: 0 1rem;
 
@@ -90,17 +105,8 @@ $nav-height: 3.5rem;
         background-color: #e8e8e8;
       }
 
-      .bar-horizontal,
-      .bar-vertical {
-        position: absolute;
-        width: 50%;
-        height: $nav-height * 0.07;
-        background-color: #000;
-        border-radius: 50px;
-      }
-
-      .bar-vertical {
-        transform: rotate(90deg);
+      .add-icon {
+        width: 55%;
       }
     }
   }
