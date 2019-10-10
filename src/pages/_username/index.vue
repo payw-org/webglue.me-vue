@@ -8,8 +8,8 @@
         <CategoryBlock
           v-for="(block, i) in blocks"
           :key="block.catName + i"
-          :catName="block.catName"
-          :color="'color' + (i % 15 + 1)"
+          :cat-name="block.catName"
+          :color="'color' + ((i % 15) + 1)"
           :type="block.type"
           :index="i"
           @create="createBlock"
@@ -31,6 +31,7 @@ export default {
       blocks: []
     }
   },
+  mounted() {},
   methods: {
     addBlock() {
       const newBlock = {
@@ -48,9 +49,6 @@ export default {
         this.blocks[payload.index].type = 'category'
       }
     }
-  },
-  mounted() {
-    console.log(this.$route.params.username)
   }
 }
 </script>
@@ -62,9 +60,11 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+
   .navi {
     width: 100vw;
   }
+
   .grid-layout {
     display: grid;
     grid-gap: 1.24rem;
@@ -79,5 +79,3 @@ export default {
   }
 }
 </style>
-
-
