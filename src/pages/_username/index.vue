@@ -4,6 +4,12 @@
       <div class="navi">
         <Navigation />
       </div>
+      <div class="edit-box">
+        <button
+          class="edit-button"
+          v-on:click="(e) => {isEditMode = !isEditMode }"
+        >{{ editBtnText }}</button>
+      </div>
       <div class="grid-layout category-box">
         <CategoryBlock
           v-for="(block, i) in blocks"
@@ -13,8 +19,10 @@
           :type="block.type"
           :index="i"
           @create="createBlock"
+          @remove="removeBlock"
+          :is-edit-mode="isEditMode"
         />
-        <CategoryBlock type="add" @add="addBlock" />
+        <CategoryBlock type="add" @add="addBlock" v-if="!isEditMode" />
       </div>
     </div>
   </div>
@@ -28,7 +36,17 @@ export default {
   components: { Navigation, CategoryBlock },
   data() {
     return {
-      blocks: []
+      blocks: [],
+      isEditMode: false
+    }
+  },
+  computed: {
+    editBtnText() {
+      if (this.isEditMode) {
+        return '완료'
+      } else {
+        return '편집'
+      }
     }
   },
   mounted() {},
@@ -40,6 +58,10 @@ export default {
         color: 'red'
       }
       this.blocks.push(newBlock)
+    },
+    removeBlock(index) {
+      console.log(index)
+      this.blocks.splice(index, 1)
     },
     createBlock(payload) {
       if (payload.catName.trim().length === 0) {
@@ -65,6 +87,16 @@ export default {
     width: 100vw;
   }
 
+  .edit-box {
+    width: 100vw;
+    display: flex;
+    justify-content: flex-end;
+
+    .edit-button {
+      margin-right: 3rem;
+    }
+  }
+
   .grid-layout {
     display: grid;
     grid-gap: 1.24rem;
@@ -76,6 +108,7 @@ export default {
     margin-top: s(6);
     width: calc(100% - 3rem);
     max-width: 80rem;
+    padding-bottom: 3rem;
   }
 }
 </style>

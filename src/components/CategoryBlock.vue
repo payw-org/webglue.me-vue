@@ -1,25 +1,33 @@
 <template>
-  <div class="add-category" :class="color" @click="handleClick">
+  <div class="add-category" :class="[color, { 'jiggle': isEditMode }]" @click="handleClick">
     <div v-if="type === 'add'" class="plus-icon" />
     <div v-else>
       <input
-        v-if="type === 'temp'"
+        v-if="type === 'temp' || isCatNameEditMode"
         v-model="catNameInputValue"
+        @input="categoryName"
         type="text"
         class="category-name-input"
         @blur="createCategory"
         @keypress.enter="createCategory"
       />
-      <h1 v-else class="category-name">{{ catName }}</h1>
+      <h1 v-else class="category-name" @click="handleCategoryNameClick">{{ catName }}</h1>
     </div>
+    <button @click="removeCategory" v-if="type !== 'add' && isEditMode" class="delete-btn">
+      <IconPlus x class="delete-icon" />
+    </button>
   </div>
 </template>
 
 <script>
+import IconPlus from '~/components/icons/IconPlus'
+
 export default {
+  components: { IconPlus },
   data() {
     return {
-      catNameInputValue: ''
+      catNameInputValue: '',
+      isCatNameEditMode: false
     }
   },
   props: {
@@ -37,12 +45,37 @@ export default {
     catName: {
       type: String,
       default: ''
+    },
+    isEditMode: {
+      type: Boolean,
+      default: false
     }
   },
   methods: {
+    editTodo(todo) {
+      this.editedTodo = todo
+    },
+    categoryName(e) {
+      this.maxLength(e, 10)
+    },
+    maxLength(e, len) {
+      const val = e.target.value
+      if (val.length > len) {
+        this.catNameInputValue = val.slice(0, 10)
+      }
+    },
     handleClick() {
       if (this.type === 'add') {
         this.addCategory()
+      }
+    },
+    handleCategoryNameClick() {
+      if (this.isEditMode) {
+        console.log('edit category name')
+        this.isCatNameEditMode = true
+        this.$nextTick(() => {
+          this.focusInput()
+        })
       }
     },
     addCategory() {
@@ -55,11 +88,17 @@ export default {
         color: 'red'
       }
       this.$emit('create', payload)
+    },
+    removeCategory() {
+      this.$emit('remove', this.index)
+    },
+    focusInput() {
+      this.$el.querySelector('.category-name-input').focus()
     }
   },
   mounted() {
     if (this.type === 'temp') {
-      this.$el.querySelector('.category-name-input').focus()
+      this.focusInput()
     }
   }
 }
@@ -75,6 +114,23 @@ export default {
   justify-content: center;
   height: 8rem;
   border-radius: 0.84rem;
+
+  @keyframes jiggle {
+    0% {
+      -webkit-transform: rotate(-0.7deg);
+    }
+    50% {
+      -webkit-transform: rotate(0.7deg);
+    }
+  }
+
+  &.jiggle {
+    animation: jiggle;
+    animation-duration: 0.2s;
+    animation-name: jiggle;
+    animation-iteration-count: infinite;
+    transform: rotate(-2deg);
+  }
 
   .category-name,
   .category-name-input {
@@ -99,6 +155,21 @@ export default {
     width: $size;
     height: $size;
     background-image: url('~assets/images/plus.svg');
+  }
+
+  .delete-btn {
+    position: absolute;
+    right: -0.7rem;
+    top: -0.7rem;
+    width: 2rem;
+    height: 2rem;
+    background-color: #c5c3c3ad;
+    border-radius: 50px;
+
+    .delete-icon {
+      width: 50%;
+      height: 50%;
+    }
   }
 
   &.gray {
