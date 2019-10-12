@@ -40,7 +40,7 @@ export default {
       Axios.get('https://api.dev-hch.webglue.me/v1/me/profile').then(
         (response) => {
           console.log(response.data)
-          window.alert(response.data)
+          // window.alert(response.data)
         }
       )
     }
