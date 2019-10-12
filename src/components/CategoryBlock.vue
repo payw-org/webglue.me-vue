@@ -1,19 +1,29 @@
 <template>
-  <div class="add-category" :class="[color, { 'jiggle': isEditMode }]" @click="handleClick">
+  <div
+    class="add-category"
+    :class="[color, { jiggle: isEditMode }]"
+    @click="handleClick"
+  >
     <div v-if="type === 'add'" class="plus-icon" />
     <div v-else>
       <input
         v-if="type === 'temp' || isCatNameEditMode"
         v-model="catNameInputValue"
-        @input="categoryName"
         type="text"
         class="category-name-input"
+        @input="categoryName"
         @blur="createCategory"
         @keypress.enter="createCategory"
       />
-      <h1 v-else class="category-name" @click="handleCategoryNameClick">{{ catName }}</h1>
+      <h1 v-else class="category-name" @click="handleCategoryNameClick">
+        {{ catName }}
+      </h1>
     </div>
-    <button @click="removeCategory" v-if="type !== 'add' && isEditMode" class="delete-btn">
+    <button
+      v-if="type !== 'add' && isEditMode"
+      class="delete-btn"
+      @click="removeCategory"
+    >
       <IconPlus x class="delete-icon" />
     </button>
   </div>
@@ -24,15 +34,10 @@ import IconPlus from '~/components/icons/IconPlus'
 
 export default {
   components: { IconPlus },
-  data() {
-    return {
-      catNameInputValue: '',
-      isCatNameEditMode: false
-    }
-  },
   props: {
     index: {
-      type: Number
+      type: Number,
+      default: 0
     },
     type: {
       type: String,
@@ -49,6 +54,17 @@ export default {
     isEditMode: {
       type: Boolean,
       default: false
+    }
+  },
+  data() {
+    return {
+      catNameInputValue: '',
+      isCatNameEditMode: false
+    }
+  },
+  mounted() {
+    if (this.type === 'temp') {
+      this.focusInput()
     }
   },
   methods: {
@@ -71,7 +87,6 @@ export default {
     },
     handleCategoryNameClick() {
       if (this.isEditMode) {
-        console.log('edit category name')
         this.isCatNameEditMode = true
         this.$nextTick(() => {
           this.focusInput()
@@ -94,11 +109,6 @@ export default {
     },
     focusInput() {
       this.$el.querySelector('.category-name-input').focus()
-    }
-  },
-  mounted() {
-    if (this.type === 'temp') {
-      this.focusInput()
     }
   }
 }
