@@ -37,12 +37,12 @@ export default {
   },
   methods: {
     getUserInfo() {
-      Axios.get('https://api.dev-hch.webglue.me/v1/me/profile').then(
-        (response) => {
-          console.log(response.data)
-          window.alert(response.data)
-        }
-      )
+      Axios.get('https://api.dev-hch.webglue.me/v1/me/profile', {
+        withCredentials: true
+      }).then((response) => {
+        console.log(response.data)
+        window.alert(response.data)
+      })
     }
   }
 }
