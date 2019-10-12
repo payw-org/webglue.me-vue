@@ -7,7 +7,9 @@
             <img src="~/assets/images/logo-simplified.svg" alt="logo" class="logo-img" />
           </div>
         </div>
-        <h1 class="name">webglue</h1>
+        <h1 class="name">
+          webglue
+        </h1>
       </div>
       <div v-if="$route.params.category">
         <button class="add-btn" @click="onClickAddBtn">

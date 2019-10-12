@@ -1,5 +1,5 @@
 <template>
-  <aside v-if="isURLBarActive" class="url-bar-container">
+  <aside class="url-bar-container">
     <div class="bg" @click="closeURLBar" />
     <input v-model="url" type="text" class="url-input" placeholder="URL을 입력하세요" @keydown.enter="handleEnter" />
   </aside>
@@ -12,17 +12,10 @@ export default {
       url: ''
     }
   },
-  computed: {
-    isURLBarActive() {
-      return this.$store.state.glueBoard.isURLBarActive
-    }
-  },
   mounted() {
-    if (this.$el.querySelector) {
-      const urlInputElm = this.$el.querySelector('.url-input')
-      urlInputElm.focus()
-      this.url = this.$store.state.glueBoard.url
-    }
+    this.url = this.$store.state.glueBoard.url
+    const urlInputElm = this.$el.querySelector('.url-input')
+    urlInputElm.focus()
   },
   methods: {
     closeURLBar() {
@@ -31,6 +24,8 @@ export default {
     handleEnter() {
       this.closeURLBar()
       this.$store.commit('glueBoard/SET_URL', this.url)
+      console.log(this.$store.state.glueBoard.url)
+      this.$store.commit('glueBoard/SET_WEBVIEW_ACTIVE', true)
     }
   }
 }

@@ -8,7 +8,7 @@
         <CategoryBlock
           v-for="(block, i) in blocks"
           :key="block.catName + i"
-          :catName="block.catName"
+          :cat-name="block.catName"
           :color="'color' + (i % 15 + 1)"
           :type="block.type"
           :index="i"
@@ -31,6 +31,9 @@ export default {
       blocks: []
     }
   },
+  mounted() {
+    console.log(this.$route.params.username)
+  },
   methods: {
     addBlock() {
       const newBlock = {
@@ -48,9 +51,6 @@ export default {
         this.blocks[payload.index].type = 'category'
       }
     }
-  },
-  mounted() {
-    console.log(this.$route.params.username)
   }
 }
 </script>
@@ -79,5 +79,3 @@ export default {
   }
 }
 </style>
-
-
