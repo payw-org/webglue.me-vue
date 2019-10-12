@@ -15,7 +15,7 @@
           v-for="(block, i) in blocks"
           :key="block.catName + i"
           :cat-name="block.catName"
-          :color="'color' + (i % 15 + 1)"
+          :color="'color' + ((i % 15) + 1)"
           :type="block.type"
           :index="i"
           @create="createBlock"
@@ -49,9 +49,7 @@ export default {
       }
     }
   },
-  mounted() {
-    console.log(this.$route.params.username)
-  },
+  mounted() {},
   methods: {
     addBlock() {
       const newBlock = {
@@ -84,6 +82,7 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+
   .navi {
     width: 100vw;
   }
