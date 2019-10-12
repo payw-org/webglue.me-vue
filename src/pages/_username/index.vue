@@ -4,17 +4,31 @@
       <div class="navi">
         <Navigation />
       </div>
+      <div class="edit-box">
+        <button
+          class="edit-button"
+          @click="
+            (e) => {
+              isEditMode = !isEditMode
+            }
+          "
+        >
+          {{ editBtnText }}
+        </button>
+      </div>
       <div class="grid-layout category-box">
         <CategoryBlock
           v-for="(block, i) in blocks"
           :key="block.catName + i"
           :cat-name="block.catName"
-          :color="'color' + (i % 15 + 1)"
+          :color="'color' + ((i % 15) + 1)"
           :type="block.type"
           :index="i"
+          :is-edit-mode="isEditMode"
           @create="createBlock"
+          @remove="removeBlock"
         />
-        <CategoryBlock type="add" @add="addBlock" />
+        <CategoryBlock v-if="!isEditMode" type="add" @add="addBlock" />
       </div>
     </div>
   </div>
@@ -28,12 +42,20 @@ export default {
   components: { Navigation, CategoryBlock },
   data() {
     return {
-      blocks: []
+      blocks: [],
+      isEditMode: false
     }
   },
-  mounted() {
-    console.log(this.$route.params.username)
+  computed: {
+    editBtnText() {
+      if (this.isEditMode) {
+        return '완료'
+      } else {
+        return '편집'
+      }
+    }
   },
+  mounted() {},
   methods: {
     addBlock() {
       const newBlock = {
@@ -42,6 +64,10 @@ export default {
         color: 'red'
       }
       this.blocks.push(newBlock)
+    },
+    removeBlock(index) {
+      console.log(index)
+      this.blocks.splice(index, 1)
     },
     createBlock(payload) {
       if (payload.catName.trim().length === 0) {
@@ -62,9 +88,21 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+
   .navi {
     width: 100vw;
   }
+
+  .edit-box {
+    width: 100vw;
+    display: flex;
+    justify-content: flex-end;
+
+    .edit-button {
+      margin-right: 3rem;
+    }
+  }
+
   .grid-layout {
     display: grid;
     grid-gap: 1.24rem;
@@ -76,6 +114,7 @@ export default {
     margin-top: s(6);
     width: calc(100% - 3rem);
     max-width: 80rem;
+    padding-bottom: 3rem;
   }
 }
 </style>
