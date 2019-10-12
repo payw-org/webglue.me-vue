@@ -1,6 +1,12 @@
 <template>
   <div class="glue-board-webview-wrapper">
-    <iframe allowtransparency="true" style="background: #fff;" :src="mirroringSrc" frameborder="0" class="glue-board-webview" />
+    <iframe
+      allowtransparency="true"
+      style="background: #fff;"
+      :src="mirroringSrc"
+      frameborder="0"
+      class="glue-board-webview"
+    />
     <button class="webview-close-btn" @click="handleClose">
       <IconPlus x color="#fff" class="webview-close-icon" />
     </button>
