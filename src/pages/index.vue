@@ -19,15 +19,30 @@
           </button>
         </a>
       </div>
+      <button @click="getUserInfo">
+        유저 정보 가져오기
+      </button>
     </div>
   </div>
 </template>
 
 <script>
+import Axios from 'axios'
+
 export default {
   head() {
     return {
       title: 'webglue'
+    }
+  },
+  methods: {
+    getUserInfo() {
+      Axios.get('https://api.dev-hch.webglue.me/v1/me/profile').then(
+        (response) => {
+          console.log(response.data)
+          window.alert(response.data)
+        }
+      )
     }
   }
 }
