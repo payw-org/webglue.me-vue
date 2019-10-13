@@ -1,7 +1,13 @@
 <template>
-  <aside class="url-bar-container">
+  <aside class="url-bar-container" :class="{ mounted: isMounted }">
     <div class="bg" @click="closeURLBar" />
-    <input v-model="url" type="text" class="url-input" placeholder="URL을 입력하세요" @keydown.enter="handleEnter" />
+    <input
+      v-model="url"
+      type="text"
+      class="url-input"
+      placeholder="URL을 입력하세요"
+      @keydown.enter="handleEnter"
+    />
   </aside>
 </template>
 
@@ -9,13 +15,18 @@
 export default {
   data() {
     return {
-      url: ''
+      url: '',
+      isMounted: false
     }
   },
   mounted() {
     this.url = this.$store.state.glueBoard.url
     const urlInputElm = this.$el.querySelector('.url-input')
     urlInputElm.focus()
+
+    this.$nextTick(() => {
+      this.isMounted = true
+    })
   },
   methods: {
     closeURLBar() {
@@ -43,6 +54,11 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+  opacity: 0;
+
+  &.mounted {
+    animation: springZoomInGentle 500ms linear both;
+  }
 
   .bg {
     position: absolute;
@@ -50,8 +66,8 @@ export default {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(#fff, 0.5);
-    @include bgBlur;
+    background-color: rgba(#fff, 1);
+    // @include bgBlur;
   }
 
   .url-input {
