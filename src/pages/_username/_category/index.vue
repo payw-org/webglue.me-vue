@@ -3,7 +3,9 @@
     <Navigation />
     <section class="gb-section">
       <URLBar v-if="$store.state.glueBoard.isURLBarActive" />
-      <WebView v-if="$store.state.glueBoard.isWebViewActive" />
+      <transition name="slide-up">
+        <WebView v-if="$store.state.glueBoard.isWebViewActive" />
+      </transition>
     </section>
   </div>
 </template>
@@ -22,5 +24,16 @@ export default {
 .glue-board {
   .gb-section {
   }
+}
+
+// Transitions
+.slide-up-enter-active,
+.slide-up-leave-active {
+  transition: transform 500ms ease;
+  transform: translateY(0%);
+}
+.slide-up-enter,
+.slide-up-leave-to {
+  transform: translateY(100%);
 }
 </style>

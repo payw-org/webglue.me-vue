@@ -1,6 +1,7 @@
 <template>
   <div class="glue-board-webview-wrapper">
     <iframe
+      name="webview"
       allowtransparency="true"
       style="background: #fff;"
       :src="mirroringSrc"
@@ -28,7 +29,10 @@ export default {
     if (!/^https?:\/\//i.test(inputUrl)) {
       inputUrl = 'http://' + inputUrl
     }
-    this.mirroringSrc = inputUrl
+
+    const corsUrl = 'https://jsonp.afeld.me/?url='
+
+    this.mirroringSrc = corsUrl + inputUrl
   },
   methods: {
     handleClose() {
@@ -47,6 +51,7 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
+  box-shadow: 0 0 2rem rgba(0, 0, 0, 0.2);
 
   // iframe
   .glue-board-webview {

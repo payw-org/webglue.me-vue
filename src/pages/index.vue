@@ -19,9 +19,9 @@
           </button>
         </a>
       </div>
-      <button @click="getUserInfo">
+      <!-- <button @click="getUserInfo">
         유저 정보 가져오기
-      </button>
+      </button> -->
     </div>
   </div>
 </template>
