@@ -1,39 +1,39 @@
 <template>
-  <div class="glue-board">
+  <div class="glue-board-page">
     <Navigation />
-    <section class="gb-section">
-      <URLBar v-if="$store.state.glueBoard.isURLBarActive" />
-      <transition name="slide-up">
-        <WebView v-if="$store.state.glueBoard.isWebViewActive" />
-      </transition>
-    </section>
+    <GlueBoard :fragments="fragments" @cancel="cancelNewFragment" />
+    <UrlBar
+      v-if="$store.state.glueBoard.isURLBarActive"
+      @urlentered="createNewFragment"
+    />
   </div>
 </template>
 
 <script>
 import Navigation from '~/components/Navigation'
-import URLBar from '~/components/glue-board/URLBar'
-import WebView from '~/components/glue-board/WebView'
+import GlueBoard from '~/components/glue-board/GlueBoard'
+import UrlBar from '~/components/glue-board/UrlBar'
 
 export default {
-  components: { Navigation, URLBar, WebView }
-}
-</script>
-
-<style lang="scss">
-.glue-board {
-  .gb-section {
+  components: { Navigation, GlueBoard, UrlBar },
+  data() {
+    return {
+      fragments: [{}, {}, {}]
+    }
+  },
+  methods: {
+    createNewFragment(url) {
+      if (!/^https?:\/\//i.test(url)) {
+        url = 'http://' + url
+      }
+      this.fragments.push({
+        url,
+        mode: 'new'
+      })
+    },
+    cancelNewFragment(index) {
+      this.fragments.splice(index, 1)
+    }
   }
 }
-
-// Transitions
-.slide-up-enter-active,
-.slide-up-leave-active {
-  transition: transform 500ms ease;
-  transform: translateY(0%);
-}
-.slide-up-enter,
-.slide-up-leave-to {
-  transform: translateY(100%);
-}
-</style>
+</script>

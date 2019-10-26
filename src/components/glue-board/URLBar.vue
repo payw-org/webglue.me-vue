@@ -34,9 +34,9 @@ export default {
     },
     handleEnter() {
       this.closeURLBar()
-      this.$store.commit('glueBoard/SET_URL', this.url)
-      console.log(this.$store.state.glueBoard.url)
-      this.$store.commit('glueBoard/SET_WEBVIEW_ACTIVE', true)
+      // this.$store.commit('glueBoard/SET_URL', this.url)
+      // this.$store.commit('glueBoard/SET_WEBVIEW_ACTIVE', true)
+      this.$emit('urlentered', this.url)
     }
   }
 }
