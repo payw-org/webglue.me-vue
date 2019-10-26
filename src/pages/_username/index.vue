@@ -7,8 +7,14 @@
       <div class="edit-box">
         <button
           class="edit-button"
-          v-on:click="(e) => {isEditMode = !isEditMode }"
-        >{{ editBtnText }}</button>
+          @click="
+            (e) => {
+              isEditMode = !isEditMode
+            }
+          "
+        >
+          {{ editBtnText }}
+        </button>
       </div>
       <div class="grid-layout category-box">
         <CategoryBlock
@@ -19,10 +25,10 @@
           :type="block.type"
           :index="i"
           @create="createBlock"
-          @remove="removeBlock"
           :is-edit-mode="isEditMode"
+          @remove="removeBlock"
         />
-        <CategoryBlock type="add" @add="addBlock" v-if="!isEditMode" />
+        <CategoryBlock type="add" v-if="!isEditMode" @add="addBlock" />
       </div>
     </div>
   </div>
