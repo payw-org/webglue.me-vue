@@ -36,7 +36,7 @@ export default {
   },
   methods: {
     handleClose() {
-      this.$store.commit('glueBoard/SET_WEBVIEW_ACTIVE', false)
+      this.$store.commit('glueBoard/setWebviewActive', false)
     }
   }
 }

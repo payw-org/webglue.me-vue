@@ -30,12 +30,12 @@ export default {
   },
   methods: {
     closeURLBar() {
-      this.$store.commit('glueBoard/SET_URL_BAR_ACTIVE', false)
+      this.$store.commit('glueBoard/setUrlBarActive', false)
     },
     handleEnter() {
       this.closeURLBar()
-      // this.$store.commit('glueBoard/SET_URL', this.url)
-      // this.$store.commit('glueBoard/SET_WEBVIEW_ACTIVE', true)
+      // this.$store.commit('glueBoard/setUrl', this.url)
+      // this.$store.commit('glueBoard/setWebviewActive', true)
       this.$emit('urlentered', this.url)
     }
   }
@@ -46,6 +46,7 @@ export default {
 @import '~/assets/scss/main';
 
 .url-bar-container {
+  z-index: 10000;
   position: fixed;
   top: 0;
   left: 0;
