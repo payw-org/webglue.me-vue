@@ -18,7 +18,35 @@ export default {
   components: { Navigation, GlueBoard, UrlBar },
   data() {
     return {
-      fragments: [{}, {}, {}]
+      fragments: [
+        {
+          position: {
+            x: 20,
+            y: 100
+          },
+          url: 'https://comic.naver.com',
+          mode: 'postit',
+          selector: ''
+        },
+        {
+          position: {
+            x: 500,
+            y: 150
+          },
+          url: 'https://comic.naver.com',
+          mode: 'postit',
+          selector: ''
+        },
+        {
+          position: {
+            x: 300,
+            y: 500
+          },
+          url: 'https://comic.naver.com',
+          mode: 'postit',
+          selector: ''
+        }
+      ]
     }
   },
   methods: {
