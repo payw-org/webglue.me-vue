@@ -1,10 +1,14 @@
 <template>
-  <nav class="webglue-navigation">
+  <nav class="webglue-navigation" :class="{ hidden: isHidden }">
     <div class="gn-menu-container">
       <div class="logo-wrapper">
         <div class="logo-box">
           <div class="logo-container">
-            <img src="~/assets/images/logo-simplified.svg" alt="logo" class="logo-img" />
+            <img
+              src="~/assets/images/logo-simplified.svg"
+              alt="logo"
+              class="logo-img"
+            />
           </div>
         </div>
         <h1 class="name">
@@ -20,18 +24,26 @@
   </nav>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script>
 import IconPlus from '~/components/icons/IconPlus.vue'
 
-export default Vue.extend({
+export default {
   components: { IconPlus },
+  computed: {
+    isHidden() {
+      if (this.$store.state.glueBoard.mode !== 'idle') {
+        return true
+      } else {
+        return false
+      }
+    }
+  },
   methods: {
     onClickAddBtn() {
-      this.$store.commit('glueBoard/SET_URL_BAR_ACTIVE', true)
+      this.$store.commit('glueBoard/setUrlBarActive', true)
     }
   }
-})
+}
 </script>
 
 <style lang="scss">
@@ -49,13 +61,21 @@ $nav-height: 3.5rem;
 }
 
 .webglue-navigation {
+  z-index: 9999;
   display: flex;
   position: sticky;
   top: 0;
   width: 100%;
   min-width: 100%;
   height: $nav-height;
-  // background-color: #f5f5f7;
+  background-color: rgba(#fff, 0.8);
+  transition: transform 200ms ease;
+  @include bgBlur;
+
+  &.hidden {
+    transform: translateY(-100%);
+    pointer-events: none;
+  }
 
   .gn-menu-container {
     display: flex;
