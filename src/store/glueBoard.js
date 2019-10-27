@@ -1,18 +1,27 @@
 export const state = () => ({
   isURLBarActive: false,
-  url: ''
+  isWebViewActive: false,
+  url: '',
+  /** @type {'idle' | 'dragging'} */
+  mode: 'idle'
 })
 
 export const mutations = {
-  SET_URL_BAR_ACTIVE(state, bool) {
+  setUrlBarActive(state, bool) {
     if (!bool) {
       state.url = ''
     }
 
     state.isURLBarActive = bool
   },
-  SET_URL(state, url) {
+  setUrl(state, url) {
     state.url = url
+  },
+  setWebviewActive(state, bool) {
+    state.isWebViewActive = bool
+  },
+  setMode(state, newMode) {
+    state.mode = newMode
   }
 }
 

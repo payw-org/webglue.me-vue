@@ -15,12 +15,13 @@ export default {
         name: 'description',
         content: process.env.npm_package_description || ''
       }
-    ],
-    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }]
+    ]
   },
 
   // Source directory
   srcDir: 'src/',
+
+  css: ['~/assets/stylus/spring.styl'],
 
   // Router config
   router: {

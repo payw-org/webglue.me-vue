@@ -216,3 +216,10 @@ $input-border-radius: radius(4);
 @mixin bgBlur {
   backdrop-filter: blur(20px) saturate(1.7);
 }
+
+// Center
+@mixin center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

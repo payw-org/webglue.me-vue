@@ -1,35 +1,27 @@
 <template>
   <div>
     <div class="webglue-category">
-      <div class="navi">
-        <Navigation />
-      </div>
-      <div class="edit-box">
-        <button
-          class="edit-button"
-          @click="
-            (e) => {
-              isEditMode = !isEditMode
-            }
-          "
+      <Navigation />
+      <transition-group class="grid-layout category-box" name="scale" tag="div">
+        <div v-for="(block, i) in blocks" :key="i" class="grid-item-wrapper">
+          <CategoryBlock
+            :cat-name="block.catName"
+            :color="'color' + ((i % 15) + 1)"
+            :type="block.type"
+            :index="i"
+            :is-edit-mode="isEditMode"
+            @create="createBlock"
+            @remove="removeBlock"
+          />
+        </div>
+        <div
+          v-if="!isEditMode"
+          key="category-block-new"
+          class="grid-item-wrapper"
         >
-          {{ editBtnText }}
-        </button>
-      </div>
-      <div class="grid-layout category-box">
-        <CategoryBlock
-          v-for="(block, i) in blocks"
-          :key="block.catName + i"
-          :cat-name="block.catName"
-          :color="'color' + ((i % 15) + 1)"
-          :type="block.type"
-          :index="i"
-          @create="createBlock"
-          :is-edit-mode="isEditMode"
-          @remove="removeBlock"
-        />
-        <CategoryBlock type="add" v-if="!isEditMode" @add="addBlock" />
-      </div>
+          <CategoryBlock type="add" @add="addBlock" />
+        </div>
+      </transition-group>
     </div>
   </div>
 </template>
@@ -66,12 +58,16 @@ export default {
       this.blocks.push(newBlock)
     },
     removeBlock(index) {
-      console.log(index)
+      const removeTarget = this.$el.querySelectorAll(
+        '.category-box .grid-item-wrapper'
+      )[index]
+      removeTarget.style.width =
+        removeTarget.getBoundingClientRect().width + 'px'
       this.blocks.splice(index, 1)
     },
     createBlock(payload) {
       if (payload.catName.trim().length === 0) {
-        this.blocks.splice(payload.index)
+        this.removeBlock(payload.index)
       } else {
         this.blocks[payload.index].catName = payload.catName
         this.blocks[payload.index].type = 'category'
@@ -84,17 +80,33 @@ export default {
 <style lang="scss">
 @import '~/assets/scss/main';
 
+.scale-enter-active,
+.scale-move,
+.scale-leave-active {
+  transition: all 0.4s cubic-bezier(0.55, 0, 0.1, 1);
+}
+
+.scale-enter {
+  opacity: 0;
+  -webkit-transform: scale(0);
+  transform: scale(0);
+}
+
+.scale-leave-active {
+  opacity: 0;
+  position: absolute;
+  -webkit-transform: scale(0);
+  transform: scale(0);
+}
+
 .webglue-category {
   display: flex;
   flex-direction: column;
   align-items: center;
 
-  .navi {
-    width: 100vw;
-  }
-
   .edit-box {
-    width: 100vw;
+    padding-top: s(3);
+    width: 100%;
     display: flex;
     justify-content: flex-end;
 

@@ -1,39 +1,21 @@
 <template>
-  <div
-    class="add-category"
-    :class="[color, { jiggle: isEditMode }]"
-    @click="handleClick"
-  >
+  <div class="add-category" :class="[color]" @click="handleClick">
     <div v-if="type === 'add'" class="plus-icon" />
     <div v-else>
-      <input
-        v-if="type === 'temp' || isCatNameEditMode"
-        v-model="catNameInputValue"
-        type="text"
-        class="category-name-input"
-        @input="categoryName"
+      <h1
+        ref="categoryName"
+        class="category-name"
+        :contenteditable="type === 'temp' ? 'true' : 'false'"
+        @click="handleCategoryNameClick"
         @blur="createCategory"
         @keypress.enter="createCategory"
       />
-      <h1 v-else class="category-name" @click="handleCategoryNameClick">
-        {{ catName }}
-      </h1>
     </div>
-    <button
-      v-if="type !== 'add' && isEditMode"
-      class="delete-btn"
-      @click="removeCategory"
-    >
-      <IconPlus x class="delete-icon" />
-    </button>
   </div>
 </template>
 
 <script>
-import IconPlus from '~/components/icons/IconPlus'
-
 export default {
-  components: { IconPlus },
   props: {
     index: {
       type: Number,
@@ -50,16 +32,14 @@ export default {
     catName: {
       type: String,
       default: ''
-    },
-    isEditMode: {
-      type: Boolean,
-      default: false
     }
   },
   data() {
-    return {
-      catNameInputValue: '',
-      isCatNameEditMode: false
+    return {}
+  },
+  watch: {
+    catName(next) {
+      this.$refs.categoryName.innerHTML = next
     }
   },
   mounted() {
@@ -68,39 +48,19 @@ export default {
     }
   },
   methods: {
-    editTodo(todo) {
-      this.editedTodo = todo
-    },
-    categoryName(e) {
-      this.maxLength(e, 10)
-    },
-    maxLength(e, len) {
-      const val = e.target.value
-      if (val.length > len) {
-        this.catNameInputValue = val.slice(0, 10)
-      }
-    },
     handleClick() {
       if (this.type === 'add') {
         this.addCategory()
       }
     },
-    handleCategoryNameClick() {
-      if (this.isEditMode) {
-        this.isCatNameEditMode = true
-        this.$nextTick(() => {
-          this.focusInput()
-        })
-      }
-    },
+    handleCategoryNameClick() {},
     addCategory() {
       this.$emit('add')
     },
     createCategory() {
       const payload = {
-        catName: this.catNameInputValue,
-        index: this.index,
-        color: 'red'
+        catName: this.$refs.categoryName.textContent.trim(),
+        index: this.index
       }
       this.$emit('create', payload)
     },
@@ -108,7 +68,7 @@ export default {
       this.$emit('remove', this.index)
     },
     focusInput() {
-      this.$el.querySelector('.category-name-input').focus()
+      this.$refs.categoryName.focus()
     }
   }
 }
@@ -122,7 +82,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 8rem;
+  min-height: 10rem;
   border-radius: 0.84rem;
 
   @keyframes jiggle {
@@ -145,11 +105,14 @@ export default {
   .category-name,
   .category-name-input {
     color: #f8f6f6;
+    line-height: lh(2);
+    min-width: 100%;
+    display: block;
+    padding: s(6);
   }
 
   .category-name {
-    word-break: break-all;
-    margin: s(6);
+    word-break: break-word;
   }
 
   .category-name-input {
@@ -160,6 +123,7 @@ export default {
     font-weight: 700;
     line-height: 1.16em;
   }
+
   .plus-icon {
     $size: 2.3rem;
     width: $size;
@@ -173,8 +137,12 @@ export default {
     top: -0.7rem;
     width: 2rem;
     height: 2rem;
-    background-color: #c5c3c3ad;
+    background-color: rgba(#fff, 0.5);
+    @include bgBlur;
     border-radius: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     .delete-icon {
       width: 50%;
