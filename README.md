@@ -1,22 +1,3 @@
-# webglue.me-vue
-
-> webglue.me implemented with Vue
-
-## Build Setup
-
-``` bash
-# install dependencies
-$ yarn install
-
-# serve with hot reload at localhost:3000
-$ yarn dev
-
-# build for production and launch server
-$ yarn build
-$ yarn start
-
-# generate static project
-$ yarn generate
-```
-
-For detailed explanation on how things work, check out [Nuxt.js docs](https://nuxtjs.org).
+<p align="center">
+  <img align="center" src="https://user-images.githubusercontent.com/19797697/67635076-03c6f000-f906-11e9-936d-eaa00cfc60cc.png" width=300 />
+</p>
