@@ -51,15 +51,21 @@ export default {
   },
   methods: {
     createNewFragment(url) {
+      this.$store.commit('glueBoard/setMode', 'new')
       if (!/^https?:\/\//i.test(url)) {
         url = 'http://' + url
       }
       this.fragments.push({
         url,
-        mode: 'new'
+        mode: 'new',
+        position: {
+          x: 0,
+          y: 0
+        }
       })
     },
     cancelNewFragment(index) {
+      this.$store.commit('glueBoard/setMode', 'idle')
       this.fragments.splice(index, 1)
     }
   }
