@@ -36,5 +36,7 @@ export default {
   },
 
   // Build modules
-  buildModules: ['@nuxtjs/eslint-module', '@nuxt/typescript-build']
+  buildModules: ['@nuxtjs/eslint-module', '@nuxt/typescript-build'],
+
+  plugins: ['~/plugins/init.js']
 }

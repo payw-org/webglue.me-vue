@@ -2,7 +2,7 @@ export const state = () => ({
   isURLBarActive: false,
   isWebViewActive: false,
   url: '',
-  /** @type {'idle' | 'dragging'} */
+  /** @type {'idle' | 'dragging' | 'new'} */
   mode: 'idle'
 })
 

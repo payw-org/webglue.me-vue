@@ -3,7 +3,12 @@
     class="webglue-fragment"
     :class="[
       fragInfo.mode,
-      { hover: stat.hover, active: stat.catched, invalid: !stat.isValidPos }
+      {
+        hover: stat.hover,
+        active: stat.catched,
+        invalid: !stat.isValidPos,
+        transitioning: stat.isTransitioning
+      }
     ]"
     :style="{ left: position.x + 'px', top: position.y + 'px' }"
   >
@@ -14,7 +19,7 @@
       :src="fragInfo.url"
       frameborder="0"
       class="wf-iframe"
-      scrolling="no"
+      :scrolling="fragInfo.mode === 'new' ? 'yes' : 'no'"
     />
     <button
       v-if="fragInfo.mode === 'new'"
@@ -48,7 +53,8 @@ export default {
         hover: false,
         catched: false,
         isMoving: false,
-        isValidPos: true
+        isValidPos: true,
+        isTransitioning: false
       },
       origin: {
         pointer: {
@@ -71,69 +77,89 @@ export default {
     this.position.y = this.fragInfo.position.y
 
     this.$el.addEventListener('mouseenter', () => {
-      this.stat.hover = true
+      if (this.fragInfo.mode === 'new') {
+      } else {
+        this.stat.hover = true
+      }
     })
     this.$el.addEventListener('mouseleave', () => {
-      this.stat.hover = false
+      if (this.fragInfo.mode === 'new') {
+      } else {
+        this.stat.hover = false
+      }
     })
     this.$el.addEventListener('mousedown', (/** @type {MouseEvent} */ e) => {
-      e.preventDefault()
-      this.stat.catched = true
-      this.origin.pointer.x = e.clientX
-      this.origin.pointer.y = e.clientY
-      this.origin.position.x = this.position.x
-      this.origin.position.y = this.position.y
+      if (this.fragInfo.mode === 'new') {
+      } else {
+        e.preventDefault()
+        this.stat.catched = true
+        this.origin.pointer.x = e.clientX
+        this.origin.pointer.y = e.clientY
+        this.origin.position.x = this.position.x
+        this.origin.position.y = this.position.y
 
-      let mouseMoveCallback
-      window.addEventListener(
-        'mousemove',
-        (mouseMoveCallback = (/** @type {MouseEvent} */ e) => {
-          if (this.stat.catched) {
-            this.$store.commit('glueBoard/setMode', 'dragging')
-            this.stat.isMoving = true
-            const moveX = e.clientX - this.origin.pointer.x
-            const moveY = e.clientY - this.origin.pointer.y
-            this.position.x = this.origin.position.x + moveX
-            this.position.y = this.origin.position.y + moveY
-            const topLeftElm = document.elementFromPoint(
-              this.position.x,
-              this.position.y
-            )
-            const topRightElm = document.elementFromPoint(
-              this.position.x + this.$el.clientWidth,
-              this.position.y
-            )
-            const bottomLeftElm = document.elementFromPoint(
-              this.position.x,
-              this.position.y + this.$el.clientHeight
-            )
-            const bottomRightElm = document.elementFromPoint(
-              this.position.x + this.$el.clientWidth,
-              this.position.y + this.$el.clientHeight
-            )
-            if (
-              (topLeftElm &&
-                topLeftElm.classList.contains('webglue-fragment')) ||
-              (topRightElm &&
-                topRightElm.classList.contains('webglue-fragment')) ||
-              (bottomLeftElm &&
-                bottomLeftElm.classList.contains('webglue-fragment')) ||
-              (bottomRightElm &&
-                bottomRightElm.classList.contains('webglue-fragment'))
-            ) {
-              this.stat.isValidPos = false
-            } else {
-              this.stat.isValidPos = true
+        let mouseMoveCallback
+        window.addEventListener(
+          'mousemove',
+          (mouseMoveCallback = (/** @type {MouseEvent} */ e) => {
+            if (this.stat.catched) {
+              this.$store.commit('glueBoard/setMode', 'dragging')
+              this.stat.isMoving = true
+              const moveX = e.clientX - this.origin.pointer.x
+              const moveY = e.clientY - this.origin.pointer.y
+              this.position.x = this.origin.position.x + moveX
+              this.position.y = this.origin.position.y + moveY
+              const topLeftElm = document.elementFromPoint(
+                this.position.x,
+                this.position.y
+              )
+              const topRightElm = document.elementFromPoint(
+                this.position.x + this.$el.clientWidth,
+                this.position.y
+              )
+              const bottomLeftElm = document.elementFromPoint(
+                this.position.x,
+                this.position.y + this.$el.clientHeight
+              )
+              const bottomRightElm = document.elementFromPoint(
+                this.position.x + this.$el.clientWidth,
+                this.position.y + this.$el.clientHeight
+              )
+              if (
+                (topLeftElm &&
+                  topLeftElm.classList.contains('webglue-fragment')) ||
+                (topRightElm &&
+                  topRightElm.classList.contains('webglue-fragment')) ||
+                (bottomLeftElm &&
+                  bottomLeftElm.classList.contains('webglue-fragment')) ||
+                (bottomRightElm &&
+                  bottomRightElm.classList.contains('webglue-fragment'))
+              ) {
+                this.stat.isValidPos = false
+              } else {
+                this.stat.isValidPos = true
+              }
             }
-          }
-        })
-      )
+          })
+        )
 
-      window.addEventListener('mouseup', () => {
-        this.$store.commit('glueBoard/setMode', 'idle')
-        this.stat.catched = false
-        window.removeEventListener('mousemove', mouseMoveCallback)
-      })
+        window.addEventListener('mouseup', () => {
+          if (!this.stat.isValidPos) {
+            this.stat.isTransitioning = true
+            setTimeout(() => {
+              this.position.x = this.origin.position.x
+              this.position.y = this.origin.position.y
+              this.stat.isValidPos = true
+              setTimeout(() => {
+                this.stat.isTransitioning = false
+              }, 300)
+            }, 10)
+          }
+          this.$store.commit('glueBoard/setMode', 'idle')
+          this.stat.catched = false
+          window.removeEventListener('mousemove', mouseMoveCallback)
+        })
+      }
     })
   }
 }
@@ -152,11 +178,21 @@ export default {
   cursor: default;
 
   &.new {
+    z-index: 10003;
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
+
+    .wf-iframe {
+      pointer-events: all !important;
+    }
+  }
+
+  &.transitioning {
+    transition: all 300ms ease;
+    z-index: 90;
   }
 
   .invalid-overlay {
@@ -172,12 +208,12 @@ export default {
     border-radius: r(3);
     overflow: hidden;
     box-shadow: 0 2rem 5rem rgba(#000, 0.4);
-    z-index: 10;
   }
 
   &.active {
     transform: scale(0.92);
     box-shadow: 0 1rem 2rem rgba(#000, 0.3);
+    z-index: 10;
   }
 
   // iframe

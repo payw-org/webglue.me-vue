@@ -1,5 +1,6 @@
 <template>
   <div class="add-category" :class="[color]" @click="handleClick">
+    <a v-if="type === 'category'" :href="link" class="category-link" />
     <div v-if="type === 'add'" class="plus-icon" />
     <div v-else>
       <h1
@@ -34,8 +35,10 @@ export default {
       default: ''
     }
   },
-  data() {
-    return {}
+  computed: {
+    link() {
+      return `/@${this.$store.state.app.user.nickname}/${this.catName}`
+    }
   },
   watch: {
     catName(next) {
@@ -84,6 +87,16 @@ export default {
   justify-content: center;
   min-height: 10rem;
   border-radius: 0.84rem;
+  position: relative;
+
+  .category-link {
+    position: absolute;
+    z-index: 100;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+  }
 
   @keyframes jiggle {
     0% {

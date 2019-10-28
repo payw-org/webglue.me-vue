@@ -11,11 +11,11 @@
           </div>
         </div>
       </div>
-      <div class="login-btn" :class="{ appear: isMounted }">
-        <a href="https://api.dev-hch.webglue.me/v1/oauth2/google">
+      <div class="signin-btn" :class="{ appear: isMounted }">
+        <a :href="signInUrl">
           <button class="google-login">
             <img src="~/assets/images/google_logo.png" class="google-logo" />
-            <p class="text">Sign in with Google</p>
+            <p class="text">{{ buttonLabel }}</p>
           </button>
         </a>
       </div>
@@ -28,24 +28,47 @@
 
 <script>
 import Axios from 'axios'
+import ApiUrl from '~/modules/api-url'
 
 export default {
+  middleware({ route, redirect }) {
+    const query = route.query
+    if (query.isnew) {
+      redirect('/welcome')
+    }
+  },
+  data() {
+    return {
+      isMounted: false,
+      signInUrl: ApiUrl.user.signInUp
+    }
+  },
+  computed: {
+    buttonLabel() {
+      if (this.$store.state.app.isSignedIn) {
+        return '시작하기 →'
+      } else {
+        return 'Google 로그인'
+      }
+    },
+    isSignedIn() {
+      return this.$store.state.app.isSignedIn
+    }
+  },
   head() {
     return {
       title: 'webglue'
     }
   },
-  data() {
-    return {
-      isMounted: false
-    }
-  },
   mounted() {
     this.isMounted = true
+    if (this.$store.state.app.isSignedIn) {
+      this.signInUrl = '/@' + this.$store.state.app.user.nickname
+    }
   },
   methods: {
     getUserInfo() {
-      Axios.get('https://api.dev-hch.webglue.me/v1/me/profile', {
+      Axios.get(ApiUrl.user.profile, {
         withCredentials: true
       }).then((response) => {
         window.alert(response.data)
@@ -59,7 +82,8 @@ export default {
 @import '~/assets/scss/main';
 
 .home {
-  width: 100vw;
+  overflow: hidden;
+  width: 100%;
   height: 100vh;
   display: flex;
   align-items: center;
@@ -67,7 +91,7 @@ export default {
 
   .logo-wrapper {
     position: relative;
-    width: 100vw;
+    width: 100%;
     display: flex;
     justify-content: center;
 
@@ -104,7 +128,7 @@ export default {
     transform: scale(20);
 
     &.appear {
-      $time: 3s;
+      $time: 2s;
       $curve: cubic-bezier(0.5, 0.03, 0, 1.04);
       transition: opacity $time/2 $curve, transform $time $curve;
       opacity: 1;
@@ -112,8 +136,8 @@ export default {
     }
   }
 
-  .login-btn {
-    width: 100vw;
+  .signin-btn {
+    width: 100%;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -123,7 +147,7 @@ export default {
 
     &.appear {
       animation: springSlideUp 1s linear both;
-      animation-delay: 3s;
+      animation-delay: 2s;
     }
 
     .google-login {
