@@ -14,6 +14,7 @@
             @remove="removeBlock"
           />
         </div>
+
         <div
           v-if="!isEditMode"
           key="category-block-new"
@@ -22,6 +23,10 @@
           <CategoryBlock type="add" @add="addBlock" />
         </div>
       </transition-group>
+      <button class="mypage-btn">
+        <a href="/" class="mypage-link" />
+        <img src="~/assets/images/mypage.png" class="mypage-icon" />
+      </button>
     </div>
   </div>
 </template>
@@ -127,6 +132,30 @@ export default {
     width: calc(100% - 3rem);
     max-width: 80rem;
     padding-bottom: 3rem;
+  }
+  .mypage-btn {
+    position: fixed;
+    background-image: linear-gradient(to bottom, #ff3952, #ff6f37);
+    opacity: 0.8;
+    width: 3rem;
+    height: 3rem;
+    left: 1rem;
+    bottom: 1rem;
+    border-radius: 50%;
+
+    .mypage-link {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 3;
+    }
+
+    .mypage-icon {
+      width: 80%;
+      height: 80%;
+    }
   }
 }
 </style>
