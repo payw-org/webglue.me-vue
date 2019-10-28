@@ -1,9 +1,13 @@
 export const state = () => ({
-  mode: 'default' // 'layered'
+  user: {},
+  isSignedIn: false
 })
 
 export const mutations = {
-  SET_MODE(state, newMode) {
-    state.mode = newMode
+  setUser(state, data) {
+    state.user = data
+  },
+  setSignedIn(state, bool) {
+    state.isSignedIn = bool
   }
 }
