@@ -1,10 +1,8 @@
 <template>
   <div class="profile">
     <div class="profile-wrapper">
-      <div class="img">
-        profile image
-      </div>
-      <div class="contents-wrapper">
+      <div class="img flex-items" />
+      <div class="contents-wrapper flex-items">
         <div class="name-wrapper">
           <div class="name">
             이름
@@ -31,10 +29,7 @@
         </div>
         <div class="nickname-edit-wrapper">
           <button class="nickname-edit-button" @click="activatePopUp">
-            <img class="edit-img" src="~assets/images/edit.png" />
-            <div class="edit-nickname">
-              닉네임 수정
-            </div>
+            닉네임 수정
           </button>
         </div>
       </div>
@@ -85,42 +80,62 @@ export default {
   align-items: center;
   justify-content: center;
   width: 100%;
+  // min-width: 40rem;
 
   .profile-wrapper {
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-direction: column;
-    padding: 5rem 0;
+    padding: 10rem 0;
+    flex-flow: row wrap;
 
     .img {
-      width: 20rem;
-      height: 25rem;
-      border: solid black 1px;
+      width: 15rem;
+      height: 15rem;
+      border-radius: 50%;
+      background-color: #ff455d;
+      margin-right: 2rem;
+      margin-left: 2rem;
+      overflow: hidden;
     }
+
     .contents-wrapper {
-      padding-top: 1.5rem;
+      padding-top: 4rem;
+      margin-right: 2rem;
+      margin-left: 2rem;
       .name-wrapper,
       .email-wrapper,
       .nickname-wrapper {
-        padding-top: 2rem;
+        padding-top: 1.2rem;
         display: flex;
         flex-direction: row;
+
         .name,
         .email,
         .nickname {
           color: #3a3a3a;
+          border-top-left-radius: 0.7rem;
+          border-bottom-left-radius: 0.7rem;
+          padding-left: 0.8rem;
+          padding-top: 0.5rem;
+          padding-bottom: 0.5rem;
+          background-color: #ececec;
+
+          width: 5rem;
+          padding-right: 1.5rem;
         }
         .myname,
         .myemail,
         .mynickname {
-          color: #707070;
-        }
-        .name,
-        .email,
-        .nickname {
-          width: 5rem;
-          padding-right: 1.5rem;
+          color: #ff455d;
+          background-color: #ececec;
+          min-width: 15rem;
+
+          border-top-right-radius: 0.7rem;
+          border-bottom-right-radius: 0.7rem;
+          padding-right: 0.8rem;
+          padding-top: 0.5rem;
+          padding-bottom: 0.5rem;
         }
       }
       .nickname-edit-wrapper {
@@ -131,14 +146,19 @@ export default {
         .nickname-edit-button {
           display: flex;
           flex-direction: row;
-          border-bottom: solid #727272 1px;
+          border-radius: 1.5rem;
+          border: solid #ff455d 1px;
+          color: #ff455d;
           padding-bottom: 0.1rem;
-          .edit-img {
-            width: 1.2rem;
-            padding-right: 0.2rem;
-          }
-          .edit-nickname {
-            text-align: center;
+          padding: 0.3rem;
+          padding-right: 0.5rem;
+          padding-left: 0.5rem;
+          margin-top: 0.1rem;
+          font-size: 0.8rem;
+          transition: background 200ms ease, color 200ms ease;
+          &:hover {
+            background-color: #ff455d;
+            color: #fff;
           }
         }
       }
