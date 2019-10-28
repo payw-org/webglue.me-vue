@@ -101,6 +101,7 @@ export default {
 
     .contents-wrapper {
       padding-top: 4rem;
+      pading-bottom: 1rem;
       margin-right: 2rem;
       margin-left: 2rem;
       .name-wrapper,
