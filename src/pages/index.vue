@@ -129,7 +129,7 @@ export default {
 
     &.appear {
       $time: 2s;
-      $curve: cubic-bezier(0.5, 0.03, 0, 1.04);
+      $curve: cubic-bezier(0.5, 0.03, 0, 0.99);
       transition: opacity $time/2 $curve, transform $time $curve;
       opacity: 1;
       transform: scale(1);
