@@ -24,7 +24,7 @@
         </div>
       </transition-group>
       <button class="mypage-btn">
-        <a href="/" class="mypage-link" />
+        <a :href="profileLink" class="mypage-link" />
         <img src="~/assets/images/mypage.png" class="mypage-icon" />
       </button>
     </div>
@@ -40,7 +40,8 @@ export default {
   data() {
     return {
       blocks: [],
-      isEditMode: false
+      isEditMode: false,
+      profileLink: ''
     }
   },
   computed: {
@@ -52,7 +53,9 @@ export default {
       }
     }
   },
-  mounted() {},
+  mounted() {
+    this.profileLink = `/@${this.$store.state.app.user.nickname}/profile`
+  },
   methods: {
     addBlock() {
       const newBlock = {
@@ -134,6 +137,7 @@ export default {
     padding-bottom: 3rem;
   }
   .mypage-btn {
+    display: none;
     position: fixed;
     background-image: linear-gradient(to bottom, #ff3952, #ff6f37);
     opacity: 0.8;

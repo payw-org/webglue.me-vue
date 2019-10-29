@@ -1,14 +1,16 @@
 <template>
   <div class="profile">
     <div class="profile-wrapper">
-      <div class="img flex-items" />
+      <div class="img flex-items">
+        <img :src="urlSrc" />
+      </div>
       <div class="contents-wrapper flex-items">
         <div class="name-wrapper">
           <div class="name">
             이름
           </div>
           <div class="myname">
-            이성민
+            {{ $store.state.app.user.name }}
           </div>
         </div>
         <div class="email-wrapper">
@@ -16,7 +18,7 @@
             이메일
           </div>
           <div class="myemail">
-            dltjdals98@naver.com
+            {{ $store.state.app.user.email }}
           </div>
         </div>
         <div class="nickname-wrapper">
@@ -24,7 +26,7 @@
             닉네임
           </div>
           <div class="mynickname">
-            이
+            {{ $store.state.app.user.nickname }}
           </div>
         </div>
         <div class="nickname-edit-wrapper">
@@ -54,8 +56,12 @@ export default {
   data() {
     return {
       isPopUpActive: false,
-      newNickname: ''
+      newNickname: '',
+      urlSrc: ''
     }
+  },
+  mounted() {
+    this.urlSrc = this.$store.state.app.user.image
   },
   methods: {
     activatePopUp() {
@@ -97,11 +103,17 @@ export default {
       margin-right: 2rem;
       margin-left: 2rem;
       overflow: hidden;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
     }
 
     .contents-wrapper {
       padding-top: 4rem;
-      pading-bottom: 1rem;
+      padding-bottom: 1rem;
       margin-right: 2rem;
       margin-left: 2rem;
       .name-wrapper,
