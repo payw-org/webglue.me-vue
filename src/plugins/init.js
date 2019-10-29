@@ -13,6 +13,9 @@ export default async (context) => {
       if (err.response.status === 401) {
         console.log('no user')
         store.commit('app/setSignedIn', false)
+        if (window.location.pathname !== '/') {
+          window.location.replace('/')
+        }
       }
     })
     if (res && res.data) {

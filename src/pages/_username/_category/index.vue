@@ -21,7 +21,7 @@ export default {
       fragments: [
         {
           position: {
-            x: 20,
+            x: 50,
             y: 100
           },
           url: 'https://comic.naver.com',
@@ -30,19 +30,10 @@ export default {
         },
         {
           position: {
-            x: 500,
+            x: 550,
             y: 150
           },
-          url: 'https://comic.naver.com',
-          mode: 'postit',
-          selector: ''
-        },
-        {
-          position: {
-            x: 300,
-            y: 500
-          },
-          url: 'https://comic.naver.com',
+          url: 'https://api.dev.webglue.me/v1/mirroring/html?url=apple.com',
           mode: 'postit',
           selector: ''
         }
