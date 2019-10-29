@@ -13,6 +13,7 @@
     :style="{ left: position.x + 'px', top: position.y + 'px' }"
   >
     <iframe
+      ref="webview"
       name="webview"
       allowtransparency="true"
       style="background: #fff;"
@@ -31,6 +32,16 @@
     <transition name="fade">
       <div v-if="!stat.isValidPos" class="invalid-overlay" />
     </transition>
+    <div
+      v-if="fragInfo.mode === 'new'"
+      class="selector"
+      :style="{
+        left: selector.x + 'px',
+        top: selector.y + 'px',
+        width: selector.width + 'px',
+        height: selector.height + 'px'
+      }"
+    />
   </div>
 </template>
 
@@ -69,6 +80,12 @@ export default {
       position: {
         x: 0,
         y: 0
+      },
+      selector: {
+        x: 0,
+        y: 0,
+        width: 0,
+        height: 0
       }
     }
   },
@@ -161,6 +178,10 @@ export default {
         })
       }
     })
+
+    // this.$refs.webview.addEventListener('mousemove', (/** @type {MouseEvent} */ e) => {
+
+    // })
   }
 }
 </script>
@@ -171,11 +192,13 @@ export default {
 .webglue-fragment {
   position: relative;
   width: 400px;
-  height: 300px;
+  height: 550px;
   position: absolute;
   transition: box-shadow 300ms ease, transform 200ms ease,
     border-radius 200ms ease;
   cursor: default;
+  border-radius: 0px;
+  box-shadow: 0 0.3rem 0.5rem rgba(#000, 0.2);
 
   &.new {
     z-index: 10003;
@@ -243,6 +266,14 @@ export default {
       height: 45%;
       opacity: 0.8;
     }
+  }
+
+  .selector {
+    display: none;
+    background-color: blue;
+    padding: 1rem;
+    position: fixed;
+    z-index: 99999999;
   }
 }
 </style>
