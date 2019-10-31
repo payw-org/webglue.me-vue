@@ -82,7 +82,7 @@ $nav-height: 3.5rem;
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    // max-width: 50rem;
+    max-width: 80rem;
     margin: auto;
     padding: 0 1rem;
 
