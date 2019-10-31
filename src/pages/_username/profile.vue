@@ -10,7 +10,7 @@
             이름
           </div>
           <div class="myname">
-            {{ $store.state.app.user.name }}
+            {{ $store.state.auth.userInfo.name }}
           </div>
         </div>
         <div class="email-wrapper">
@@ -18,7 +18,7 @@
             이메일
           </div>
           <div class="myemail">
-            {{ $store.state.app.user.email }}
+            {{ $store.state.auth.userInfo.email }}
           </div>
         </div>
         <div class="nickname-wrapper">
@@ -26,7 +26,7 @@
             닉네임
           </div>
           <div class="mynickname">
-            {{ $store.state.app.user.nickname }}
+            {{ $store.state.auth.userInfo.nickname }}
           </div>
         </div>
         <div class="nickname-edit-wrapper">
@@ -61,7 +61,7 @@ export default {
     }
   },
   mounted() {
-    this.urlSrc = this.$store.state.app.user.image
+    this.urlSrc = this.$store.state.auth.userInfo.image
   },
   methods: {
     activatePopUp() {

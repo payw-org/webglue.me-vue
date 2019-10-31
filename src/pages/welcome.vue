@@ -23,8 +23,8 @@ import ApiUrl from '~/modules/api-url'
 export default {
   data() {
     return {
-      name: this.$store.state.app.user.name,
-      nickname: this.$store.state.app.user.nickname,
+      name: this.$store.state.auth.userInfo.name,
+      nickname: this.$store.state.auth.userInfo.nickname,
       imgSrc: ''
     }
   },
