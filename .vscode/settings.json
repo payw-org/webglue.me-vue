@@ -1,5 +1,4 @@
 {
-  "editor.formatOnSave": true,
   "eslint.autoFixOnSave": true,
   "eslint.alwaysShowStatus": true,
   "eslint.validate": [
@@ -20,5 +19,6 @@
   "vetur.completion.tagCasing": "initial",
   "vetur.format.defaultFormatter.html": "prettier",
   "files.insertFinalNewline": true,
-  "editor.formatOnPaste": true
+  "editor.formatOnSave": true,
+  "eslint.enable": true
 }

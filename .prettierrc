@@ -1,6 +1,9 @@
 {
-  "semi": false,
-  "arrowParens": "always",
   "singleQuote": true,
-  "bracketSpacing": true
+  "tabWidth": 2,
+  "useTabs": false,
+  "semi": false,
+  "bracketSpacing": true,
+  "arrowParens": "avoid",
+  "htmlWhitespaceSensitivity": "ignore"
 }

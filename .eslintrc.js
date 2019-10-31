@@ -13,6 +13,7 @@ module.exports = {
     'plugin:nuxt/recommended'
   ],
   rules: {
+    'arrow-parens': ['error', 'always'],
     'no-console': ['warn', { allow: ['warn', 'error'] }],
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'space-before-function-paren': [
