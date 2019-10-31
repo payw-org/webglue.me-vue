@@ -3,6 +3,7 @@ import ApiUrl from '~/modules/api-url'
 
 export default async (context) => {
   const { store } = context
+  let error
 
   if (process.client) {
     const res = await Axios({
@@ -10,18 +11,31 @@ export default async (context) => {
       url: ApiUrl.user.profile,
       withCredentials: true
     }).catch((err) => {
-      if (err.response.status === 401) {
-        console.log('no user')
-        store.commit('app/setSignedIn', false)
+      error = err
+    })
+
+    // Error occurs
+    if (error) {
+      // Handle network error
+      if (!error.response) {
+        console.error('[webglue] ❌ Network Error!', error)
+        return
+      }
+
+      // Sign in failed(no sign in information)
+      if (error.response && error.response.status === 401) {
+        store.dispatch('auth/clear')
+
+        // Redirect to home
         if (window.location.pathname !== '/') {
           window.location.replace('/')
         }
       }
-    })
+    }
+
     if (res && res.data) {
-      console.log('yes user')
-      store.commit('app/setUser', res.data)
-      store.commit('app/setSignedIn', true)
+      const userInfo = res.data
+      store.dispatch('auth/signIn', userInfo)
     }
   }
 }
