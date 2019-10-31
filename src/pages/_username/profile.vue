@@ -1,58 +1,64 @@
 <template>
   <div class="profile">
-    <div class="profile-wrapper">
-      <div class="img flex-items">
-        <img :src="urlSrc" />
+    <Navigation />
+    <div class="profile-container">
+      <div class="profile-wrapper">
+        <div class="img flex-items">
+          <img :src="urlSrc" />
+        </div>
+        <div class="contents-wrapper flex-items">
+          <div class="name-wrapper">
+            <div class="name">
+              이름
+            </div>
+            <div class="myname">
+              {{ $store.state.auth.userInfo.name }}
+            </div>
+          </div>
+          <div class="email-wrapper">
+            <div class="email">
+              이메일
+            </div>
+            <div class="myemail">
+              {{ $store.state.auth.userInfo.email }}
+            </div>
+          </div>
+          <div class="nickname-wrapper">
+            <div class="nickname">
+              닉네임
+            </div>
+            <div class="mynickname">
+              {{ $store.state.auth.userInfo.nickname }}
+            </div>
+          </div>
+          <div class="nickname-edit-wrapper">
+            <button class="nickname-edit-button" @click="activatePopUp">
+              닉네임 수정
+            </button>
+          </div>
+        </div>
       </div>
-      <div class="contents-wrapper flex-items">
-        <div class="name-wrapper">
-          <div class="name">
-            이름
-          </div>
-          <div class="myname">
-            {{ $store.state.auth.userInfo.name }}
-          </div>
-        </div>
-        <div class="email-wrapper">
-          <div class="email">
-            이메일
-          </div>
-          <div class="myemail">
-            {{ $store.state.auth.userInfo.email }}
-          </div>
-        </div>
-        <div class="nickname-wrapper">
-          <div class="nickname">
-            닉네임
-          </div>
-          <div class="mynickname">
-            {{ $store.state.auth.userInfo.nickname }}
-          </div>
-        </div>
-        <div class="nickname-edit-wrapper">
-          <button class="nickname-edit-button" @click="activatePopUp">
-            닉네임 수정
+      <div v-if="isPopUpActive" class="popup">
+        <div class="bg" @click="deactivatePopUp" />
+        <div class="input-box">
+          <input v-model="newNickname" type="text" placeholder="새 닉네임" />
+          <button @click="updateNickname">
+            수정
+          </button>
+          <button @click="deactivatePopUp">
+            취소
           </button>
         </div>
-      </div>
-    </div>
-    <div v-if="isPopUpActive" class="popup">
-      <div class="bg" @click="deactivatePopUp" />
-      <div class="input-box">
-        <input v-model="newNickname" type="text" placeholder="새 닉네임" />
-        <button @click="updateNickname">
-          수정
-        </button>
-        <button @click="deactivatePopUp">
-          취소
-        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import Navigation from '~/components/Navigation'
+
 export default {
+  components: { Navigation },
   data() {
     return {
       isPopUpActive: false,
@@ -81,7 +87,6 @@ export default {
 @import '~/assets/scss/main';
 
 .profile {
-  display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
@@ -186,6 +191,7 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 10000;
 
     .bg {
       position: absolute;
