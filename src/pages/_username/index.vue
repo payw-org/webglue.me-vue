@@ -1,7 +1,8 @@
 <template>
   <div>
     <div class="webglue-category">
-      <Navigation />
+      <Navigation class="navigation" />
+      <ColorPicker v-if="isChangeColor" class="colorpicker" />
       <transition-group class="grid-layout category-box" name="scale" tag="div">
         <div
           v-for="(block, i) in blocks"
@@ -10,12 +11,13 @@
         >
           <CategoryBlock
             :cat-name="block.catName"
-            :color="'color' + ((i % 15) + 1)"
+            :color="block.color"
             :type="block.type"
             :index="i"
             :is-edit-mode="isEditMode"
             @create="createBlock"
             @remove="removeBlock"
+            @colorchange="visibleColorPicker"
           />
         </div>
 
@@ -24,13 +26,28 @@
           key="category-block-new"
           class="grid-item-wrapper"
         >
-          <CategoryBlock type="add" @add="addBlock" />
+          <CategoryBlock type="add" @add="addBlock" @popup="checkPopupActive" />
         </div>
       </transition-group>
       <button class="mypage-btn">
         <a :href="profileLink" class="mypage-link" />
         <img src="~/assets/images/mypage.png" class="mypage-icon" />
       </button>
+      <div v-if="isPopUp" class="popup">
+        <div class="bg" @click="deactivatePopUp" />
+        <div class="color-picker-bg">
+          <div class="color-pick">
+            카테고리 색깔선택
+          </div>
+          <button
+            v-for="i in 15"
+            :key="`color-picker-${i}`"
+            class="color-choose"
+            :class="'color' + i"
+            @click="selectBlockColor(`color${i}`)"
+          />
+        </div>
+      </div>
     </div>
   </div>
 </template>
