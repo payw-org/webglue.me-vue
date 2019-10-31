@@ -33,8 +33,8 @@ export default {
       withCredentials: true
     })
       .then((res) => {
-        this.$store.commit('app/setUser', res.data)
-        this.$store.commit('app/setSignedIn', true)
+        this.$store.commit('auth/setUser', res.data)
+        this.$store.commit('auth/setSignedIn', true)
 
         this.imgSrc = res.data.image
         this.name = res.data.name
@@ -46,7 +46,7 @@ export default {
       })
       .catch((err) => {
         if (err.response.status === 401) {
-          this.$store.commit('app/setSignedIn', false)
+          this.$store.commit('auth/setSignedIn', false)
         }
       })
 
@@ -79,7 +79,6 @@ export default {
         window.alert('공백은 안됩니다')
         return
       }
-      console.log('update nickname')
       Axios({
         method: 'patch',
         url: ApiUrl.user.profile,
