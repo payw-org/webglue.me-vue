@@ -157,8 +157,8 @@ export default {
     max-width: 80rem;
     padding-bottom: 3rem;
   }
+
   .mypage-btn {
-    display: none;
     position: fixed;
     background-image: linear-gradient(to bottom, #ff3952, #ff6f37);
     opacity: 0.8;
@@ -180,6 +180,58 @@ export default {
     .mypage-icon {
       width: 80%;
       height: 80%;
+    }
+  }
+  .popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+
+    .bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(#000, 0.7);
+    }
+    .color-picker-bg {
+      background-color: #fff;
+      z-index: 1;
+      display: block;
+      justify-content: center;
+      align-items: center;
+
+      .color-pick {
+        width: 100%;
+        text-align: center;
+        color: #6b6b6b;
+        padding-top: 1.2rem;
+        padding-bottom: 1.2rem;
+      }
+
+      .color-choose {
+        width: 10%;
+        display: inline-block;
+        border-radius: 50%;
+        margin: 0.8rem;
+        transition: box-shadow 200ms ease;
+
+        &:hover {
+          box-shadow: 0 0 0 0.2rem #40b3ff;
+        }
+        &::before {
+          content: '';
+          display: block;
+          padding-top: 100%;
+        }
+      }
     }
   }
 }
