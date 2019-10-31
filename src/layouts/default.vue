@@ -1,6 +1,6 @@
 <template>
-  <div id="app" :class="$store.state.app.mode">
-    <nuxt />
+  <div id="app">
+    <Nuxt />
   </div>
 </template>
 
