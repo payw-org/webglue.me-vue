@@ -126,6 +126,56 @@ export default {
               const moveY = e.clientY - this.origin.pointer.y
               this.position.x = this.origin.position.x + moveX
               this.position.y = this.origin.position.y + moveY
+
+              const fragmentElms = document.querySelectorAll(
+                '.webglue-fragment.postit:not(.hover)'
+              )
+              for (let i = 0; i < fragmentElms.length; i += 1) {
+                let isInvalid = false
+                const fragElm = fragmentElms[i]
+                const fragElmRect = fragElm.getBoundingClientRect()
+                const vertices = []
+                vertices[0] = {
+                  x: fragElmRect.left,
+                  y: fragElmRect.top
+                }
+                vertices[1] = {
+                  x: fragElmRect.right,
+                  y: fragElmRect.top
+                }
+                vertices[2] = {
+                  x: fragElmRect.left,
+                  y: fragElmRect.bottom
+                }
+                vertices[3] = {
+                  x: fragElmRect.right,
+                  y: fragElmRect.bottom
+                }
+
+                const thisRect = this.$el.getBoundingClientRect()
+
+                for (let j = 0; j < vertices.length; j += 1) {
+                  const vertex = vertices[j]
+                  if (
+                    vertex.x >= thisRect.left &&
+                    vertex.x <= thisRect.right &&
+                    vertex.y >= thisRect.top &&
+                    vertex.y <= thisRect.bottom
+                  ) {
+                    this.stat.isValidPos = false
+                    isInvalid = true
+                    break
+                  } else {
+                    this.stat.isValidPos = true
+                    isInvalid = false
+                  }
+                }
+
+                if (isInvalid) {
+                  break
+                }
+              }
+
               const topLeftElm = document.elementFromPoint(
                 this.position.x,
                 this.position.y
@@ -178,10 +228,6 @@ export default {
         })
       }
     })
-
-    // this.$refs.webview.addEventListener('mousemove', (/** @type {MouseEvent} */ e) => {
-
-    // })
   }
 }
 </script>
