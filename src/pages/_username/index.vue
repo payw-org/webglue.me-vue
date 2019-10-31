@@ -53,16 +53,27 @@
 </template>
 
 <script>
+import ColorPicker from '~/components/ColorPicker'
 import Navigation from '~/components/Navigation'
 import CategoryBlock from '~/components/CategoryBlock'
 
 export default {
-  components: { Navigation, CategoryBlock },
+  components: { Navigation, CategoryBlock, ColorPicker },
+  props: {
+    color: {
+      type: String,
+      default: 'gray'
+    }
+  },
   data() {
     return {
+      blockcolor: '',
       blocks: [],
+      colors: [],
       isEditMode: false,
-      profileLink: ''
+      isPopUp: false,
+      profileLink: '',
+      isChangeColor: false
     }
   },
   computed: {
@@ -78,11 +89,26 @@ export default {
     this.profileLink = `/@${this.$store.state.auth.userInfo.nickname}/profile`
   },
   methods: {
-    addBlock() {
+    visibleColorPicker() {
+      this.isChangeColor = true
+      console.log('colorpicker')
+    },
+    selectBlockColor(color) {
+      this.deactivatePopUp()
+      this.addBlock(color)
+    },
+    checkPopupActive() {
+      this.isPopUp = true
+    },
+    deactivatePopUp() {
+      this.isPopUp = false
+    },
+    addBlock(color) {
       const newBlock = {
         catName: '',
         type: 'temp',
-        id: Math.random()
+        id: Math.random(),
+        color
       }
       this.blocks.push(newBlock)
     },
