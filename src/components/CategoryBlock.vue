@@ -1,17 +1,28 @@
 <template>
-  <div class="add-category" :class="[color]" @click="handleClick">
-    <a v-if="type === 'category'" :href="link" class="category-link" />
+  <div
+    class="add-category"
+    :class="[color]"
+    @click="activatePopUp"
+    @mouseenter="handleMouseEnter(true)"
+    @mouseleave="handleMouseEnter(false)"
+  >
+    <!-- <a v-if="type === 'category'" :href="link" class="category-link" /> -->
     <div v-if="type === 'add'" class="plus-icon" />
     <div v-else>
       <h1
         ref="categoryName"
         class="category-name"
-        :contenteditable="type === 'temp' ? 'true' : 'false'"
+        :contenteditable="
+          isContentEditable || type === 'temp' ? 'true' : 'false'
+        "
+        spellcheck="false"
         @click="handleCategoryNameClick"
         @blur="createCategory"
         @keypress.enter="createCategory"
       />
     </div>
+    <button v-if="isMouseEnter" class="edit-btn" @click="edit" />
+    <button v-if="isMouseEnter" class="remove-btn" @click="removeCategory" />
   </div>
 </template>
 
@@ -35,6 +46,15 @@ export default {
       default: ''
     }
   },
+  data() {
+    return {
+      isPopUpActive: false,
+      isMouseEnter: false,
+      isContentEditable: false,
+      isClicked: false,
+      isMoving: false
+    }
+  },
   computed: {
     link() {
       return `/@${this.$store.state.auth.userInfo.nickname}/${this.catName}`
@@ -51,6 +71,18 @@ export default {
     }
   },
   methods: {
+    edit() {
+      this.$emit('colorchange')
+      this.focusInput()
+    },
+    handleMouseEnter(bool) {
+      if (this.type === 'category') {
+        this.isMouseEnter = bool
+      }
+    },
+    activatePopUp() {
+      this.$emit('popup')
+    },
     handleClick() {
       if (this.type === 'add') {
         this.addCategory()
@@ -65,13 +97,37 @@ export default {
         catName: this.$refs.categoryName.textContent.trim(),
         index: this.index
       }
+      this.isContentEditable = false
       this.$emit('create', payload)
     },
     removeCategory() {
       this.$emit('remove', this.index)
     },
     focusInput() {
-      this.$refs.categoryName.focus()
+      this.isContentEditable = true
+      this.$nextTick(() => {
+        this.$refs.categoryName.focus()
+        this.placeCaretAtEnd(this.$refs.categoryName)
+      })
+    },
+    placeCaretAtEnd(el) {
+      el.focus()
+      if (
+        typeof window.getSelection !== 'undefined' &&
+        typeof document.createRange !== 'undefined'
+      ) {
+        const range = document.createRange()
+        range.selectNodeContents(el)
+        range.collapse(false)
+        const sel = window.getSelection()
+        sel.removeAllRanges()
+        sel.addRange(range)
+      } else if (typeof document.body.createTextRange !== 'undefined') {
+        const textRange = document.body.createTextRange()
+        textRange.moveToElementText(el)
+        textRange.collapse(false)
+        textRange.select()
+      }
     }
   }
 }
@@ -144,22 +200,33 @@ export default {
     background-image: url('~assets/images/plus.svg');
   }
 
-  .delete-btn {
+  .edit-btn {
+    background-color: #ff94cf;
     position: absolute;
-    right: -0.7rem;
-    top: -0.7rem;
-    width: 2rem;
-    height: 2rem;
-    background-color: rgba(#fff, 0.5);
-    @include bgBlur;
-    border-radius: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    right: 7%;
+    top: -2.5%;
+    width: 8%;
+    border-radius: 80%;
+    z-index: 101;
+    &::before {
+      content: '';
+      display: block;
+      padding-top: 100%;
+    }
+  }
 
-    .delete-icon {
-      width: 50%;
-      height: 50%;
+  .remove-btn {
+    position: absolute;
+    right: -3%;
+    top: -2.5%;
+    width: 8%;
+    background-color: #ff94cf;
+    border-radius: 80%;
+    z-index: 101;
+    &::before {
+      content: '';
+      display: block;
+      padding-top: 100%;
     }
   }
 
