@@ -28,6 +28,7 @@
 
 <script>
 import Axios from 'axios'
+import { mapState } from 'vuex'
 import ApiUrl from '~/modules/api-url'
 
 export default {
@@ -44,15 +45,15 @@ export default {
     }
   },
   computed: {
+    ...mapState({
+      isSignedIn: (state) => state.auth.isSignedIn
+    }),
     buttonLabel() {
-      if (this.$store.state.app.isSignedIn) {
+      if (this.isSignedIn) {
         return '시작하기 →'
       } else {
         return 'Google 로그인'
       }
-    },
-    isSignedIn() {
-      return this.$store.state.app.isSignedIn
     }
   },
   head() {
@@ -62,7 +63,7 @@ export default {
   },
   mounted() {
     this.isMounted = true
-    if (this.$store.state.app.isSignedIn) {
+    if (this.isSignedIn) {
       this.signInUrl = '/@' + this.$store.state.app.user.nickname
     }
   },
