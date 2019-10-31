@@ -37,7 +37,7 @@ export default {
   },
   computed: {
     link() {
-      return `/@${this.$store.state.app.user.nickname}/${this.catName}`
+      return `/@${this.$store.state.auth.userInfo.nickname}/${this.catName}`
     }
   },
   watch: {

@@ -64,7 +64,7 @@ export default {
   mounted() {
     this.isMounted = true
     if (this.isSignedIn) {
-      this.signInUrl = '/@' + this.$store.state.app.user.nickname
+      this.signInUrl = '/@' + this.$store.state.auth.userInfo.nickname
     }
   },
   methods: {
