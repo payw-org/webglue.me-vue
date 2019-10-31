@@ -3,7 +3,7 @@
     <div class="webglue-category">
       <Navigation />
       <transition-group class="grid-layout category-box" name="scale" tag="div">
-        <div v-for="(block, i) in blocks" :key="i" class="grid-item-wrapper">
+        <div v-for="block in blocks" :key="block.id" class="grid-item-wrapper">
           <CategoryBlock
             :cat-name="block.catName"
             :color="'color' + ((i % 15) + 1)"
@@ -61,7 +61,7 @@ export default {
       const newBlock = {
         catName: '',
         type: 'temp',
-        color: 'red'
+        id: Math.random()
       }
       this.blocks.push(newBlock)
     },

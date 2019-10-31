@@ -71,7 +71,6 @@ export default {
       this.isPopUpActive = false
     },
     updateNickname() {
-      console.log(this.newNickname)
       this.deactivatePopUp()
     }
   }
