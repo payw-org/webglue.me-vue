@@ -6,6 +6,7 @@
       type="text"
       class="url-input"
       placeholder="URL을 입력하세요"
+      spellcheck="false"
       @keydown.enter="handleEnter"
     />
   </aside>
@@ -34,8 +35,6 @@ export default {
     },
     handleEnter() {
       this.closeURLBar()
-      // this.$store.commit('glueBoard/setUrl', this.url)
-      // this.$store.commit('glueBoard/setWebviewActive', true)
       this.$emit('urlentered', this.url)
     }
   }
@@ -55,10 +54,15 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: opacity 100ms ease;
   opacity: 0;
 
   &.mounted {
-    animation: springZoomInGentle 500ms linear both;
+    opacity: 1;
+
+    .url-input {
+      animation: springZoomOut 600ms linear both;
+    }
   }
 
   .bg {
@@ -67,7 +71,7 @@ export default {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: #fff;
+    background-color: rgba(#fff, 0.9);
   }
 
   .url-input {
@@ -75,9 +79,13 @@ export default {
     max-width: 30rem;
     font-size: h(2);
     padding: s(4) s(6);
-    background-color: $base-white-blue;
+    background-color: rgba(#000, 0.7);
+    // @include bgBlur;
     border-radius: r(5);
     z-index: 3;
+    color: #fff;
+    position: relative;
+    top: -2rem;
   }
 }
 </style>
