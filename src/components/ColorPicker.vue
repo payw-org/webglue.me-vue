@@ -36,9 +36,10 @@ export default {
 <style lang="scss">
 @import '~/assets/scss/main';
 .speech-bubble {
-  position: relative;
+  position: fixed;
   top: 2rem;
   z-index: 200;
+  transition: all 200ms ease;
 
   .speech-pointer {
     background-color: yellow;
@@ -47,14 +48,15 @@ export default {
     transform: rotate(45deg) translateX(-50%);
     position: absolute;
     left: 50%;
-    top: -0.1rem;
-    background-color: #eee;
+    top: 0.3rem;
+    background-color: #fff;
     z-index: -1;
     border-radius: 5px;
   }
 
   .speech-box {
-    background-color: #eeeeee;
+    background-color: #fff;
+    box-shadow: 0 1rem 5rem rgba(#000, 0.2);
     border-radius: 0.84rem;
     align-items: center;
     justify-content: center;
@@ -62,7 +64,7 @@ export default {
     padding: 0.5rem;
 
     .color-choose {
-      width: 12%;
+      width: calc(12% + 0.125rem);
       display: inline-block;
       border-radius: 50%;
       margin-right: 0.4rem;
