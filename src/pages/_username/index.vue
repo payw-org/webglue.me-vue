@@ -45,13 +45,15 @@
           <div class="color-pick">
             카테고리 색깔선택
           </div>
-          <button
-            v-for="i in 15"
-            :key="`color-picker-${i}`"
-            class="color-choose"
-            :class="'color' + i"
-            @click="selectBlockColor(`color${i}`)"
-          />
+          <div class="button-box">
+            <button
+              v-for="i in 15"
+              :key="`color-picker-${i}`"
+              class="color-choose"
+              :class="'color' + i"
+              @click="selectBlockColor(`color${i}`)"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -79,7 +81,8 @@ export default {
       isEditMode: false,
       isPopUp: false,
       profileLink: '',
-      isChangeColor: false
+      isChangeColor: false,
+      willChangeCatBlockIndex: null
     }
   },
   computed: {
@@ -95,6 +98,9 @@ export default {
     this.profileLink = `/@${this.$store.state.auth.userInfo.nickname}/profile`
   },
   methods: {
+    selectColor(newColor) {
+      this.blocks[this.willChangeCatBlockIndex].color = newColor
+    },
     invisibleColorPicker() {
       this.isChangeColor = false
     },
