@@ -4,9 +4,11 @@
     <div class="speech-box">
       <button
         v-for="i in 15"
+        id="color-button"
         :key="`color-picker-${i}`"
         class="color-choose"
         :class="'color' + i"
+        @click="isSelectColor($event)"
       />
     </div>
   </div>
@@ -18,6 +20,14 @@ export default {
     color: {
       type: String,
       default: 'gray'
+    }
+  },
+  methods: {
+    isSelectColor(event) {
+      this.$emit('select')
+      const list = event.target.classList
+      const selectedColorName = list[1]
+      this.$emit('colorselect', selectedColorName)
     }
   }
 }
