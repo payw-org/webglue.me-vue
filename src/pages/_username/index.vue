@@ -148,8 +148,14 @@ export default {
       if (payload.catName.trim().length === 0) {
         this.removeBlock(payload.index)
       } else {
-        this.blocks[payload.index].catName = payload.catName
-        this.blocks[payload.index].type = 'category'
+        for (let i = 0; i < this.blocks.length; i++) {
+          if (this.blocks[i].catName === payload.catName) {
+            this.blocks[payload.index].available = false
+          } else {
+            this.blocks[payload.index].catName = payload.catName
+            this.blocks[payload.index].type = 'category'
+          }
+        }
       }
     }
   }
