@@ -10,18 +10,24 @@
         transitioning: stat.isTransitioning
       }
     ]"
-    :style="{ left: position.x + 'px', top: position.y + 'px' }"
+    :style="{
+      left: `${fragInfo.position.x}px`,
+      top: `${fragInfo.position.y}px`,
+      width: `${fragInfo.size.width}px`,
+      height: `${fragInfo.size.height}px`
+    }"
   >
     <iframe
       ref="webview"
       name="webview"
       allowtransparency="true"
       style="background: #fff;"
-      :src="fragInfo.url"
+      src="about:blank"
       frameborder="0"
       class="wf-iframe"
       :scrolling="fragInfo.mode === 'new' ? 'yes' : 'no'"
     />
+    <!-- <div ref="shadow" class="wf-shadow" /> -->
     <button
       v-if="fragInfo.mode === 'new'"
       class="webview-close-btn"
@@ -46,7 +52,9 @@
 </template>
 
 <script>
+import Axios from 'axios'
 import IconPlus from '~/components/icons/IconPlus'
+import ApiUrl from '~/modules/api-url'
 
 export default {
   components: { IconPlus },
@@ -60,6 +68,7 @@ export default {
   },
   data() {
     return {
+      shadow: null,
       stat: {
         hover: false,
         catched: false,
@@ -90,9 +99,6 @@ export default {
     }
   },
   mounted() {
-    this.position.x = this.fragInfo.position.x
-    this.position.y = this.fragInfo.position.y
-
     this.$el.addEventListener('mouseenter', () => {
       if (this.fragInfo.mode === 'new') {
       } else {
@@ -105,31 +111,34 @@ export default {
         this.stat.hover = false
       }
     })
-    this.$el.addEventListener('mousedown', (/** @type {MouseEvent} */ e) => {
+    this.$el.addEventListener('mousedown', e => {
       if (this.fragInfo.mode === 'new') {
       } else {
         e.preventDefault()
         this.stat.catched = true
         this.origin.pointer.x = e.clientX
         this.origin.pointer.y = e.clientY
-        this.origin.position.x = this.position.x
-        this.origin.position.y = this.position.y
+        this.origin.position.x = this.fragInfo.position.x
+        this.origin.position.y = this.fragInfo.position.y
 
         let mouseMoveCallback
         window.addEventListener(
           'mousemove',
-          (mouseMoveCallback = (/** @type {MouseEvent} */ e) => {
+          (mouseMoveCallback = e => {
             if (this.stat.catched) {
               this.$store.commit('glueBoard/setMode', 'dragging')
               this.stat.isMoving = true
               const moveX = e.clientX - this.origin.pointer.x
               const moveY = e.clientY - this.origin.pointer.y
-              this.position.x = this.origin.position.x + moveX
-              this.position.y = this.origin.position.y + moveY
+              // this.fragInfo.position.x = this.origin.position.x + moveX
+              // this.fragInfo.position.y = this.origin.position.y + moveY
+              this.fragInfo.position.x = this.origin.position.x + moveX
+              this.fragInfo.position.y = this.origin.position.y + moveY
 
               const fragmentElms = document.querySelectorAll(
                 '.webglue-fragment.postit:not(.hover)'
               )
+              console.log(fragmentElms.length)
               for (let i = 0; i < fragmentElms.length; i += 1) {
                 let isInvalid = false
                 const fragElm = fragmentElms[i]
@@ -177,20 +186,20 @@ export default {
               }
 
               const topLeftElm = document.elementFromPoint(
-                this.position.x,
-                this.position.y
+                this.fragInfo.position.x,
+                this.fragInfo.position.y
               )
               const topRightElm = document.elementFromPoint(
-                this.position.x + this.$el.clientWidth,
-                this.position.y
+                this.fragInfo.position.x + this.$el.clientWidth,
+                this.fragInfo.position.y
               )
               const bottomLeftElm = document.elementFromPoint(
-                this.position.x,
-                this.position.y + this.$el.clientHeight
+                this.fragInfo.position.x,
+                this.fragInfo.position.y + this.$el.clientHeight
               )
               const bottomRightElm = document.elementFromPoint(
-                this.position.x + this.$el.clientWidth,
-                this.position.y + this.$el.clientHeight
+                this.fragInfo.position.x + this.$el.clientWidth,
+                this.fragInfo.position.y + this.$el.clientHeight
               )
               if (
                 (topLeftElm &&
@@ -214,8 +223,8 @@ export default {
           if (!this.stat.isValidPos) {
             this.stat.isTransitioning = true
             setTimeout(() => {
-              this.position.x = this.origin.position.x
-              this.position.y = this.origin.position.y
+              this.fragInfo.position.x = this.origin.position.x
+              this.fragInfo.position.y = this.origin.position.y
               this.stat.isValidPos = true
               setTimeout(() => {
                 this.stat.isTransitioning = false
@@ -228,6 +237,105 @@ export default {
         })
       }
     })
+
+    // Shadow DOM
+    // this.shadow = this.$refs.shadow.attachShadow({ mode: 'closed' })
+    // const htmlDoc = document.implementation.createHTMLDocument(null)
+    // this.shadow.append(htmlDoc)
+
+    console.log('mounted')
+    Axios({
+      method: 'GET',
+      url: ApiUrl.mirror,
+      params: {
+        url: this.fragInfo.url
+      }
+    })
+      .then(res => {
+        this.$refs.webview.contentWindow.document.documentElement.innerHTML =
+          res.data
+
+        if (this.fragInfo.mode === 'new') {
+          this.$refs.webview.contentWindow.addEventListener('mousemove', e => {
+            const rect = e.target.getBoundingClientRect()
+            const payload = {
+              x: rect.left,
+              y: rect.top,
+              width: rect.width,
+              height: rect.height
+            }
+            this.$emit('sniff', payload)
+          })
+
+          let newMouseDownEventCallback
+          this.$refs.webview.contentWindow.addEventListener(
+            'mousedown',
+            (newMouseDownEventCallback = e => {
+              e.stopPropagation()
+              e.preventDefault()
+              const rect = e.target.getBoundingClientRect()
+              const moveX = rect.left + this.$refs.webview.contentWindow.scrollX
+              const moveY = rect.top + this.$refs.webview.contentWindow.scrollY
+              const fragBody = this.$refs.webview.contentDocument.body
+              this.$refs.webview.style.transition =
+                'top 300ms ease, left 300ms ease'
+              this.$refs.webview.style.position = 'absolute'
+              this.$refs.webview.style.width = fragBody.clientWidth + 'px'
+              this.$refs.webview.style.height = fragBody.clientHeight + 'px'
+              this.$refs.webview.style.left = 0
+              this.$refs.webview.style.top = 0
+              // eslint-disable-next-line no-unused-expressions
+              this.$refs.webview.getBoundingClientRect().left
+              console.log(moveX, moveY)
+              this.$refs.webview.style.left = -moveX + 'px'
+              this.$refs.webview.style.top = -moveY + 'px'
+
+              this.$el.style.transition =
+                'top 300ms ease, left 300ms ease, width 300ms ease, height 300ms ease'
+              // eslint-disable-next-line no-unused-expressions
+              this.$el.getBoundingClientRect().left
+              this.$el.classList.remove('new')
+              this.$el.style.left = rect.left + 'px'
+              this.$el.style.top = rect.top + 'px'
+              this.$el.style.width = rect.width + 'px'
+              this.$el.style.height = rect.height + 'px'
+
+              setTimeout(() => {
+                this.$el.style.transition = ''
+              }, 300)
+
+              this.fragInfo.mode = 'postit'
+
+              this.$store.commit('glueBoard/setMode', 'idle')
+
+              this.$emit('exitnewmode', {
+                position: {
+                  x: rect.left,
+                  y: rect.top
+                },
+                size: {
+                  width: rect.width,
+                  height: rect.height
+                }
+              })
+
+              // Remove mousedown event listener
+              this.$refs.webview.contentWindow.removeEventListener(
+                'mousedown',
+                newMouseDownEventCallback
+              )
+            })
+          )
+
+          this.$refs.webview.contentWindow.addEventListener('click', e => {
+            e.stopPropagation()
+            e.preventDefault()
+          })
+        }
+      })
+      .catch(err => {
+        console.error('[webglue] ❌', err)
+      })
   }
 }
 </script>
@@ -240,19 +348,20 @@ export default {
   width: 400px;
   height: 550px;
   position: absolute;
-  transition: box-shadow 300ms ease, transform 200ms ease,
-    border-radius 200ms ease;
+  transition: box-shadow 300ms ease, transform 200ms ease;
   cursor: default;
   border-radius: 0px;
   box-shadow: 0 0.3rem 0.5rem rgba(#000, 0.2);
+  overflow: hidden;
 
   &.new {
-    z-index: 10003;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    z-index: 10003 !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    overflow: auto;
 
     .wf-iframe {
       pointer-events: all !important;
@@ -274,7 +383,6 @@ export default {
   }
 
   &.hover {
-    border-radius: r(3);
     overflow: hidden;
     box-shadow: 0 2rem 5rem rgba(#000, 0.4);
   }

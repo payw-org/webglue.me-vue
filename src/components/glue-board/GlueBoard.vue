@@ -3,25 +3,109 @@
     <div class="glue-board-fragment-container">
       <Fragment
         v-for="(frag, i) in fragments"
-        :key="frag.url + frag.selector + i + frag.mode"
+        :key="frag.id"
         :frag-info="frag"
-        @cancel="$emit('cancel', i)"
+        @cancel="cancelNewFragment(i)"
+        @sniff="updateSelector"
+        @exitnewmode="changeModeTo($event, 'postit', i)"
       />
     </div>
+    <UrlBar
+      v-if="$store.state.glueBoard.isURLBarActive"
+      @urlentered="createNewFragment"
+    />
+    <Selector v-if="$store.state.glueBoard.mode === 'new'" :rect="rect" />
   </div>
 </template>
 
 <script>
 import Fragment from '~/components/glue-board/Fragment'
+import UrlBar from '~/components/glue-board/UrlBar'
+import Selector from '~/components/glue-board/Selector'
 
 export default {
-  components: { Fragment },
-  props: {
-    fragments: {
-      type: Array,
-      default: () => {
-        return []
+  components: { Fragment, UrlBar, Selector },
+  data() {
+    return {
+      fragments: [],
+      rect: {
+        x: 0,
+        y: 0,
+        width: 0,
+        heigth: 0
       }
+    }
+  },
+  mounted() {
+    this.loadFragments()
+  },
+  methods: {
+    sniff(payload) {
+      this.$emit('sniff', payload)
+    },
+    changeModeTo(payload, mode, index) {
+      console.log('change mode to ' + mode)
+      this.fragments[index].mode = mode
+      console.log(payload)
+      this.fragments[index].position = payload.position
+      this.fragments[index].size = payload.size
+      console.log(JSON.stringify(this.fragments, null, 2))
+    },
+    loadFragments() {
+      this.fragments = [
+        {
+          position: {
+            x: 50,
+            y: 100
+          },
+          size: {
+            width: 400,
+            height: 550
+          },
+          url: 'https://comic.naver.com',
+          mode: 'postit',
+          selector: '',
+          id: Math.random()
+        },
+        {
+          position: {
+            x: 500,
+            y: 150
+          },
+          size: {
+            width: 400,
+            height: 550
+          },
+          url: 'https://comic.naver.com',
+          mode: 'postit',
+          selector: '',
+          id: Math.random()
+        }
+      ]
+    },
+    updateSelector(payload) {
+      this.rect = payload
+    },
+    createNewFragment(url) {
+      this.$store.commit('glueBoard/setMode', 'new')
+      this.fragments.push({
+        position: {
+          x: null,
+          y: null
+        },
+        size: {
+          width: null,
+          heigth: null
+        },
+        url,
+        mode: 'new',
+        selector: '',
+        id: Math.random()
+      })
+    },
+    cancelNewFragment(index) {
+      this.$store.commit('glueBoard/setMode', 'idle')
+      this.fragments.splice(index, 1)
     }
   }
 }
