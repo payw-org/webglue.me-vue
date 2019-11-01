@@ -1,7 +1,7 @@
 import Axios from 'axios'
 import ApiUrl from '~/modules/api-url'
 
-export default async (context) => {
+export default async context => {
   const { store } = context
   let error
 
@@ -10,7 +10,7 @@ export default async (context) => {
       method: 'get',
       url: ApiUrl.user.profile,
       withCredentials: true
-    }).catch((err) => {
+    }).catch(err => {
       error = err
     })
 
