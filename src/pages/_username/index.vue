@@ -259,6 +259,7 @@ export default {
     }
     .color-picker-bg {
       background-color: #fff;
+      border-radius: 0.7rem;
       z-index: 1;
       display: block;
       justify-content: center;
@@ -271,21 +272,24 @@ export default {
         padding-top: 1.2rem;
         padding-bottom: 1.2rem;
       }
+      .button-box {
+        padding-right: 0.7rem;
+        padding-left: 0.7em;
+        .color-choose {
+          width: 10%;
+          display: inline-block;
+          border-radius: 50%;
+          margin: 0.7rem;
+          transition: box-shadow 200ms ease;
 
-      .color-choose {
-        width: 10%;
-        display: inline-block;
-        border-radius: 50%;
-        margin: 0.8rem;
-        transition: box-shadow 200ms ease;
-
-        &:hover {
-          box-shadow: 0 0 0 0.2rem #40b3ff;
-        }
-        &::before {
-          content: '';
-          display: block;
-          padding-top: 100%;
+          &:hover {
+            box-shadow: 0 0 0 0.2rem #40b3ff;
+          }
+          &::before {
+            content: '';
+            display: block;
+            padding-top: 100%;
+          }
         }
       }
     }
