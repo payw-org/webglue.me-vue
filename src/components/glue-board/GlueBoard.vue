@@ -5,6 +5,7 @@
         v-for="(frag, i) in fragments"
         :key="frag.id"
         :frag-info="frag"
+        :class="`fragment-${frag.id}`"
         @cancel="cancelNewFragment(i)"
         @sniff="updateSelector"
         @exitnewmode="changeModeTo($event, 'postit', i)"
@@ -36,6 +37,9 @@ export default {
       }
     }
   },
+  watch: {
+    fragments() {}
+  },
   mounted() {
     this.loadFragments()
   },
@@ -51,6 +55,11 @@ export default {
       this.fragments[index].size = payload.size
       console.log(JSON.stringify(this.fragments, null, 2))
     },
+    generateRandomId() {
+      return Math.random()
+        .toString(36)
+        .substr(2, 5)
+    },
     loadFragments() {
       this.fragments = [
         {
@@ -65,7 +74,7 @@ export default {
           url: 'https://comic.naver.com',
           mode: 'postit',
           selector: '',
-          id: Math.random()
+          id: this.generateRandomId()
         },
         {
           position: {
@@ -79,7 +88,7 @@ export default {
           url: 'https://comic.naver.com',
           mode: 'postit',
           selector: '',
-          id: Math.random()
+          id: this.generateRandomId()
         }
       ]
     },
@@ -100,7 +109,7 @@ export default {
         url,
         mode: 'new',
         selector: '',
-        id: Math.random()
+        id: this.generateRandomId()
       })
     },
     cancelNewFragment(index) {

@@ -275,7 +275,7 @@ export default {
               e.preventDefault()
               const rect = e.target.getBoundingClientRect()
               const moveX = rect.left + this.$refs.webview.contentWindow.scrollX
-              const moveY = rect.top + this.$refs.webview.contentWindow.scrollY
+              const moveY = rect.top
               const fragBody = this.$refs.webview.contentDocument.body
               this.$refs.webview.style.transition =
                 'top 300ms ease, left 300ms ease'
