@@ -32,7 +32,7 @@ export default {
     Axios.get(ApiUrl.user.profile, {
       withCredentials: true
     })
-      .then((res) => {
+      .then(res => {
         this.$store.commit('auth/setUser', res.data)
         this.$store.commit('auth/setSignedIn', true)
 
@@ -44,7 +44,7 @@ export default {
           this.$refs.inputNickname.select()
         })
       })
-      .catch((err) => {
+      .catch(err => {
         if (err.response.status === 401) {
           this.$store.commit('auth/setSignedIn', false)
         }

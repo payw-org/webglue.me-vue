@@ -46,7 +46,7 @@ export default {
   },
   computed: {
     ...mapState({
-      isSignedIn: (state) => state.auth.isSignedIn
+      isSignedIn: state => state.auth.isSignedIn
     }),
     buttonLabel() {
       if (this.isSignedIn) {
@@ -71,7 +71,7 @@ export default {
     getUserInfo() {
       Axios.get(ApiUrl.user.profile, {
         withCredentials: true
-      }).then((response) => {
+      }).then(response => {
         window.alert(response.data)
       })
     }
