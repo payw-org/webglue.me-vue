@@ -2,7 +2,13 @@
   <div>
     <div class="webglue-category">
       <Navigation class="navigation" />
-      <ColorPicker v-if="isChangeColor" class="colorpicker" />
+      <ColorPicker
+        v-if="isChangeColor"
+        ref="colorPicker"
+        class="colorpicker"
+        @select="invisibleColorPicker"
+        @colorselect="selectColor"
+      />
       <transition-group class="grid-layout category-box" name="scale" tag="div">
         <div
           v-for="(block, i) in blocks"
@@ -17,7 +23,7 @@
             :is-edit-mode="isEditMode"
             @create="createBlock"
             @remove="removeBlock"
-            @colorchange="visibleColorPicker"
+            @colorchange="visibleColorPicker($event, i)"
           />
         </div>
 
@@ -89,9 +95,27 @@ export default {
     this.profileLink = `/@${this.$store.state.auth.userInfo.nickname}/profile`
   },
   methods: {
-    visibleColorPicker() {
+    invisibleColorPicker() {
+      this.isChangeColor = false
+    },
+    visibleColorPicker(catElem, index) {
+      this.willChangeCatBlockIndex = index
       this.isChangeColor = true
-      console.log('colorpicker')
+      this.$nextTick(() => {
+        const colorPickerElm = document.querySelector('.colorpicker')
+        colorPickerElm.style.left =
+          catElem.getBoundingClientRect().left +
+          (catElem.getBoundingClientRect().width -
+            colorPickerElm.getBoundingClientRect().width) /
+            2 +
+          'px'
+        colorPickerElm.style.top =
+          catElem.getBoundingClientRect().top +
+          (catElem.getBoundingClientRect().height +
+            colorPickerElm.getBoundingClientRect().height) /
+            2 +
+          'px'
+      })
     },
     selectBlockColor(color) {
       this.deactivatePopUp()
