@@ -21,8 +21,13 @@
         @keypress.enter="createCategory"
       />
     </div>
-    <button v-if="isMouseEnter" class="edit-btn" @click="edit" />
-    <button v-if="isMouseEnter" class="remove-btn" @click="removeCategory" />
+    <button v-if="isMouseEnter" class="edit-btn" @click="edit">
+      <img src="~/assets/images/edit-icon.svg" class="edit-icon" />
+    </button>
+    <button v-if="isMouseEnter" class="remove-btn" @click="removeCategory">
+      <div class="x-line" />
+      <div class="y-line" />
+    </button>
   </div>
 </template>
 
@@ -201,32 +206,55 @@ export default {
   }
 
   .edit-btn {
-    background-color: #ff94cf;
+    background-color: #b1b1b1;
     position: absolute;
-    right: 7%;
-    top: -2.5%;
-    width: 8%;
+    right: 9%;
+    top: -5%;
+    width: 2rem;
+    height: 2rem;
     border-radius: 80%;
     z-index: 101;
-    &::before {
-      content: '';
-      display: block;
-      padding-top: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .edit-icon {
+      width: 55%;
+      height: 55%;
+      margin-left: 7%;
+      margin-bottom: 7%;
     }
   }
 
   .remove-btn {
     position: absolute;
-    right: -3%;
-    top: -2.5%;
-    width: 8%;
-    background-color: #ff94cf;
-    border-radius: 80%;
+    right: -5%;
+    top: -5%;
+    width: 2rem;
+    height: 2rem;
+    background-color: #b1b1b1;
+    border-radius: 100%;
     z-index: 101;
-    &::before {
-      content: '';
-      display: block;
-      padding-top: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    .x-line {
+      width: 1.1rem;
+      height: 0.15rem;
+      background-color: #ffffff;
+      border-radius: 0.1rem;
+      transform: rotate(45deg);
+      position: absolute;
+    }
+    .y-line {
+      width: 1.1rem;
+      height: 0.15rem;
+      background-color: #ffffff;
+      border-radius: 0.1rem;
+      transform: rotate(135deg);
+      position: absolute;
     }
   }
 
