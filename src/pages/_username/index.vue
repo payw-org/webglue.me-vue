@@ -2,7 +2,13 @@
   <div>
     <div class="webglue-category">
       <Navigation class="navigation" />
-      <ColorPicker v-if="isChangeColor" class="colorpicker" />
+      <ColorPicker
+        v-if="isChangeColor"
+        ref="colorPicker"
+        class="colorpicker"
+        @select="invisibleColorPicker"
+        @colorselect="selectColor"
+      />
       <transition-group class="grid-layout category-box" name="scale" tag="div">
         <div
           v-for="(block, i) in blocks"
@@ -17,7 +23,7 @@
             :is-edit-mode="isEditMode"
             @create="createBlock"
             @remove="removeBlock"
-            @colorchange="visibleColorPicker"
+            @colorchange="visibleColorPicker($event, i)"
           />
         </div>
 
@@ -39,13 +45,15 @@
           <div class="color-pick">
             카테고리 색깔선택
           </div>
-          <button
-            v-for="i in 15"
-            :key="`color-picker-${i}`"
-            class="color-choose"
-            :class="'color' + i"
-            @click="selectBlockColor(`color${i}`)"
-          />
+          <div class="button-box">
+            <button
+              v-for="i in 15"
+              :key="`color-picker-${i}`"
+              class="color-choose"
+              :class="'color' + i"
+              @click="selectBlockColor(`color${i}`)"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -73,7 +81,8 @@ export default {
       isEditMode: false,
       isPopUp: false,
       profileLink: '',
-      isChangeColor: false
+      isChangeColor: false,
+      willChangeCatBlockIndex: null
     }
   },
   computed: {
@@ -89,9 +98,30 @@ export default {
     this.profileLink = `/@${this.$store.state.auth.userInfo.nickname}/profile`
   },
   methods: {
-    visibleColorPicker() {
+    selectColor(newColor) {
+      this.blocks[this.willChangeCatBlockIndex].color = newColor
+    },
+    invisibleColorPicker() {
+      this.isChangeColor = false
+    },
+    visibleColorPicker(catElem, index) {
+      this.willChangeCatBlockIndex = index
       this.isChangeColor = true
-      console.log('colorpicker')
+      this.$nextTick(() => {
+        const colorPickerElm = document.querySelector('.colorpicker')
+        colorPickerElm.style.left =
+          catElem.getBoundingClientRect().left +
+          (catElem.getBoundingClientRect().width -
+            colorPickerElm.getBoundingClientRect().width) /
+            2 +
+          'px'
+        colorPickerElm.style.top =
+          catElem.getBoundingClientRect().top +
+          (catElem.getBoundingClientRect().height +
+            colorPickerElm.getBoundingClientRect().height) /
+            2 +
+          'px'
+      })
     },
     selectBlockColor(color) {
       this.deactivatePopUp()
@@ -124,8 +154,14 @@ export default {
       if (payload.catName.trim().length === 0) {
         this.removeBlock(payload.index)
       } else {
-        this.blocks[payload.index].catName = payload.catName
-        this.blocks[payload.index].type = 'category'
+        for (let i = 0; i < this.blocks.length; i++) {
+          if (this.blocks[i].catName === payload.catName) {
+            this.blocks[payload.index].available = false
+          } else {
+            this.blocks[payload.index].catName = payload.catName
+            this.blocks[payload.index].type = 'category'
+          }
+        }
       }
     }
   }
@@ -229,6 +265,7 @@ export default {
     }
     .color-picker-bg {
       background-color: #fff;
+      border-radius: 0.7rem;
       z-index: 1;
       display: block;
       justify-content: center;
@@ -241,21 +278,24 @@ export default {
         padding-top: 1.2rem;
         padding-bottom: 1.2rem;
       }
+      .button-box {
+        padding-right: 0.7rem;
+        padding-left: 0.7em;
+        .color-choose {
+          width: 10%;
+          display: inline-block;
+          border-radius: 50%;
+          margin: 0.7rem;
+          transition: box-shadow 200ms ease;
 
-      .color-choose {
-        width: 10%;
-        display: inline-block;
-        border-radius: 50%;
-        margin: 0.8rem;
-        transition: box-shadow 200ms ease;
-
-        &:hover {
-          box-shadow: 0 0 0 0.2rem #40b3ff;
-        }
-        &::before {
-          content: '';
-          display: block;
-          padding-top: 100%;
+          &:hover {
+            box-shadow: 0 0 0 0.2rem #40b3ff;
+          }
+          &::before {
+            content: '';
+            display: block;
+            padding-top: 100%;
+          }
         }
       }
     }
