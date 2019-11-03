@@ -72,7 +72,7 @@ export default {
   },
   methods: {
     edit() {
-      this.$emit('colorchange')
+      this.$emit('colorchange', this.$el)
       this.focusInput()
     },
     handleMouseEnter(bool) {

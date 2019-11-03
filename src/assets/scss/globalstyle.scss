@@ -236,3 +236,22 @@ ol {
 .color15 {
   background-image: linear-gradient(to bottom, #9c908b, #8f817d);
 }
+
+// Animations
+@keyframes shaking {
+  0% {
+    transform: translateX(-10%);
+  }
+  25% {
+    transform: translateX(7.5%);
+  }
+  50% {
+    transform: translateX(-5%);
+  }
+  75% {
+    transform: translateX(2.5%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
