@@ -3,6 +3,7 @@
     class="add-category"
     :class="[color]"
     @click="activatePopUp"
+    @mousedown="mousedown"
     @mouseenter="handleMouseEnter(true)"
     @mouseleave="handleMouseEnter(false)"
   >
@@ -76,6 +77,13 @@ export default {
     }
   },
   methods: {
+    mousedown() {
+      if (this.type === 'category') {
+        console.log(event.clientX)
+        console.log(event.clientY)
+        this.$emit('movecat', this.$el)
+      }
+    },
     edit() {
       this.$emit('colorchange', this.$el)
       this.focusInput()

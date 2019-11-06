@@ -27,6 +27,7 @@
             @create="createBlock"
             @remove="removeBlock"
             @colorchange="visibleColorPicker($event, i)"
+            @movecat="moveCat($event)"
           />
         </div>
 
@@ -85,7 +86,8 @@ export default {
       isPopUp: false,
       profileLink: '',
       isChangeColor: false,
-      willChangeCatBlockIndex: null
+      willChangeCatBlockIndex: null,
+      isMovePosition: false
     }
   },
   computed: {
@@ -99,8 +101,33 @@ export default {
   },
   mounted() {
     this.profileLink = `/@${this.$store.state.auth.userInfo.nickname}/profile`
+
+    window.addEventListener('mouseup', () => {
+      this.leaveCat()
+    })
   },
   methods: {
+    moveCat(catElem) {
+      this.isMovePosition = true
+      this.$nextTick(() => {
+        const moveCatElm = document.querySelector('.movecategory')
+        moveCatElm.style.left =
+          catElem.getBoundingClientRect().left +
+          (catElem.getBoundingClientRect().width -
+            moveCatElm.getBoundingClientRect().width) /
+            2 +
+          'px'
+        moveCatElm.style.top =
+          catElem.getBoundingClientRect().top +
+          (catElem.getBoundingClientRect().height +
+            moveCatElm.getBoundingClientRect().height) /
+            2 +
+          'px'
+      })
+    },
+    leaveCat() {
+      this.isMovePosition = false
+    },
     selectColor(newColor) {
       this.blocks[this.willChangeCatBlockIndex].color = newColor
     },
