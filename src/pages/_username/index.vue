@@ -9,6 +9,9 @@
         @select="invisibleColorPicker"
         @colorselect="selectColor"
       />
+      <div v-show="isMovePosition" class="movecategory">
+        으
+      </div>
       <transition-group class="grid-layout category-box" name="scale" tag="div">
         <div
           v-for="(block, i) in blocks"
@@ -194,6 +197,11 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  .movecategory {
+    position: fixed;
+    z-index: 1000;
+  }
 
   .edit-box {
     padding-top: s(3);
