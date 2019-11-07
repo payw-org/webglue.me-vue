@@ -138,7 +138,7 @@ export default {
               const fragmentElms = document.querySelectorAll(
                 '.webglue-fragment.postit:not(.hover)'
               )
-              console.log(fragmentElms.length)
+
               for (let i = 0; i < fragmentElms.length; i += 1) {
                 let isInvalid = false
                 const fragElm = fragmentElms[i]
@@ -234,6 +234,13 @@ export default {
           this.$store.commit('glueBoard/setMode', 'idle')
           this.stat.catched = false
           window.removeEventListener('mousemove', mouseMoveCallback)
+
+          // Emit mouseup event and change the fragments
+          // position data from the parent
+          this.$emit('donemove', {
+            x: this.fragInfo.position.x,
+            y: this.fragInfo.position.y
+          })
         })
       }
     })
@@ -243,7 +250,6 @@ export default {
     // const htmlDoc = document.implementation.createHTMLDocument(null)
     // this.shadow.append(htmlDoc)
 
-    console.log('mounted')
     Axios({
       method: 'GET',
       url: ApiUrl.mirror,
@@ -286,7 +292,7 @@ export default {
               this.$refs.webview.style.top = 0
               // eslint-disable-next-line no-unused-expressions
               this.$refs.webview.getBoundingClientRect().left
-              console.log(moveX, moveY)
+
               this.$refs.webview.style.left = -moveX + 'px'
               this.$refs.webview.style.top = -moveY + 'px'
 
