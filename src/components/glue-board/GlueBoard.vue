@@ -9,6 +9,7 @@
         @cancel="cancelNewFragment(i)"
         @sniff="updateSelector"
         @exitnewmode="changeModeTo($event, 'postit', i)"
+        @donemove="updateFragmentPosition($event, i)"
       />
     </div>
     <UrlBar
@@ -38,12 +39,18 @@ export default {
     }
   },
   watch: {
-    fragments() {}
+    fragments(frags) {
+      console.log(frags)
+    }
   },
   mounted() {
     this.loadFragments()
   },
   methods: {
+    updateFragmentData(payload, index) {
+      console.log('position updated')
+      console.log(index, payload)
+    },
     sniff(payload) {
       this.$emit('sniff', payload)
     },
