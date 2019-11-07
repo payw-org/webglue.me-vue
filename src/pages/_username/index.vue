@@ -2,14 +2,15 @@
   <div>
     <div class="webglue-category">
       <Navigation class="navigation" />
-      <ColorPicker
-        v-if="isChangeColor"
-        ref="colorPicker"
-        class="colorpicker"
-        @select="invisibleColorPicker"
-        @colorselect="selectColor"
-        @clickcolorpicker="clickColorPicker"
-      />
+      <transition name="fade">
+        <ColorPicker
+          v-if="isChangeColor"
+          ref="colorPicker"
+          class="colorpicker"
+          @select="invisibleColorPicker"
+          @colorselect="selectColor"
+        />
+      </transition>
       <transition-group class="grid-layout category-box" name="scale" tag="div">
         <div
           v-for="(block, i) in blocks"
@@ -83,7 +84,24 @@ export default {
       isPopUp: false,
       profileLink: '',
       isChangeColor: false,
-      willChangeCatBlockIndex: null
+      willChangeCatBlockIndex: null,
+      isMovePosition: false,
+      points: {
+        original: {
+          x: 0,
+          y: 0
+        }
+      },
+      stat: {
+        catch: false,
+        move: false
+      },
+      moving: {
+        /** @type {HTMLElement} */
+        elm: undefined,
+        x: undefined,
+        y: undefined
+      }
     }
   },
   computed: {
@@ -100,6 +118,57 @@ export default {
 
     window.addEventListener('mouseup', () => {
       this.leaveCat()
+    })
+
+    window.addEventListener('mousedown', e => {
+      /** @type {HTMLElement} */
+      const target = e.target
+
+      // Mousedown category element
+      if (target.closest('.add-category:not(.gray)')) {
+        // Init mousedown event information
+        this.stat.catch = true
+        this.points.x = e.clientX
+        this.points.y = e.clientY
+
+        const original = target.closest('.add-category')
+        const orgRect = original.getBoundingClientRect()
+
+        // Clone the category element to move
+        /** @type {HTMLElement} */
+        const clonedNode = original.cloneNode(true)
+        // Assign to data
+        this.moving.elm = clonedNode
+
+        // Remove unnecessary elements
+        clonedNode.removeChild(clonedNode.querySelector('.edit-btn'))
+        clonedNode.removeChild(clonedNode.querySelector('.remove-btn'))
+        clonedNode.style.width = orgRect.width + 'px'
+        clonedNode.style.height = orgRect.height + 'px'
+        clonedNode.style.top = orgRect.top + 'px'
+        clonedNode.style.left = orgRect.left + 'px'
+        clonedNode.style.position = 'absolute'
+        document.body.appendChild(clonedNode)
+        this.moving.x = orgRect.left
+        this.moving.y = orgRect.top
+      }
+    })
+
+    window.addEventListener('mousemove', e => {
+      if (this.stat.catch) {
+        this.stat.move = true
+        const moveX = e.pageX - this.points.x
+        const moveY = e.pageY - this.points.y
+        console.log(moveX, moveY)
+        this.moving.elm.style.left = this.moving.x + moveX + 'px'
+        this.moving.elm.style.top = this.moving.y + moveY + 'px'
+      }
+    })
+
+    window.addEventListener('mouseup', () => {
+      this.stat.catch = false
+      this.stat.move = false
+      this.moving.elm.parentElement.removeChild(this.moving.elm)
     })
 
     window.addEventListener('click', e => {
