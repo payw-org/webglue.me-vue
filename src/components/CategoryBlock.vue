@@ -22,18 +22,24 @@
         @keypress.enter="createCategory"
       />
     </div>
-    <button v-if="isMouseEnter" class="edit-btn" @click="edit">
-      <img src="~/assets/images/edit-icon.svg" class="edit-icon" />
-    </button>
-    <button v-if="isMouseEnter" class="remove-btn" @click="removeCategory">
-      <div class="x-line" />
-      <div class="y-line" />
-    </button>
+    <transition name="zoom-in">
+      <button v-if="isMouseEnter" class="edit-btn" @click="edit">
+        <img src="~/assets/images/edit-icon.svg" class="edit-icon" />
+      </button>
+    </transition>
+    <transition name="zoom-in">
+      <button v-if="isMouseEnter" class="remove-btn" @click="removeCategory">
+        <IconPlus class="icon-x" x mode="thin" color="red" />
+      </button>
+    </transition>
   </div>
 </template>
 
 <script>
+import IconPlus from '@/components/icons/IconPlus'
+
 export default {
+  components: { IconPlus },
   props: {
     index: {
       type: Number,
@@ -79,8 +85,6 @@ export default {
   methods: {
     mousedown() {
       if (this.type === 'category') {
-        console.log(event.clientX)
-        console.log(event.clientY)
         this.$emit('movecat', this.$el)
       }
     },
@@ -149,6 +153,18 @@ export default {
 <style lang="scss">
 @import '~/assets/scss/main';
 
+.zoom-in-enter-active,
+.zoom-in-leave-active {
+  transition: transform 0.2s, opacity 0.2s;
+  transform: scale(1);
+  opacity: 1;
+}
+.zoom-in-enter,
+.zoom-in-leave-to {
+  transform: scale(0.8);
+  opacity: 0;
+}
+
 .add-category {
   cursor: pointer;
   display: flex;
@@ -213,56 +229,42 @@ export default {
     background-image: url('~assets/images/plus.svg');
   }
 
-  .edit-btn {
-    background-color: #b1b1b1;
-    position: absolute;
-    right: 9%;
-    top: -5%;
-    width: 2rem;
-    height: 2rem;
-    border-radius: 80%;
+  $btn-size: 2.2rem;
+
+  .edit-btn,
+  .remove-btn {
+    background-color: #fff;
+    border-radius: 50%;
+    width: $btn-size;
+    height: $btn-size;
     z-index: 101;
+    top: -5%;
+    position: absolute;
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 0.4rem 1.2rem rgba(#000, 0.2);
+  }
+
+  .edit-btn {
+    right: calc(-5% + #{$btn-size + 0.3rem});
 
     .edit-icon {
-      width: 55%;
-      height: 55%;
-      margin-left: 7%;
-      margin-bottom: 7%;
+      $icon-size: 55%;
+      width: $icon-size;
+      height: $icon-size;
+      $margin: 5%;
+      margin-left: $margin;
+      margin-bottom: $margin;
     }
   }
 
   .remove-btn {
-    position: absolute;
     right: -5%;
-    top: -5%;
-    width: 2rem;
-    height: 2rem;
-    background-color: #b1b1b1;
-    border-radius: 100%;
-    z-index: 101;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     flex-direction: column;
 
-    .x-line {
-      width: 1.1rem;
-      height: 0.15rem;
-      background-color: #ffffff;
-      border-radius: 0.1rem;
-      transform: rotate(45deg);
-      position: absolute;
-    }
-    .y-line {
-      width: 1.1rem;
-      height: 0.15rem;
-      background-color: #ffffff;
-      border-radius: 0.1rem;
-      transform: rotate(135deg);
-      position: absolute;
+    .icon-x {
+      width: 55%;
     }
   }
 
