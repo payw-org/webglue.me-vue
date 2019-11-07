@@ -15,16 +15,22 @@
           webglue
         </h1>
       </div>
-      <div v-if="$route.params.category">
-        <button class="add-btn" @click="onClickAddBtn">
-          <IconPlus class="add-icon" color="#ff176b" />
-        </button>
+      <div class="icon-container">
+        <div class="logout" @click="logout">
+          로그아웃
+        </div>
+        <div v-if="$route.params.category">
+          <button class="add-btn" @click="onClickAddBtn">
+            <IconPlus class="add-icon" color="#ff176b" />
+          </button>
+        </div>
       </div>
     </div>
   </nav>
 </template>
 
 <script>
+import Axios from 'axios'
 import IconPlus from '~/components/icons/IconPlus.vue'
 
 export default {
@@ -41,6 +47,17 @@ export default {
   methods: {
     onClickAddBtn() {
       this.$store.commit('glueBoard/setUrlBarActive', true)
+    },
+    logout() {
+      Axios.delete('https://api.dev.webglue.me/v1/oauth2/google', {
+        withCredentials: true
+      })
+        .then(() => {
+          window.location.replace('/')
+        })
+        .catch(err => {
+          console.error(err)
+        })
     }
   }
 }
@@ -116,28 +133,40 @@ $nav-height: 3.5rem;
       }
     }
 
-    .add-btn {
-      width: $nav-height * 0.7;
-      height: $nav-height * 0.7;
-      background-color: #fff;
-      border-radius: 0.4rem;
-      position: relative;
+    .icon-container {
       display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: background 200ms ease;
-
-      &:hover {
-        background-color: #f5f5f7;
+      flex-direction: row;
+      .logout {
+        color: #8b8b8b;
+        font-size: 1rem;
+        padding-right: 0.8rem;
+        display: flex;
+        align-items: center;
       }
 
-      &:active {
-        background-color: #e8e8e8;
-      }
+      .add-btn {
+        width: $nav-height * 0.7;
+        height: $nav-height * 0.7;
+        background-color: #fff;
+        border-radius: 0.4rem;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background 200ms ease;
 
-      .add-icon {
-        width: 55%;
+        &:hover {
+          background-color: #f5f5f7;
+        }
+
+        &:active {
+          background-color: #e8e8e8;
+        }
+
+        .add-icon {
+          width: 55%;
+        }
       }
     }
   }
