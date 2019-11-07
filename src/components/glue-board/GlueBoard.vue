@@ -11,6 +11,11 @@
         @exitnewmode="changeModeTo($event, 'postit', i)"
       />
     </div>
+    <div class="zoom-btn">
+      <button class="zoom-in" @click="zoomIn" />
+      <div class="line" />
+      <button class="zoom-out" @click="zoomOut" />
+    </div>
     <UrlBar
       v-if="$store.state.glueBoard.isURLBarActive"
       @urlentered="createNewFragment"
@@ -28,6 +33,7 @@ export default {
   components: { Fragment, UrlBar, Selector },
   data() {
     return {
+      fragmentsize: 1,
       fragments: [],
       rect: {
         x: 0,
@@ -44,6 +50,18 @@ export default {
     this.loadFragments()
   },
   methods: {
+    zoomIn() {
+      this.fragmentsize += 0.2
+      const zoomElm = document.querySelector('.glue-board-fragment-container')
+      zoomElm.style.transform = `scale(${this.fragmentsize})`
+    },
+    zoomOut() {
+      if (this.fragmentsize - 0.2 > 0.001) {
+        this.fragmentsize -= 0.2
+        const zoomElm = document.querySelector('.glue-board-fragment-container')
+        zoomElm.style.transform = `scale(${this.fragmentsize})`
+      }
+    },
     sniff(payload) {
       this.$emit('sniff', payload)
     },
@@ -143,6 +161,44 @@ export default {
 
   .glue-board-fragment-container {
     display: inline-block;
+    transition: transform 200ms ease;
+  }
+
+  .zoom-btn {
+    position: fixed;
+
+    width: 7rem;
+    height: 3rem;
+    bottom: 2rem;
+    left: 2rem;
+    display: flex;
+    flex-direction: row;
+
+    .zoom-in {
+      width: 50%;
+      background-color: #cecece;
+      border-top-left-radius: 50%;
+      border-bottom-left-radius: 50%;
+
+      &:hover {
+        background-color: #8f8f8f;
+      }
+    }
+    .line {
+      width: 1%;
+      background-color: #8f8f8f;
+    }
+    .zoom-out {
+      width: 50%;
+      background-color: #cecece;
+
+      border-top-right-radius: 50%;
+      border-bottom-right-radius: 50%;
+
+      &:hover {
+        background-color: #8f8f8f;
+      }
+    }
   }
 }
 </style>

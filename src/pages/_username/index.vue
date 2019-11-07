@@ -8,10 +8,8 @@
         class="colorpicker"
         @select="invisibleColorPicker"
         @colorselect="selectColor"
+        @clickcolorpicker="clickColorPicker"
       />
-      <div v-show="isMovePosition" class="movecategory">
-        으
-      </div>
       <transition-group class="grid-layout category-box" name="scale" tag="div">
         <div
           v-for="(block, i) in blocks"
@@ -27,7 +25,6 @@
             @create="createBlock"
             @remove="removeBlock"
             @colorchange="visibleColorPicker($event, i)"
-            @movecat="moveCat($event)"
           />
         </div>
 
@@ -86,8 +83,7 @@ export default {
       isPopUp: false,
       profileLink: '',
       isChangeColor: false,
-      willChangeCatBlockIndex: null,
-      isMovePosition: false
+      willChangeCatBlockIndex: null
     }
   },
   computed: {
@@ -105,28 +101,21 @@ export default {
     window.addEventListener('mouseup', () => {
       this.leaveCat()
     })
+
+    window.addEventListener('click', e => {
+      /** @type {HTMLElement} */
+      const target = e.target
+      if (
+        !target.closest('.speech-bubble') &&
+        !target.closest('.add-category')
+      ) {
+        this.isChangeColor = false
+      }
+    })
   },
   methods: {
-    moveCat(catElem) {
-      this.isMovePosition = true
-      this.$nextTick(() => {
-        const moveCatElm = document.querySelector('.movecategory')
-        moveCatElm.style.left =
-          catElem.getBoundingClientRect().left +
-          (catElem.getBoundingClientRect().width -
-            moveCatElm.getBoundingClientRect().width) /
-            2 +
-          'px'
-        moveCatElm.style.top =
-          catElem.getBoundingClientRect().top +
-          (catElem.getBoundingClientRect().height +
-            moveCatElm.getBoundingClientRect().height) /
-            2 +
-          'px'
-      })
-    },
-    leaveCat() {
-      this.isMovePosition = false
+    clickColorPicker() {
+      this.isChangeColor = true
     },
     selectColor(newColor) {
       this.blocks[this.willChangeCatBlockIndex].color = newColor
@@ -173,6 +162,7 @@ export default {
       this.blocks.push(newBlock)
     },
     removeBlock(index) {
+      this.isChangeColor = false
       const removeTarget = this.$el.querySelectorAll(
         '.category-box .grid-item-wrapper'
       )[index]
@@ -224,11 +214,6 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-
-  .movecategory {
-    position: fixed;
-    z-index: 1000;
-  }
 
   .edit-box {
     padding-top: s(3);
