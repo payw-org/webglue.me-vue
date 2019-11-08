@@ -14,7 +14,6 @@
     </div>
     <div class="zoom-btn">
       <button class="zoom-in" @click="zoomIn" />
-      <div class="line" />
       <button class="zoom-out" @click="zoomOut" />
     </div>
     <UrlBar
@@ -190,10 +189,6 @@ export default {
       &:hover {
         background-color: #8f8f8f;
       }
-    }
-    .line {
-      width: 1%;
-      background-color: #8f8f8f;
     }
     .zoom-out {
       width: 50%;
