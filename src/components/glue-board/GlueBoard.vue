@@ -53,9 +53,6 @@ export default {
     this.loadFragments()
   },
   methods: {
-    updateFragmentData(payload, index) {
-      console.log('position updated')
-      console.log(index, payload)
     zoomIn() {
       this.fragmentsize += 0.2
       const zoomElm = document.querySelector('.glue-board-fragment-container')
