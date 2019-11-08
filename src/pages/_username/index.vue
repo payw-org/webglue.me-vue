@@ -19,6 +19,7 @@
           v-for="(block, i) in blocks"
           :key="block.id"
           class="grid-item-wrapper"
+          :data-index="i"
         >
           <CategoryBlock
             :cat-name="block.catName"
@@ -82,7 +83,50 @@ export default {
   data() {
     return {
       blockcolor: '',
-      blocks: [],
+      blocks: [
+        {
+          catName: 'a',
+          type: 'category',
+          id: Math.random(),
+          color: 'color1'
+        },
+        {
+          catName: 'b',
+          type: 'category',
+          id: Math.random(),
+          color: 'color2'
+        },
+        {
+          catName: 'c',
+          type: 'category',
+          id: Math.random(),
+          color: 'color3'
+        },
+        {
+          catName: 'd',
+          type: 'category',
+          id: Math.random(),
+          color: 'color4'
+        },
+        {
+          catName: 'e',
+          type: 'category',
+          id: Math.random(),
+          color: 'color5'
+        },
+        {
+          catName: 'f',
+          type: 'category',
+          id: Math.random(),
+          color: 'color6'
+        },
+        {
+          catName: 'g',
+          type: 'category',
+          id: Math.random(),
+          color: 'color7'
+        }
+      ],
       colors: [],
       isEditMode: false,
       isPopUp: false,
@@ -103,9 +147,11 @@ export default {
       moving: {
         /** @type {HTMLElement} */
         elm: undefined,
+        index: undefined,
         x: undefined,
         y: undefined
-      }
+      },
+      isCatMoving: false
     }
   },
   computed: {
@@ -124,6 +170,9 @@ export default {
       this.leaveCat()
     })
 
+    /** @type {HTMLElement} */
+    let original
+
     window.addEventListener('mousedown', e => {
       /** @type {HTMLElement} */
       const target = e.target
@@ -135,18 +184,27 @@ export default {
         this.points.x = e.clientX
         this.points.y = e.clientY
 
-        const original = target.closest('.add-category')
+        original = target.closest('.add-category')
         const orgRect = original.getBoundingClientRect()
 
         // Clone the category element to move
         /** @type {HTMLElement} */
         const clonedNode = original.cloneNode(true)
+
         // Assign to data
         this.moving.elm = clonedNode
+        this.moving.index = Number(
+          original.closest('.grid-item-wrapper').getAttribute('data-index')
+        )
 
         // Remove unnecessary elements
         clonedNode.removeChild(clonedNode.querySelector('.edit-btn'))
         clonedNode.removeChild(clonedNode.querySelector('.remove-btn'))
+
+        // Add additional class names
+        clonedNode.classList.add('cloned')
+
+        // Set geometry
         clonedNode.style.width = orgRect.width + 'px'
         clonedNode.style.height = orgRect.height + 'px'
         clonedNode.style.top = orgRect.top + 'px'
@@ -160,19 +218,68 @@ export default {
 
     window.addEventListener('mousemove', e => {
       if (this.stat.catch) {
+        if (original) {
+          original.classList.add('ghost')
+        }
+
         this.stat.move = true
         const moveX = e.pageX - this.points.x
         const moveY = e.pageY - this.points.y
-        console.log(moveX, moveY)
         this.moving.elm.style.left = this.moving.x + moveX + 'px'
         this.moving.elm.style.top = this.moving.y + moveY + 'px'
+
+        const movingElmRect = this.moving.elm.getBoundingClientRect()
+
+        const center = {
+          x: movingElmRect.left + movingElmRect.width / 2,
+          y: movingElmRect.top + movingElmRect.height / 2
+        }
+
+        const elms = document.elementsFromPoint(center.x, center.y)
+
+        if (this.isCatMoving) {
+          return
+        }
+
+        elms.forEach(elm => {
+          if (
+            elm.classList.contains('grid-item-wrapper') &&
+            elm.getAttribute('data-index')
+          ) {
+            const targetIndex = Number(elm.getAttribute('data-index'))
+            const movingIndex = this.moving.index
+            const tempBlocks = this.blocks.slice()
+
+            const cutOut = tempBlocks.splice(movingIndex, 1)[0]
+            tempBlocks.splice(targetIndex, 0, cutOut)
+
+            this.moving.index = targetIndex
+
+            this.blocks = tempBlocks
+            this.isCatMoving = true
+
+            setTimeout(() => {
+              this.isCatMoving = false
+            }, 400)
+          }
+        })
       }
     })
 
     window.addEventListener('mouseup', () => {
       this.stat.catch = false
       this.stat.move = false
-      this.moving.elm.parentElement.removeChild(this.moving.elm)
+      const orgRect = original.getBoundingClientRect()
+      this.moving.elm.classList.add('returning')
+      this.moving.elm.getBoundingClientRect()
+      this.moving.elm.style.left = orgRect.left + 'px'
+      this.moving.elm.style.top = orgRect.top + 'px'
+      setTimeout(() => {
+        this.moving.elm.parentElement.removeChild(this.moving.elm)
+        if (original) {
+          original.classList.remove('ghost')
+        }
+      }, 300)
     })
   },
   methods: {
@@ -198,6 +305,7 @@ export default {
       this.isMovePosition = false
     },
     selectColor(newColor) {
+      console.log(newColor)
       this.blocks[this.willChangeCatBlockIndex].color = newColor
     },
     invisibleColorPicker() {

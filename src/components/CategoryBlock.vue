@@ -174,6 +174,20 @@ export default {
   border-radius: 0.84rem;
   position: relative;
 
+  &.ghost {
+    opacity: 0 !important;
+  }
+
+  &.cloned {
+    z-index: 99999;
+    box-shadow: 0 0.5rem 3rem rgba(#000, 0.3);
+
+    &.returning {
+      transition: all 300ms ease;
+      box-shadow: 0 0 0 transparent;
+    }
+  }
+
   .category-link {
     position: absolute;
     z-index: 100;
@@ -215,8 +229,11 @@ export default {
 
   .category-name-input {
     text-align: center;
-    background-color: transparent;
     font-size: 2.3rem;
+
+    &.returning {
+      transition: all 400ms ease;
+    }
     width: 100%;
     font-weight: 700;
     line-height: 1.16em;
