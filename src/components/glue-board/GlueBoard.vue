@@ -53,6 +53,39 @@ export default {
     this.loadFragments()
   },
   methods: {
+    calculateWrapperSize() {
+      this.minLeft = Infinity
+      this.maxRight = -Infinity
+      this.minTop = Infinity
+      this.maxBottom = -Infinity
+
+      /** @type {HTMLElement[]} */
+      const fragElms = document.querySelectorAll('.webglue-fragment')
+      for (let i = 0; i < this.fragments.length; i++) {
+        const leftOffset = fragElms[i].getBoundingClientRect().left
+        const rightOffset = fragElms[i].getBoundingClientRect().right
+        const topOffset = fragElms[i].getBoundingClientRect().top
+        const bottomOffset = fragElms[i].getBoundingClientRect().bottom
+        if (leftOffset < this.minLeft) {
+          this.minLeft = leftOffset
+        }
+        if (rightOffset > this.maxRight) {
+          this.maxRight = rightOffset
+        }
+        if (topOffset < this.minTop) {
+          this.minTop = topOffset
+        }
+        if (bottomOffset > this.maxBottom) {
+          this.maxBottom = bottomOffset
+        }
+      }
+
+      const containerElm = document.getElementsByClassName(
+        'glue-board-fragment-container'
+      )[0]
+      containerElm.style.width = this.maxRight - this.minLeft + 'px'
+      containerElm.style.height = this.maxBottom - this.minTop + 'px'
+    },
     updateFragmentData(payload, index) {
       console.log('position updated')
       console.log(index, payload)
