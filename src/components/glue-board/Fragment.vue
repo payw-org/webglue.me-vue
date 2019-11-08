@@ -17,6 +17,26 @@
       height: `${fragInfo.size.height}px`
     }"
   >
+    <div
+      class="top-line"
+      @mouseenter="mouserenter"
+      @mousedown="mouseDownBoundary"
+    />
+    <div
+      class="left-line"
+      @mouseenter="mouserenter"
+      @mousedown="mouseDownBoundary"
+    />
+    <div
+      class="right-line"
+      @mouseenter="mouserenter"
+      @mousedown="mouseDownBoundary"
+    />
+    <div
+      class="bottom-line"
+      @mouseenter="mouserenter"
+      @mousedown="mouseDownBoundary"
+    />
     <iframe
       ref="webview"
       name="webview"
@@ -215,6 +235,7 @@ export default {
               } else {
                 this.stat.isValidPos = true
               }
+              this.$emit('fragmentmove')
             }
           })
         )
@@ -241,6 +262,7 @@ export default {
             x: this.fragInfo.position.x,
             y: this.fragInfo.position.y
           })
+          this.$emit('fragmentmove')
         })
       }
     })
@@ -342,6 +364,14 @@ export default {
       .catch(err => {
         console.error('[webglue] ❌', err)
       })
+  },
+  methods: {
+    mouserenter() {
+      this.$emit('linemouseenter')
+    },
+    mouseDownBoundary(e) {
+      console.log(e.target.closest('.webglue-fragment'))
+    }
   }
 }
 </script>
@@ -359,6 +389,45 @@ export default {
   border-radius: 0px;
   box-shadow: 0 0.3rem 0.5rem rgba(#000, 0.2);
   overflow: hidden;
+
+  .top-line {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+
+    cursor: ns-resize;
+  }
+
+  .bottom-line {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+
+    cursor: ns-resize;
+  }
+
+  .left-line {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 2px;
+    height: 100%;
+
+    cursor: ew-resize;
+  }
+
+  .right-line {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 2px;
+    height: 100%;
+    cursor: ew-resize;
+  }
 
   &.new {
     z-index: 10003 !important;

@@ -9,7 +9,8 @@
         @cancel="cancelNewFragment(i)"
         @sniff="updateSelector"
         @exitnewmode="changeModeTo($event, 'postit', i)"
-        @donemove="updateFragmentPosition($event, i)"
+        @fragmentmove="calculateWrapperSize"
+        @linemouseenter="fragmentResize"
       />
     </div>
     <div class="zoom-btn">
