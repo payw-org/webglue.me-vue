@@ -58,15 +58,15 @@ export default {
       console.log(index, payload)
     },
     zoomIn() {
-      this.fragmentsize += 0.2
+      this.glueboardsize += 0.2
       const zoomElm = document.querySelector('.glue-board-fragment-container')
-      zoomElm.style.transform = `scale(${this.fragmentsize})`
+      zoomElm.style.transform = `scale(${this.glueboardsize})`
     },
     zoomOut() {
-      if (this.fragmentsize - 0.2 > 0.001) {
-        this.fragmentsize -= 0.2
+      if (this.glueboardsize - 0.2 > 0.001) {
+        this.glueboardsize -= 0.2
         const zoomElm = document.querySelector('.glue-board-fragment-container')
-        zoomElm.style.transform = `scale(${this.fragmentsize})`
+        zoomElm.style.transform = `scale(${this.glueboardsize})`
       }
     },
     sniff(payload) {
@@ -169,6 +169,12 @@ export default {
   .glue-board-fragment-container {
     display: inline-block;
     transition: transform 200ms ease;
+    transform-origin: center;
+    ::after {
+      content: '';
+      display: block;
+      clear: both;
+    }
   }
 
   .zoom-btn {
@@ -177,18 +183,26 @@ export default {
     width: 7rem;
     height: 3rem;
     bottom: 2rem;
-    left: 2rem;
+    right: 2rem;
     display: flex;
     flex-direction: row;
 
-    .zoom-in {
+    .zoom-in,
+    .zoom-out {
       width: 50%;
       background-color: #cecece;
+
+      &:hover {
+        background-color: #bdbdbd;
+      }
+    }
+    .zoom-in {
       border-top-left-radius: 50%;
       border-bottom-left-radius: 50%;
 
-      &:hover {
-        background-color: #8f8f8f;
+      .plus {
+        width: 45%;
+        padding-left: 0.1rem;
       }
     }
     .zoom-out {
@@ -198,8 +212,9 @@ export default {
       border-top-right-radius: 50%;
       border-bottom-right-radius: 50%;
 
-      &:hover {
-        background-color: #8f8f8f;
+      .minus {
+        width: 45%;
+        padding-right: 0.1rem;
       }
     }
   }
