@@ -14,8 +14,12 @@
       />
     </div>
     <div class="zoom-btn">
-      <button class="zoom-in" @click="zoomIn" />
-      <button class="zoom-out" @click="zoomOut" />
+      <button class="zoom-in" @click="zoomIn">
+        <img class="plus" src="~/assets/images/plus.svg" />
+      </button>
+      <button class="zoom-out" @click="zoomOut">
+        <img class="minus" src="~/assets/images/minus.svg" />
+      </button>
     </div>
     <UrlBar
       v-if="$store.state.glueBoard.isURLBarActive"
@@ -34,6 +38,7 @@ export default {
   components: { Fragment, UrlBar, Selector },
   data() {
     return {
+      glueboardsize: 1,
       fragmentsize: 1,
       fragments: [],
       rect: {
@@ -41,7 +46,11 @@ export default {
         y: 0,
         width: 0,
         heigth: 0
-      }
+      },
+      minLeft: Infinity,
+      maxRight: -Infinity,
+      minTop: Infinity,
+      maxBottom: -Infinity
     }
   },
   watch: {
@@ -53,6 +62,11 @@ export default {
     this.loadFragments()
   },
   methods: {
+    fragmenstResize() {
+      this.fragmentsize += 0.2
+      const zoomElm = document.querySelector('.glue-board-fragment-container')
+      zoomElm.style.transform = `scale(${this.glueboardsize})`
+    },
     calculateWrapperSize() {
       this.minLeft = Infinity
       this.maxRight = -Infinity
@@ -239,9 +253,6 @@ export default {
       }
     }
     .zoom-out {
-      width: 50%;
-      background-color: #cecece;
-
       border-top-right-radius: 50%;
       border-bottom-right-radius: 50%;
 
