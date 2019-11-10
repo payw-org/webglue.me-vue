@@ -59,6 +59,9 @@ export default {
     }
   },
   mounted() {
+    window.addEventListener('mouseup', () => {
+      this.resizedirection = null
+    })
     this.loadFragments()
   },
   methods: {
