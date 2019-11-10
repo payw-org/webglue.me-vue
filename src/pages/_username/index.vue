@@ -183,6 +183,8 @@ export default {
         target.closest('.add-category:not(.gray)') &&
         !target.closest('.actions')
       ) {
+        e.preventDefault()
+        e.stopPropagation()
         // Init mousedown event information
         this.stat.catch = true
         this.points.x = e.clientX
@@ -270,6 +272,11 @@ export default {
     })
 
     window.addEventListener('mouseup', () => {
+      if (original && !this.stat.move) {
+        const glueBoardLink = original.querySelector('.glueboard-link').href
+        window.location.href = glueBoardLink
+      }
+
       this.stat.catch = false
       this.stat.move = false
       this.moving.elm.classList.add('returning')
@@ -284,12 +291,15 @@ export default {
       this.moving.elm.style.left = giwRect.left + 'px'
       this.moving.elm.style.top = giwRect.top + 'px'
 
+      const originalCloned = original
       setTimeout(() => {
         this.moving.elm.parentElement.removeChild(this.moving.elm)
-        if (original) {
-          original.classList.remove('ghost')
+        if (originalCloned) {
+          originalCloned.classList.remove('ghost')
         }
       }, 300)
+
+      original = null
     })
 
     window.addEventListener('click', e => {
