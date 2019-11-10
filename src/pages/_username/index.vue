@@ -169,12 +169,20 @@ export default {
     /** @type {HTMLElement} */
     let original
 
+    // Attach mousedown event
+    // When mousedown on category block
+    // it remembers the original pointer position
+    // and apply the movement changes
+    // to category block when mousemove
     window.addEventListener('mousedown', e => {
       /** @type {HTMLElement} */
       const target = e.target
 
       // Mousedown category element
-      if (target.closest('.add-category:not(.gray)')) {
+      if (
+        target.closest('.add-category:not(.gray)') &&
+        !target.closest('.actions')
+      ) {
         // Init mousedown event information
         this.stat.catch = true
         this.points.x = e.clientX
@@ -194,8 +202,7 @@ export default {
         )
 
         // Remove unnecessary elements
-        clonedNode.removeChild(clonedNode.querySelector('.edit-btn'))
-        clonedNode.removeChild(clonedNode.querySelector('.remove-btn'))
+        clonedNode.removeChild(clonedNode.querySelector('.actions'))
 
         // Add additional class names
         clonedNode.classList.add('cloned')
@@ -265,11 +272,18 @@ export default {
     window.addEventListener('mouseup', () => {
       this.stat.catch = false
       this.stat.move = false
-      const orgRect = original.getBoundingClientRect()
       this.moving.elm.classList.add('returning')
       this.moving.elm.getBoundingClientRect()
-      this.moving.elm.style.left = orgRect.left + 'px'
-      this.moving.elm.style.top = orgRect.top + 'px'
+
+      // Move back the cloned element
+      // to the position where it was
+      const gridItemWrapper = document.getElementsByClassName(
+        'grid-item-wrapper'
+      )[this.moving.index]
+      const giwRect = gridItemWrapper.getBoundingClientRect()
+      this.moving.elm.style.left = giwRect.left + 'px'
+      this.moving.elm.style.top = giwRect.top + 'px'
+
       setTimeout(() => {
         this.moving.elm.parentElement.removeChild(this.moving.elm)
         if (original) {
@@ -371,7 +385,7 @@ export default {
 .scale-enter-active,
 .scale-move,
 .scale-leave-active {
-  transition: all 0.4s cubic-bezier(0.55, 0, 0.1, 1);
+  transition: all 0.3s cubic-bezier(0.55, 0, 0.1, 1);
 }
 
 .scale-enter {
