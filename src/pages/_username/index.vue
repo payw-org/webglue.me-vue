@@ -79,50 +79,7 @@ export default {
   data() {
     return {
       blockcolor: '',
-      blocks: [
-        {
-          catName: 'a',
-          type: 'category',
-          id: Math.random(),
-          color: 'color1'
-        },
-        {
-          catName: 'b',
-          type: 'category',
-          id: Math.random(),
-          color: 'color2'
-        },
-        {
-          catName: 'c',
-          type: 'category',
-          id: Math.random(),
-          color: 'color3'
-        },
-        {
-          catName: 'd',
-          type: 'category',
-          id: Math.random(),
-          color: 'color4'
-        },
-        {
-          catName: 'e',
-          type: 'category',
-          id: Math.random(),
-          color: 'color5'
-        },
-        {
-          catName: 'f',
-          type: 'category',
-          id: Math.random(),
-          color: 'color6'
-        },
-        {
-          catName: 'g',
-          type: 'category',
-          id: Math.random(),
-          color: 'color7'
-        }
-      ],
+      blocks: [],
       colors: [],
       isEditMode: false,
       isPopUp: false,
@@ -161,10 +118,6 @@ export default {
   },
   mounted() {
     this.profileLink = `/@${this.$store.state.auth.userInfo.nickname}/profile`
-
-    window.addEventListener('mouseup', () => {
-      this.leaveCat()
-    })
 
     /** @type {HTMLElement} */
     let original
