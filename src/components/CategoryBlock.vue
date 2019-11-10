@@ -22,16 +22,18 @@
         @keypress.enter="createCategory"
       />
     </div>
-    <transition name="zoom-in">
-      <button v-if="isMouseEnter" class="edit-btn" @click="edit">
-        <img src="~/assets/images/edit-icon.svg" class="edit-icon" />
-      </button>
-    </transition>
-    <transition name="zoom-in">
-      <button v-if="isMouseEnter" class="remove-btn" @click="removeCategory">
-        <IconPlus class="icon-x" x mode="thin" color="red" />
-      </button>
-    </transition>
+    <div class="actions">
+      <transition name="zoom-in">
+        <button v-if="isMouseEnter" class="edit-btn" @click="edit">
+          <img src="~/assets/images/edit-icon.svg" class="edit-icon" />
+        </button>
+      </transition>
+      <transition name="zoom-in">
+        <button v-if="isMouseEnter" class="remove-btn" @click="removeCategory">
+          <IconPlus class="icon-x" x mode="thin" color="red" />
+        </button>
+      </transition>
+    </div>
   </div>
 </template>
 
