@@ -10,7 +10,7 @@
         @sniff="updateSelector"
         @exitnewmode="changeModeTo($event, 'postit', i)"
         @fragmentmove="calculateWrapperSize"
-        @linemouseenter="fragmentResize"
+        @fragmentselect="fragmentSelect"
       />
     </div>
     <div class="zoom-btn">
@@ -62,10 +62,32 @@ export default {
     this.loadFragments()
   },
   methods: {
-    fragmenstResize() {
-      this.fragmentsize += 0.2
-      const zoomElm = document.querySelector('.glue-board-fragment-container')
-      zoomElm.style.transform = `scale(${this.glueboardsize})`
+    fragmentSelect(payload, data) {
+      this.willResizeElm = payload
+      if (data === 'right') {
+        this.initialsize = this.willResizeElm.getBoundingClientRect().right
+        this.resizedirection = 'right'
+      } else if (data === 'left') {
+        this.initialsize = this.willResizeElm.getBoundingClientRect().left
+        this.resizedirection = 'left'
+      } else if (data === 'top') {
+        this.initialsize = this.willResizeElm.getBoundingClientRect().top
+        this.resizedirection = 'top'
+      } else if (data === 'bottom') {
+        this.initialsize = this.willResizeElm.getBoundingClientRect().bottom
+        this.resizedirection = 'bottom'
+      }
+      this.initialwidth = this.willResizeElm.getBoundingClientRect().width
+      this.initialheight = this.willResizeElm.getBoundingClientRect().height
+      const a = this.willResizeElm.style.transform
+      const regExp = /[+-]?\d+(?:\.\d+)?/g
+      const regExpResult = regExp.exec(a)
+      let scaleVal = 1
+      if (regExpResult) {
+        scaleVal = Number(regExpResult[0])
+      }
+      this.initialscale = scaleVal
+      console.log(this.initialscale)
     },
     calculateWrapperSize() {
       this.minLeft = Infinity
