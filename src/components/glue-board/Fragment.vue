@@ -369,7 +369,7 @@ export default {
   width: 400px;
   height: 550px;
   position: absolute;
-  transition: box-shadow 300ms ease, transform 200ms ease;
+  // transition: box-shadow 300ms ease, transform 200ms ease;
   cursor: default;
   border-radius: 0px;
   box-shadow: 0 0.3rem 0.5rem rgba(#000, 0.2);
@@ -380,7 +380,7 @@ export default {
     top: 0;
     left: 0;
     width: 100%;
-    height: 2px;
+    height: 3px;
 
     cursor: ns-resize;
   }
@@ -390,7 +390,7 @@ export default {
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 2px;
+    height: 3px;
 
     cursor: ns-resize;
   }
@@ -399,7 +399,7 @@ export default {
     position: absolute;
     bottom: 0;
     left: 0;
-    width: 2px;
+    width: 3px;
     height: 100%;
 
     cursor: ew-resize;
@@ -409,7 +409,7 @@ export default {
     position: absolute;
     bottom: 0;
     right: 0;
-    width: 2px;
+    width: 3px;
     height: 100%;
     cursor: ew-resize;
   }
