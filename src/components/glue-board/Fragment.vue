@@ -350,11 +350,12 @@ export default {
       })
   },
   methods: {
-    mouserenter() {
-      this.$emit('linemouseenter')
-    },
     mouseDownBoundary(e) {
+      this.$emit(
+        'fragmentselect',
+        e.target.closest('.webglue-fragment'),
         e.target.getAttribute('data-pos')
+      )
     }
   }
 }
