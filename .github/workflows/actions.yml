@@ -11,7 +11,7 @@ on:
 jobs:
   build:
 
-    runs-on: [macOS-latest, ubuntu-latest, windows-latest]
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/setup-node@v1
