@@ -59,6 +59,61 @@ export default {
     }
   },
   mounted() {
+    window.addEventListener('mousemove', event => {
+      if (this.resizedirection === 'right') {
+        if (event.pageX < this.initialsize) {
+          const size =
+            (this.initialwidth - this.initialsize + event.pageX) /
+            parseInt(this.willResizeElm.style.width)
+          this.willResizeElm.style.transform = `scale(${size})`
+        } else if (event.pageX > this.initialsize) {
+          const size =
+            (this.initialwidth + event.pageX - this.initialsize) /
+            parseInt(this.willResizeElm.style.width)
+          this.willResizeElm.style.transform = `scale(${size})`
+        }
+        this.willResizeElm.style.transformOrigin = '0 50%'
+      } else if (this.resizedirection === 'left') {
+        if (event.pageX < this.initialsize) {
+          const size =
+            (this.initialwidth + this.initialsize - event.pageX) /
+            parseInt(this.willResizeElm.style.width)
+          this.willResizeElm.style.transform = `scale(${size})`
+        } else if (event.pageX > this.initialsize) {
+          const size =
+            (this.initialwidth - event.pageX + this.initialsize) /
+            parseInt(this.willResizeElm.style.width)
+          this.willResizeElm.style.transform = `scale(${size})`
+        }
+        this.willResizeElm.style.transformOrigin = '100% 50%'
+      } else if (this.resizedirection === 'top') {
+        if (event.pageY < this.initialsize) {
+          const size =
+            (this.initialheight + this.initialsize - event.pageY) /
+            parseInt(this.willResizeElm.style.height)
+          this.willResizeElm.style.transform = `scale(${size})`
+        } else if (event.pageY > this.initialsize) {
+          const size =
+            (this.initialheight - event.pageY + this.initialsize) /
+            parseInt(this.willResizeElm.style.height)
+          this.willResizeElm.style.transform = `scale(${size})`
+        }
+        this.willResizeElm.style.transformOrigin = '50% 100%'
+      } else if (this.resizedirection === 'bottom') {
+        if (event.pageY < this.initialsize) {
+          const size =
+            (this.initialheight - this.initialsize + event.pageY) /
+            parseInt(this.willResizeElm.style.height)
+          this.willResizeElm.style.transform = `scale(${size})`
+        } else if (event.pageY > this.initialsize) {
+          const size =
+            (this.initialheight + event.pageY - this.initialsize) /
+            parseInt(this.willResizeElm.style.height)
+          this.willResizeElm.style.transform = `scale(${size})`
+        }
+        this.willResizeElm.style.transformOrigin = '50% 0'
+      }
+    })
     window.addEventListener('mouseup', () => {
       this.resizedirection = null
     })
