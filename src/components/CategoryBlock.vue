@@ -22,16 +22,18 @@
         @keypress.enter="createCategory"
       />
     </div>
-    <transition name="zoom-in">
-      <button v-if="isMouseEnter" class="edit-btn" @click="edit">
-        <img src="~/assets/images/edit-icon.svg" class="edit-icon" />
-      </button>
-    </transition>
-    <transition name="zoom-in">
-      <button v-if="isMouseEnter" class="remove-btn" @click="removeCategory">
-        <IconPlus class="icon-x" x mode="thin" color="red" />
-      </button>
-    </transition>
+    <div class="actions">
+      <transition name="zoom-in">
+        <button v-if="isMouseEnter" class="edit-btn" @click="edit">
+          <img src="~/assets/images/edit-icon.svg" class="edit-icon" />
+        </button>
+      </transition>
+      <transition name="zoom-in">
+        <button v-if="isMouseEnter" class="remove-btn" @click="removeCategory">
+          <IconPlus class="icon-x" x mode="thin" color="red" />
+        </button>
+      </transition>
+    </div>
   </div>
 </template>
 
@@ -174,6 +176,20 @@ export default {
   border-radius: 0.84rem;
   position: relative;
 
+  &.ghost {
+    opacity: 0 !important;
+  }
+
+  &.cloned {
+    z-index: 99999;
+    box-shadow: 0 0.5rem 3rem rgba(#000, 0.3);
+
+    &.returning {
+      transition: all 300ms ease;
+      box-shadow: 0 0 0 transparent;
+    }
+  }
+
   .category-link {
     position: absolute;
     z-index: 100;
@@ -215,8 +231,11 @@ export default {
 
   .category-name-input {
     text-align: center;
-    background-color: transparent;
     font-size: 2.3rem;
+
+    &.returning {
+      transition: all 400ms ease;
+    }
     width: 100%;
     font-weight: 700;
     line-height: 1.16em;
