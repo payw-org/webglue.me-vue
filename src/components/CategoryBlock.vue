@@ -7,6 +7,11 @@
     @mouseenter="handleMouseEnter(true)"
     @mouseleave="handleMouseEnter(false)"
   >
+    <a
+      v-if="type === 'category'"
+      :href="glueboardLink"
+      class="glueboard-link"
+    />
     <!-- <a v-if="type === 'category'" :href="link" class="category-link" /> -->
     <div v-if="type === 'add'" class="plus-icon" />
     <div v-else>
@@ -62,6 +67,7 @@ export default {
   },
   data() {
     return {
+      glueboardLink: '',
       isPopUpActive: false,
       isMouseEnter: false,
       isContentEditable: false,
@@ -77,6 +83,7 @@ export default {
   watch: {
     catName(next) {
       this.$refs.categoryName.innerHTML = next
+      this.glueboardLink = `/@${this.$store.state.auth.userInfo.nickname}/${next}`
     }
   },
   mounted() {
@@ -190,7 +197,8 @@ export default {
     }
   }
 
-  .category-link {
+  .glueboard-link {
+    pointer-events: none;
     position: absolute;
     z-index: 100;
     top: 0;
