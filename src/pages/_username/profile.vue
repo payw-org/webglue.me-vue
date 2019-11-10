@@ -41,11 +41,16 @@
       <div v-if="isPopUpActive" class="popup">
         <div class="bg" @click="deactivatePopUp" />
         <div class="input-box">
-          <input v-model="newNickname" type="text" placeholder="새 닉네임" />
-          <button @click="updateNickname">
+          <input
+            v-model="newNickname"
+            class="input"
+            type="text"
+            placeholder="새 닉네임"
+          />
+          <button class="edit" @click="updateNickname">
             수정
           </button>
-          <button @click="deactivatePopUp">
+          <button class="cancel" @click="deactivatePopUp">
             취소
           </button>
         </div>
@@ -207,6 +212,12 @@ export default {
       padding: 1rem;
       z-index: 1;
       border-radius: r(3);
+      height: 4rem;
+
+      .input {
+        height: 100%;
+        font-size: 100%;
+      }
     }
   }
 }
