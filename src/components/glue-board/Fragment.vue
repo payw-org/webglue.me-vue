@@ -17,26 +17,10 @@
       height: `${fragInfo.size.height}px`
     }"
   >
-    <div
-      class="top-line"
-      @mouseenter="mouserenter"
-      @mousedown="mouseDownBoundary"
-    />
-    <div
-      class="left-line"
-      @mouseenter="mouserenter"
-      @mousedown="mouseDownBoundary"
-    />
-    <div
-      class="right-line"
-      @mouseenter="mouserenter"
-      @mousedown="mouseDownBoundary"
-    />
-    <div
-      class="bottom-line"
-      @mouseenter="mouserenter"
-      @mousedown="mouseDownBoundary"
-    />
+    <div class="top-line" data-pos="top" @mousedown="mouseDownBoundary" />
+    <div class="left-line" data-pos="left" @mousedown="mouseDownBoundary" />
+    <div class="right-line" data-pos="right" @mousedown="mouseDownBoundary" />
+    <div class="bottom-line" data-pos="bottom" @mousedown="mouseDownBoundary" />
     <iframe
       ref="webview"
       name="webview"
@@ -370,7 +354,7 @@ export default {
       this.$emit('linemouseenter')
     },
     mouseDownBoundary(e) {
-      console.log(e.target.closest('.webglue-fragment'))
+        e.target.getAttribute('data-pos')
     }
   }
 }
