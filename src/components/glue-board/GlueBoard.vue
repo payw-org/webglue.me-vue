@@ -38,6 +38,12 @@ export default {
   components: { Fragment, UrlBar, Selector },
   data() {
     return {
+      initialheight: null,
+      initialwidth: null,
+      initialscale: null,
+      resizedirection: null,
+      initialsize: null,
+      willResizeElm: null,
       glueboardsize: 1,
       fragmentsize: 1,
       fragments: [],
