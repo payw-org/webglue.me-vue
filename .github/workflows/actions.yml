@@ -16,9 +16,9 @@ jobs:
     steps:
     - uses: actions/setup-node@v1
     - name: Install Dependencies
-      run: yarn install
+      run: npm install
     - name: Build the App
-      run: yarn run build
+      run: npm run build
     - name: Start the App
-      run: yarn run start
+      run: npm run start
       
