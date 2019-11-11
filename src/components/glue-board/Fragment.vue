@@ -131,141 +131,145 @@ export default {
         this.stat.hover = false
       }
     })
-    // this.$el.addEventListener('mousedown', e => {
-    //   if (this.fragInfo.mode === 'new') {
-    //   } else {
-    //     e.preventDefault()
-    //     this.stat.catched = true
-    //     this.origin.pointer.x = e.clientX
-    //     this.origin.pointer.y = e.clientY
-    //     this.origin.position.x = this.fragInfo.position.x
-    //     this.origin.position.y = this.fragInfo.position.y
+    this.$el.addEventListener('mousedown', e => {
+      if (this.fragInfo.mode === 'new') {
+      } else {
+        if (e.target.closest('.boundary-line')) {
+          return
+        }
+        e.preventDefault()
+        this.stat.catched = true
+        this.origin.pointer.x = e.clientX
+        this.origin.pointer.y = e.clientY
+        this.origin.position.x = this.fragInfo.position.x
+        this.origin.position.y = this.fragInfo.position.y
 
-    //     let mouseMoveCallback
-    //     window.addEventListener(
-    //       'mousemove',
-    //       (mouseMoveCallback = e => {
-    //         if (this.stat.catched) {
-    //           this.$store.commit('glueBoard/setMode', 'dragging')
-    //           this.stat.isMoving = true
-    //           const moveX = e.clientX - this.origin.pointer.x
-    //           const moveY = e.clientY - this.origin.pointer.y
-    //           // this.fragInfo.position.x = this.origin.position.x + moveX
-    //           // this.fragInfo.position.y = this.origin.position.y + moveY
-    //           this.fragInfo.position.x = this.origin.position.x + moveX
-    //           this.fragInfo.position.y = this.origin.position.y + moveY
+        let mouseMoveCallback
+        window.addEventListener(
+          'mousemove',
+          (mouseMoveCallback = e => {
+            if (this.stat.catched) {
+              this.$store.commit('glueBoard/setMode', 'dragging')
+              this.stat.isMoving = true
+              const moveX = e.clientX - this.origin.pointer.x
+              const moveY = e.clientY - this.origin.pointer.y
+              // this.fragInfo.position.x = this.origin.position.x + moveX
+              // this.fragInfo.position.y = this.origin.position.y + moveY
+              this.fragInfo.position.x = this.origin.position.x + moveX
+              this.fragInfo.position.y = this.origin.position.y + moveY
 
-    //           const fragmentElms = document.querySelectorAll(
-    //             '.webglue-fragment.postit:not(.hover)'
-    //           )
+              const fragmentElms = document.querySelectorAll(
+                '.webglue-fragment.postit:not(.hover)'
+              )
 
-    //           for (let i = 0; i < fragmentElms.length; i += 1) {
-    //             let isInvalid = false
-    //             const fragElm = fragmentElms[i]
-    //             const fragElmRect = fragElm.getBoundingClientRect()
-    //             const vertices = []
-    //             vertices[0] = {
-    //               x: fragElmRect.left,
-    //               y: fragElmRect.top
-    //             }
-    //             vertices[1] = {
-    //               x: fragElmRect.right,
-    //               y: fragElmRect.top
-    //             }
-    //             vertices[2] = {
-    //               x: fragElmRect.left,
-    //               y: fragElmRect.bottom
-    //             }
-    //             vertices[3] = {
-    //               x: fragElmRect.right,
-    //               y: fragElmRect.bottom
-    //             }
+              for (let i = 0; i < fragmentElms.length; i += 1) {
+                let isInvalid = false
+                const fragElm = fragmentElms[i]
+                const fragElmRect = fragElm.getBoundingClientRect()
+                const vertices = []
+                vertices[0] = {
+                  x: fragElmRect.left,
+                  y: fragElmRect.top
+                }
+                vertices[1] = {
+                  x: fragElmRect.right,
+                  y: fragElmRect.top
+                }
+                vertices[2] = {
+                  x: fragElmRect.left,
+                  y: fragElmRect.bottom
+                }
+                vertices[3] = {
+                  x: fragElmRect.right,
+                  y: fragElmRect.bottom
+                }
 
-    //             const thisRect = this.$el.getBoundingClientRect()
+                const thisRect = this.$el.getBoundingClientRect()
 
-    //             for (let j = 0; j < vertices.length; j += 1) {
-    //               const vertex = vertices[j]
-    //               if (
-    //                 vertex.x >= thisRect.left &&
-    //                 vertex.x <= thisRect.right &&
-    //                 vertex.y >= thisRect.top &&
-    //                 vertex.y <= thisRect.bottom
-    //               ) {
-    //                 this.stat.isValidPos = false
-    //                 isInvalid = true
-    //                 break
-    //               } else {
-    //                 this.stat.isValidPos = true
-    //                 isInvalid = false
-    //               }
-    //             }
+                for (let j = 0; j < vertices.length; j += 1) {
+                  const vertex = vertices[j]
+                  if (
+                    vertex.x >= thisRect.left &&
+                    vertex.x <= thisRect.right &&
+                    vertex.y >= thisRect.top &&
+                    vertex.y <= thisRect.bottom
+                  ) {
+                    this.stat.isValidPos = false
+                    isInvalid = true
+                    break
+                  } else {
+                    this.stat.isValidPos = true
+                    isInvalid = false
+                  }
+                }
 
-    //             if (isInvalid) {
-    //               break
-    //             }
-    //           }
+                if (isInvalid) {
+                  break
+                }
+              }
 
-    //           const topLeftElm = document.elementFromPoint(
-    //             this.fragInfo.position.x,
-    //             this.fragInfo.position.y
-    //           )
-    //           const topRightElm = document.elementFromPoint(
-    //             this.fragInfo.position.x + this.$el.clientWidth,
-    //             this.fragInfo.position.y
-    //           )
-    //           const bottomLeftElm = document.elementFromPoint(
-    //             this.fragInfo.position.x,
-    //             this.fragInfo.position.y + this.$el.clientHeight
-    //           )
-    //           const bottomRightElm = document.elementFromPoint(
-    //             this.fragInfo.position.x + this.$el.clientWidth,
-    //             this.fragInfo.position.y + this.$el.clientHeight
-    //           )
-    //           if (
-    //             (topLeftElm &&
-    //               topLeftElm.classList.contains('webglue-fragment')) ||
-    //             (topRightElm &&
-    //               topRightElm.classList.contains('webglue-fragment')) ||
-    //             (bottomLeftElm &&
-    //               bottomLeftElm.classList.contains('webglue-fragment')) ||
-    //             (bottomRightElm &&
-    //               bottomRightElm.classList.contains('webglue-fragment'))
-    //           ) {
-    //             this.stat.isValidPos = false
-    //           } else {
-    //             this.stat.isValidPos = true
-    //           }
-    //           this.$emit('fragmentmove')
-    //         }
-    //       })
-    //     )
+              const topLeftElm = document.elementFromPoint(
+                this.fragInfo.position.x,
+                this.fragInfo.position.y
+              )
+              const topRightElm = document.elementFromPoint(
+                this.fragInfo.position.x + this.$el.clientWidth,
+                this.fragInfo.position.y
+              )
+              const bottomLeftElm = document.elementFromPoint(
+                this.fragInfo.position.x,
+                this.fragInfo.position.y + this.$el.clientHeight
+              )
+              const bottomRightElm = document.elementFromPoint(
+                this.fragInfo.position.x + this.$el.clientWidth,
+                this.fragInfo.position.y + this.$el.clientHeight
+              )
+              if (
+                (topLeftElm &&
+                  topLeftElm.classList.contains('webglue-fragment')) ||
+                (topRightElm &&
+                  topRightElm.classList.contains('webglue-fragment')) ||
+                (bottomLeftElm &&
+                  bottomLeftElm.classList.contains('webglue-fragment')) ||
+                (bottomRightElm &&
+                  bottomRightElm.classList.contains('webglue-fragment'))
+              ) {
+                this.stat.isValidPos = false
+              } else {
+                this.stat.isValidPos = true
+              }
+              this.$emit('fragmentmove')
+            }
+          })
+        )
 
-    //     window.addEventListener('mouseup', () => {
-    //       if (!this.stat.isValidPos) {
-    //         this.stat.isTransitioning = true
-    //         setTimeout(() => {
-    //           this.fragInfo.position.x = this.origin.position.x
-    //           this.fragInfo.position.y = this.origin.position.y
-    //           this.stat.isValidPos = true
-    //           setTimeout(() => {
-    //             this.stat.isTransitioning = false
-    //           }, 300)
-    //         }, 10)
-    //       }
-    //       this.$store.commit('glueBoard/setMode', 'idle')
-    //       this.stat.catched = false
-    //       window.removeEventListener('mousemove', mouseMoveCallback)
+        window.addEventListener('mouseup', () => {
+          this.isfragmentmove = 0
+          if (!this.stat.isValidPos) {
+            this.stat.isTransitioning = true
+            setTimeout(() => {
+              this.fragInfo.position.x = this.origin.position.x
+              this.fragInfo.position.y = this.origin.position.y
+              this.stat.isValidPos = true
+              setTimeout(() => {
+                this.stat.isTransitioning = false
+              }, 300)
+            }, 10)
+          }
+          this.$store.commit('glueBoard/setMode', 'idle')
+          this.stat.catched = false
+          window.removeEventListener('mousemove', mouseMoveCallback)
 
-    //       // Emit mouseup event and change the fragments
-    //       // position data from the parent
-    //       this.$emit('donemove', {
-    //         x: this.fragInfo.position.x,
-    //         y: this.fragInfo.position.y
-    //       })
-    //       this.$emit('fragmentmove')
-    //     })
-    //   }
-    // })
+          // Emit mouseup event and change the fragments
+          // position data from the parent
+          this.$emit('donemove', {
+            x: this.fragInfo.position.x,
+            y: this.fragInfo.position.y
+          })
+          this.$emit('fragmentmove')
+        })
+      }
+    })
 
     // Shadow DOM
     // this.shadow = this.$refs.shadow.attachShadow({ mode: 'closed' })
@@ -386,6 +390,7 @@ export default {
   height: 550px;
   position: absolute;
   // transition: box-shadow 300ms ease, transform 200ms ease;
+  transition: box-shadow 300ms ease;
   cursor: default;
   border-radius: 0px;
   box-shadow: 0 0.3rem 0.5rem rgba(#000, 0.2);
@@ -417,6 +422,7 @@ export default {
     left: 0;
     width: 3px;
     height: 100%;
+    z-index: 10000;
 
     cursor: ew-resize;
   }
@@ -464,7 +470,7 @@ export default {
   }
 
   &.active {
-    transform: scale(0.92);
+    // transform: scale(0.92);
     box-shadow: 0 1rem 2rem rgba(#000, 0.3);
     z-index: 10;
   }
