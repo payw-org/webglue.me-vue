@@ -69,55 +69,51 @@ export default {
       if (this.resizedirection === 'right') {
         if (event.pageX < this.initialsize) {
           const size =
-            (this.initialwidth - this.initialsize + event.pageX) /
+            (this.initialwidth - (this.initialposition - event.pageX) * 2) /
             parseInt(this.willResizeElm.style.width)
           this.willResizeElm.style.transform = `scale(${size})`
         } else if (event.pageX > this.initialsize) {
           const size =
-            (this.initialwidth + event.pageX - this.initialsize) /
+            (this.initialwidth + (event.pageX - this.initialposition) * 2) /
             parseInt(this.willResizeElm.style.width)
           this.willResizeElm.style.transform = `scale(${size})`
         }
-        this.willResizeElm.style.transformOrigin = '0 50%'
       } else if (this.resizedirection === 'left') {
         if (event.pageX < this.initialsize) {
           const size =
-            (this.initialwidth + this.initialsize - event.pageX) /
+            (this.initialwidth + (this.initialposition - event.pageX) * 2) /
             parseInt(this.willResizeElm.style.width)
           this.willResizeElm.style.transform = `scale(${size})`
         } else if (event.pageX > this.initialsize) {
           const size =
-            (this.initialwidth - event.pageX + this.initialsize) /
+            (this.initialwidth - (event.pageX - this.initialposition) * 2) /
             parseInt(this.willResizeElm.style.width)
           this.willResizeElm.style.transform = `scale(${size})`
         }
-        this.willResizeElm.style.transformOrigin = '100% 50%'
       } else if (this.resizedirection === 'top') {
         if (event.pageY < this.initialsize) {
           const size =
-            (this.initialheight + this.initialsize - event.pageY) /
+            (this.initialheight + (this.initialposition - event.pageY) * 2) /
             parseInt(this.willResizeElm.style.height)
           this.willResizeElm.style.transform = `scale(${size})`
         } else if (event.pageY > this.initialsize) {
           const size =
-            (this.initialheight - event.pageY + this.initialsize) /
+            (this.initialheight - (event.pageY - this.initialposition) * 2) /
             parseInt(this.willResizeElm.style.height)
           this.willResizeElm.style.transform = `scale(${size})`
         }
-        this.willResizeElm.style.transformOrigin = '50% 100%'
       } else if (this.resizedirection === 'bottom') {
         if (event.pageY < this.initialsize) {
           const size =
-            (this.initialheight - this.initialsize + event.pageY) /
+            (this.initialheight - (this.initialposition - event.pageY) * 2) /
             parseInt(this.willResizeElm.style.height)
           this.willResizeElm.style.transform = `scale(${size})`
         } else if (event.pageY > this.initialsize) {
           const size =
-            (this.initialheight + event.pageY - this.initialsize) /
+            (this.initialheight + (event.pageY - this.initialposition) * 2) /
             parseInt(this.willResizeElm.style.height)
           this.willResizeElm.style.transform = `scale(${size})`
         }
-        this.willResizeElm.style.transformOrigin = '50% 0'
       }
     })
     window.addEventListener('mouseup', () => {
@@ -151,7 +147,6 @@ export default {
         scaleVal = Number(regExpResult[0])
       }
       this.initialscale = scaleVal
-      console.log(this.initialscale)
     },
     calculateWrapperSize() {
       this.minLeft = Infinity
