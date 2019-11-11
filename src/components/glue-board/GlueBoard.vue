@@ -42,7 +42,7 @@ export default {
       initialwidth: null,
       initialscale: null,
       resizedirection: null,
-      initialsize: null,
+      initialposition: null,
       willResizeElm: null,
       glueboardsize: 1,
       fragmentsize: 1,
@@ -67,57 +67,53 @@ export default {
   mounted() {
     window.addEventListener('mousemove', event => {
       if (this.resizedirection === 'right') {
-        if (event.pageX < this.initialsize) {
+        if (event.pageX < this.initialposition) {
           const size =
-            (this.initialwidth - this.initialsize + event.pageX) /
+            (this.initialwidth - (this.initialposition - event.pageX) * 2) /
             parseInt(this.willResizeElm.style.width)
           this.willResizeElm.style.transform = `scale(${size})`
-        } else if (event.pageX > this.initialsize) {
+        } else if (event.pageX > this.initialposition) {
           const size =
-            (this.initialwidth + event.pageX - this.initialsize) /
+            (this.initialwidth + (event.pageX - this.initialposition) * 2) /
             parseInt(this.willResizeElm.style.width)
           this.willResizeElm.style.transform = `scale(${size})`
         }
-        this.willResizeElm.style.transformOrigin = '0 50%'
       } else if (this.resizedirection === 'left') {
-        if (event.pageX < this.initialsize) {
+        if (event.pageX < this.initialposition) {
           const size =
-            (this.initialwidth + this.initialsize - event.pageX) /
+            (this.initialwidth + (this.initialposition - event.pageX) * 2) /
             parseInt(this.willResizeElm.style.width)
           this.willResizeElm.style.transform = `scale(${size})`
-        } else if (event.pageX > this.initialsize) {
+        } else if (event.pageX > this.initialposition) {
           const size =
-            (this.initialwidth - event.pageX + this.initialsize) /
+            (this.initialwidth - (event.pageX - this.initialposition) * 2) /
             parseInt(this.willResizeElm.style.width)
           this.willResizeElm.style.transform = `scale(${size})`
         }
-        this.willResizeElm.style.transformOrigin = '100% 50%'
       } else if (this.resizedirection === 'top') {
-        if (event.pageY < this.initialsize) {
+        if (event.pageY < this.initialposition) {
           const size =
-            (this.initialheight + this.initialsize - event.pageY) /
+            (this.initialheight + (this.initialposition - event.pageY) * 2) /
             parseInt(this.willResizeElm.style.height)
           this.willResizeElm.style.transform = `scale(${size})`
-        } else if (event.pageY > this.initialsize) {
+        } else if (event.pageY > this.initialposition) {
           const size =
-            (this.initialheight - event.pageY + this.initialsize) /
+            (this.initialheight - (event.pageY - this.initialposition) * 2) /
             parseInt(this.willResizeElm.style.height)
           this.willResizeElm.style.transform = `scale(${size})`
         }
-        this.willResizeElm.style.transformOrigin = '50% 100%'
       } else if (this.resizedirection === 'bottom') {
-        if (event.pageY < this.initialsize) {
+        if (event.pageY < this.initialposition) {
           const size =
-            (this.initialheight - this.initialsize + event.pageY) /
+            (this.initialheight - (this.initialposition - event.pageY) * 2) /
             parseInt(this.willResizeElm.style.height)
           this.willResizeElm.style.transform = `scale(${size})`
-        } else if (event.pageY > this.initialsize) {
+        } else if (event.pageY > this.initialposition) {
           const size =
-            (this.initialheight + event.pageY - this.initialsize) /
+            (this.initialheight + (event.pageY - this.initialposition) * 2) /
             parseInt(this.willResizeElm.style.height)
           this.willResizeElm.style.transform = `scale(${size})`
         }
-        this.willResizeElm.style.transformOrigin = '50% 0'
       }
     })
     window.addEventListener('mouseup', () => {
@@ -129,29 +125,28 @@ export default {
     fragmentSelect(payload, data) {
       this.willResizeElm = payload
       if (data === 'right') {
-        this.initialsize = this.willResizeElm.getBoundingClientRect().right
+        this.initialposition = this.willResizeElm.getBoundingClientRect().right
         this.resizedirection = 'right'
       } else if (data === 'left') {
-        this.initialsize = this.willResizeElm.getBoundingClientRect().left
+        this.initialposition = this.willResizeElm.getBoundingClientRect().left
         this.resizedirection = 'left'
       } else if (data === 'top') {
-        this.initialsize = this.willResizeElm.getBoundingClientRect().top
+        this.initialposition = this.willResizeElm.getBoundingClientRect().top
         this.resizedirection = 'top'
       } else if (data === 'bottom') {
-        this.initialsize = this.willResizeElm.getBoundingClientRect().bottom
+        this.initialposition = this.willResizeElm.getBoundingClientRect().bottom
         this.resizedirection = 'bottom'
       }
       this.initialwidth = this.willResizeElm.getBoundingClientRect().width
       this.initialheight = this.willResizeElm.getBoundingClientRect().height
-      const a = this.willResizeElm.style.transform
+      const scale = this.willResizeElm.style.transform
       const regExp = /[+-]?\d+(?:\.\d+)?/g
-      const regExpResult = regExp.exec(a)
+      const regExpResult = regExp.exec(scale)
       let scaleVal = 1
       if (regExpResult) {
         scaleVal = Number(regExpResult[0])
       }
       this.initialscale = scaleVal
-      console.log(this.initialscale)
     },
     calculateWrapperSize() {
       this.minLeft = Infinity
@@ -312,6 +307,7 @@ export default {
 
   .zoom-btn {
     position: fixed;
+    z-index: 500;
 
     width: 7rem;
     height: 3rem;
@@ -322,7 +318,10 @@ export default {
 
     .zoom-in,
     .zoom-out {
-      width: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 3rem;
       background-color: #cecece;
 
       &:hover {
