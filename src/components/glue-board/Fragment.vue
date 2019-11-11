@@ -17,10 +17,26 @@
       height: `${fragInfo.size.height}px`
     }"
   >
-    <div class="top-line" data-pos="top" @mousedown="mouseDownBoundary" />
-    <div class="left-line" data-pos="left" @mousedown="mouseDownBoundary" />
-    <div class="right-line" data-pos="right" @mousedown="mouseDownBoundary" />
-    <div class="bottom-line" data-pos="bottom" @mousedown="mouseDownBoundary" />
+    <div
+      class="boundary-line top-line"
+      data-pos="top"
+      @mousedown="mouseDownBoundary"
+    />
+    <div
+      class="boundary-line left-line"
+      data-pos="left"
+      @mousedown="mouseDownBoundary"
+    />
+    <div
+      class="boundary-line right-line"
+      data-pos="right"
+      @mousedown="mouseDownBoundary"
+    />
+    <div
+      class="boundary-line bottom-line"
+      data-pos="bottom"
+      @mousedown="mouseDownBoundary"
+    />
     <iframe
       ref="webview"
       name="webview"
