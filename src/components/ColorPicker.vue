@@ -1,5 +1,6 @@
 <template>
   <div class="speech-bubble">
+    <chrome-picker class="chrome" :value="colors" @input="updateValue" />
     <div class="speech-pointer" />
     <div class="speech-box">
       <button
@@ -15,11 +16,21 @@
 </template>
 
 <script>
+import { chrome } from 'vue-color'
+// https://github.com/xiaokaike/vue-color
 export default {
+  components: {
+    'chrome-picker': chrome
+  },
   props: {
     color: {
       type: String,
       default: 'gray'
+    }
+  },
+  data() {
+    return {
+      colors: '#194d33'
     }
   },
   methods: {
@@ -40,7 +51,6 @@ export default {
   top: 2rem;
   z-index: 200;
   transition: all 200ms ease;
-
   .speech-pointer {
     background-color: yellow;
     width: 2rem;
