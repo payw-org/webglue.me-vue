@@ -70,6 +70,7 @@ import Navigation from '~/components/Navigation'
 import CategoryBlock from '~/components/CategoryBlock'
 import requireAuth from '~/mixins/require-auth'
 import ApiUrl from '~/modules/api-url'
+import Color from '~/modules/color'
 
 export default {
   components: { Navigation, CategoryBlock, ColorPicker },
@@ -82,6 +83,8 @@ export default {
   },
   data() {
     return {
+      isCreating: false,
+      newColor: '',
       blockcolor: '',
       blocks: [],
       colors: [],
@@ -126,6 +129,7 @@ export default {
       ...ApiUrl.glueBoard.list,
       withCredentials: true
     }).then(res => {
+      console.log(res.data)
       this.blocks = res.data.glueBoards
     })
 
@@ -310,6 +314,7 @@ export default {
     selectBlockColor(color) {
       this.deactivatePopUp()
       this.addBlock(color)
+      this.newColor = color
     },
     checkPopupActive() {
       this.isPopUp = true
@@ -336,23 +341,53 @@ export default {
       this.blocks.splice(index, 1)
     },
     createBlock(payload) {
+      if (this.isCreating) {
+        return
+      }
+
+      this.isCreating = true
+
+      const catName = payload.catName
+      const color = Color[this.newColor] ? Color[this.newColor] : this.newColor
+
+      // Change type from temp to category
+      this.blocks[payload.index].type = 'category'
+
+      Axios({
+        ...ApiUrl.glueBoard.create,
+        withCredentials: true,
+        data: {
+          name: catName,
+          color
+        }
+      })
+        .then(() => {
+          console.log('successfully created a category')
+        })
+        .catch(err => {
+          console.error(err)
+        })
+        .finally(() => {
+          this.isCreating = false
+        })
+
       /**
        * If a category name is empty,
        * removes it from the blocks array
        */
-      if (payload.catName.trim().length === 0) {
-        this.removeBlock(payload.index)
-      } else {
-        // Check the name duplication
-        for (let i = 0; i < this.blocks.length; i++) {
-          if (this.blocks[i].catName === payload.catName) {
-            this.blocks[payload.index].available = false
-          } else {
-            this.blocks[payload.index].catName = payload.catName
-            this.blocks[payload.index].type = 'category'
-          }
-        }
-      }
+      // if (payload.catName.trim().length === 0) {
+      //   this.removeBlock(payload.index)
+      // } else {
+      //   // Check the name duplication
+      //   for (let i = 0; i < this.blocks.length; i++) {
+      //     if (this.blocks[i].catName === payload.catName) {
+      //       this.blocks[payload.index].available = false
+      //     } else {
+      //       this.blocks[payload.index].catName = payload.catName
+      //       this.blocks[payload.index].type = 'category'
+      //     }
+      //   }
+      // }
     }
   }
 }
