@@ -6,7 +6,7 @@ export default class User {
     let error
     const res = await Axios.get(ApiUrl.user.profile, {
       withCredentials: true
-    }).catch((err) => {
+    }).catch(err => {
       error = err
     })
 
