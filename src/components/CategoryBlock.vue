@@ -83,7 +83,9 @@ export default {
   watch: {
     catName(next) {
       this.$refs.categoryName.innerHTML = next
-      this.glueboardLink = `/@${this.$store.state.auth.userInfo.nickname}/${next}`
+      this.glueboardLink = `/@${
+        this.$store.state.auth.userInfo.nickname
+      }/${next}`
     }
   },
   mounted() {
