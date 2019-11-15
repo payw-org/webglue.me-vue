@@ -67,9 +67,11 @@
 import ColorPicker from '~/components/ColorPicker'
 import Navigation from '~/components/Navigation'
 import CategoryBlock from '~/components/CategoryBlock'
+import requireAuth from '~/mixins/require-auth'
 
 export default {
   components: { Navigation, CategoryBlock, ColorPicker },
+  mixins: [requireAuth],
   props: {
     color: {
       type: String,
