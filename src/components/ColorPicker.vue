@@ -73,7 +73,8 @@ export default {
     display: block;
     padding: 0.5rem;
 
-    .color-choose {
+    .color-choose,
+    .chrome-picker {
       width: calc(12% + 0.125rem);
       display: inline-block;
       border-radius: 50%;
@@ -92,6 +93,20 @@ export default {
         padding-top: 100%;
       }
     }
+
+    .chrome-picker {
+      background-image: conic-gradient(
+        #ff4141,
+        #ffff51,
+        #55fc55,
+        #5555ff,
+        #ff5959
+      );
+    }
+  }
+
+  .chrome {
+    position: absolute;
   }
 }
 </style>
