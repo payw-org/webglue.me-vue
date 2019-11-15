@@ -1,7 +1,7 @@
 <template>
   <div
     class="add-category"
-    :class="[color]"
+    :class="[color, { 'real-category': type === 'category' }]"
     @click="activatePopUp"
     @mousedown="mousedown"
     @mouseenter="handleMouseEnter(true)"
@@ -24,7 +24,7 @@
         spellcheck="false"
         @click="handleCategoryNameClick"
         @blur="createCategory"
-        @keypress.enter="createCategory"
+        @keydown.enter="createCategory"
       />
     </div>
     <div class="actions">
@@ -83,7 +83,9 @@ export default {
   watch: {
     catName(next) {
       this.$refs.categoryName.innerHTML = next
-      this.glueboardLink = `/@${this.$store.state.auth.userInfo.nickname}/${next}`
+      this.glueboardLink = `/@${
+        this.$store.state.auth.userInfo.nickname
+      }/${next}`
     }
   },
   mounted() {
@@ -118,13 +120,59 @@ export default {
     addCategory() {
       this.$emit('add')
     },
-    createCategory() {
-      const payload = {
-        catName: this.$refs.categoryName.textContent.trim(),
-        index: this.index
+    /**
+     * Check and emit create event
+     * when press enter or blur event occurs
+     *
+     * @param {KeyboardEvent} e
+     */
+    createCategory(e) {
+      if (e) {
+        e.preventDefault()
       }
-      this.isContentEditable = false
-      this.$emit('create', payload)
+
+      /**
+       * No name duplication
+       * No empty name
+       */
+      let isAvailable = true
+      const nameNodes = document.querySelectorAll(
+        '.real-category .category-name'
+      )
+
+      if (!this.$refs.categoryName) {
+        return
+      }
+
+      /** @type {string} */
+      const catName = this.$refs.categoryName.textContent.trim()
+      for (let i = 0; i < nameNodes.length; i += 1) {
+        if (i === this.index) {
+          continue
+        }
+
+        if (nameNodes[i].textContent && nameNodes[i].textContent === catName) {
+          isAvailable = false
+          this.focusInput()
+          break
+        }
+      }
+
+      if (isAvailable) {
+        const payload = {
+          catName,
+          index: this.index
+        }
+        this.$emit('create', payload)
+        this.isContentEditable = false
+      } else if (catName.length === 0) {
+        this.$emit('remove', this.index)
+      } else {
+        this.$el.classList.remove('unavailable')
+        setTimeout(() => {
+          this.$el.classList.add('unavailable')
+        }, 0)
+      }
     },
     removeCategory() {
       this.$emit('remove', this.index)
@@ -162,6 +210,26 @@ export default {
 <style lang="scss">
 @import '~/assets/scss/main';
 
+@keyframes shake {
+  10%,
+  90% {
+    transform: translate3d(-2px, 0, 0);
+  }
+  20%,
+  80% {
+    transform: translate3d(4px, 0, 0);
+  }
+  30%,
+  50%,
+  70% {
+    transform: translate3d(-6px, 0, 0);
+  }
+  40%,
+  60% {
+    transform: translate3d(6px, 0, 0);
+  }
+}
+
 .zoom-in-enter-active,
 .zoom-in-leave-active {
   transition: transform 0.2s, opacity 0.2s;
@@ -195,6 +263,10 @@ export default {
       transition: all 300ms ease;
       box-shadow: 0 0 0 transparent;
     }
+  }
+
+  &.unavailable {
+    animation: shake 0.7s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
   }
 
   .glueboard-link {
