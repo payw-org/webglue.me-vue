@@ -24,7 +24,7 @@
         spellcheck="false"
         @click="handleCategoryNameClick"
         @blur="createCategory"
-        @keypress.enter="createCategory"
+        @keydown.enter="createCategory"
       />
     </div>
     <div class="actions">
@@ -118,7 +118,10 @@ export default {
     addCategory() {
       this.$emit('add')
     },
-    createCategory() {
+    createCategory(e) {
+      if (e) {
+        e.preventDefault()
+      }
       const payload = {
         catName: this.$refs.categoryName.textContent.trim(),
         index: this.index
