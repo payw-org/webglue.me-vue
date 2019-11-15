@@ -20,12 +20,11 @@
           :data-index="i"
         >
           <CategoryBlock
-            :cat-name="block.catName"
-            :color="block.color"
+            :cat-name="block.category.name"
+            :color="block.category.color"
             :type="block.type"
             :index="i"
             :is-edit-mode="isEditMode"
-            :style="{ backgroundColor }"
             @create="createBlock"
             @remove="removeBlock"
             @colorchange="visibleColorPicker($event, i)"
@@ -329,7 +328,10 @@ export default {
     },
     addBlock(color) {
       const newBlock = {
-        catName: '',
+        category: {
+          name: '',
+          color
+        },
         type: 'temp',
         id: Math.random(),
         color
