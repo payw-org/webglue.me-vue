@@ -64,10 +64,12 @@
 </template>
 
 <script>
+import Axios from 'axios'
 import ColorPicker from '~/components/ColorPicker'
 import Navigation from '~/components/Navigation'
 import CategoryBlock from '~/components/CategoryBlock'
 import requireAuth from '~/mixins/require-auth'
+import ApiUrl from '~/modules/api-url'
 
 export default {
   components: { Navigation, CategoryBlock, ColorPicker },
@@ -119,6 +121,14 @@ export default {
     }
   },
   mounted() {
+    // Load blocks(glueboards)
+    Axios({
+      ...ApiUrl.glueBoard.list,
+      withCredentials: true
+    }).then(res => {
+      this.blocks = res.data.glueBoards
+    })
+
     this.profileLink = `/@${this.$store.state.auth.userInfo.nickname}/profile`
 
     /** @type {HTMLElement} */
@@ -273,7 +283,6 @@ export default {
       this.isChangeColor = true
     },
     selectColor(newColor) {
-      console.log(newColor)
       this.blocks[this.willChangeCatBlockIndex].color = newColor
     },
     invisibleColorPicker() {
@@ -327,9 +336,14 @@ export default {
       this.blocks.splice(index, 1)
     },
     createBlock(payload) {
+      /**
+       * If a category name is empty,
+       * removes it from the blocks array
+       */
       if (payload.catName.trim().length === 0) {
         this.removeBlock(payload.index)
       } else {
+        // Check the name duplication
         for (let i = 0; i < this.blocks.length; i++) {
           if (this.blocks[i].catName === payload.catName) {
             this.blocks[payload.index].available = false
