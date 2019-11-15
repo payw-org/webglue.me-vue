@@ -4,7 +4,7 @@
 const options = {
   beforeMount() {
     if (!this.$store.state.auth.isSignedIn) {
-      location.replace('/')
+      // location.replace('/')
       return
     }
 
@@ -14,7 +14,7 @@ const options = {
       !userName ||
       userName.replace('@', '') !== this.$store.state.auth.userInfo.nickname
     ) {
-      location.replace('/')
+      // location.replace('/')
     }
   }
 }
