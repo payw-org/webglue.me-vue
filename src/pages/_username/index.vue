@@ -9,6 +9,7 @@
           class="colorpicker"
           @select="invisibleColorPicker"
           @colorselect="selectColor"
+          @chromecolorselect="chromeSelectColor"
         />
       </transition>
       <transition-group class="grid-layout category-box" name="scale" tag="div">
@@ -24,6 +25,7 @@
             :type="block.type"
             :index="i"
             :is-edit-mode="isEditMode"
+            :style="{ backgroundColor }"
             @create="createBlock"
             @remove="removeBlock"
             @colorchange="visibleColorPicker($event, i)"
@@ -267,11 +269,13 @@ export default {
     })
   },
   methods: {
+    chromeSelectColor(newColor) {
+      this.blocks[this.willChangeCatBlockIndex].color = newColor + ''
+    },
     clickColorPicker() {
       this.isChangeColor = true
     },
     selectColor(newColor) {
-      console.log(newColor)
       this.blocks[this.willChangeCatBlockIndex].color = newColor
     },
     invisibleColorPicker() {
