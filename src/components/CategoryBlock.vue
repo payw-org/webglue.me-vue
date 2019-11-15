@@ -1,7 +1,7 @@
 <template>
   <div
     class="add-category"
-    :class="[color]"
+    :class="[color, { 'real-category': type === 'category' }]"
     @click="activatePopUp"
     @mousedown="mousedown"
     @mouseenter="handleMouseEnter(true)"
