@@ -10,19 +10,45 @@
         :class="'color' + i"
         @click="isSelectColor($event)"
       />
+      <button class="chrome-picker" @click="selectChromeColor" />
     </div>
+    <chrome-picker
+      v-if="isChromePicker"
+      class="chrome"
+      :value="colors"
+      @input="updateValue"
+    />
   </div>
 </template>
 
 <script>
+import { Chrome } from 'vue-color'
+// https://github.com/xiaokaike/vue-color
 export default {
+  components: {
+    'chrome-picker': Chrome
+  },
   props: {
     color: {
       type: String,
       default: 'gray'
     }
   },
+  data() {
+    return {
+      colors: '#194d33',
+      isChromePicker: false
+    }
+  },
   methods: {
+    updateValue(colorData) {
+      const color = colorData.hex
+      this.isChromePicker = false
+      this.$emit('chromecolorselect', color)
+    },
+    selectChromeColor() {
+      this.isChromePicker = true
+    },
     isSelectColor(event) {
       this.$emit('select')
       const list = event.target.classList
@@ -40,7 +66,6 @@ export default {
   top: 2rem;
   z-index: 200;
   transition: all 200ms ease;
-
   .speech-pointer {
     background-color: yellow;
     width: 2rem;
@@ -63,7 +88,8 @@ export default {
     display: block;
     padding: 0.5rem;
 
-    .color-choose {
+    .color-choose,
+    .chrome-picker {
       width: calc(12% + 0.125rem);
       display: inline-block;
       border-radius: 50%;
@@ -82,6 +108,20 @@ export default {
         padding-top: 100%;
       }
     }
+
+    .chrome-picker {
+      background-image: conic-gradient(
+        #ff4141,
+        #ffff51,
+        #55fc55,
+        #5555ff,
+        #ff5959
+      );
+    }
+  }
+
+  .chrome {
+    position: absolute;
   }
 }
 </style>
