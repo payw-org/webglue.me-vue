@@ -1,6 +1,5 @@
 <template>
   <div class="speech-bubble">
-    <chrome-picker class="chrome" :value="colors" @input="updateValue" />
     <div class="speech-pointer" />
     <div class="speech-box">
       <button
@@ -11,16 +10,23 @@
         :class="'color' + i"
         @click="isSelectColor($event)"
       />
+      <button class="chrome-picker" @click="selectChromeColor" />
     </div>
+    <chrome-picker
+      v-if="isChromePicker"
+      class="chrome"
+      :value="colors"
+      @input="updateValue"
+    />
   </div>
 </template>
 
 <script>
-import { chrome } from 'vue-color'
+import { Chrome } from 'vue-color'
 // https://github.com/xiaokaike/vue-color
 export default {
   components: {
-    'chrome-picker': chrome
+    'chrome-picker': Chrome
   },
   props: {
     color: {
@@ -30,10 +36,19 @@ export default {
   },
   data() {
     return {
-      colors: '#194d33'
+      colors: '#194d33',
+      isChromePicker: false
     }
   },
   methods: {
+    updateValue(colorData) {
+      const color = colorData.hex
+      this.isChromePicker = false
+      this.$emit('chromecolorselect', color)
+    },
+    selectChromeColor() {
+      this.isChromePicker = true
+    },
     isSelectColor(event) {
       this.$emit('select')
       const list = event.target.classList
