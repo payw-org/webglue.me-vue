@@ -286,13 +286,17 @@ export default {
   },
   methods: {
     chromeSelectColor(newColor) {
-      this.blocks[this.willChangeCatBlockIndex].color = newColor + ''
+      const blockElms = document.getElementsByClassName('real-category')
+      blockElms[this.willChangeCatBlockIndex].style.backgroundColor = newColor
+      blockElms[this.willChangeCatBlockIndex].style.backgroundImage = 'none'
     },
     clickColorPicker() {
       this.isChangeColor = true
     },
     selectColor(newColor) {
       this.blocks[this.willChangeCatBlockIndex].color = newColor
+      const blockElms = document.getElementsByClassName('real-category')
+      blockElms[this.willChangeCatBlockIndex].style.backgroundImage = ''
     },
     invisibleColorPicker() {
       this.isChangeColor = false
