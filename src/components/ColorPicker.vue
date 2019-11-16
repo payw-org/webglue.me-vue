@@ -66,7 +66,9 @@ export default {
   top: 2rem;
   z-index: 200;
   transition: all 200ms ease;
+
   .speech-pointer {
+    box-shadow: 0 0 1rem rgba(#000, 0.2);
     background-color: yellow;
     width: 2rem;
     height: 2rem;
