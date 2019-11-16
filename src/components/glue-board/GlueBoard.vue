@@ -2,7 +2,6 @@
   <div class="glue-board-scroll-wrapper">
     <div class="glue-board-sentinel" />
     <div class="glue-board-fragment-container">
-      <div></div>
       <Fragment
         v-for="(frag, i) in fragments"
         :key="frag.id"
