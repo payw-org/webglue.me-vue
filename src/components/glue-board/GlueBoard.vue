@@ -33,6 +33,7 @@
 import Fragment from '~/components/glue-board/Fragment'
 import UrlBar from '~/components/glue-board/UrlBar'
 import Selector from '~/components/glue-board/Selector'
+import apiUrl from '~/modules/api-url'
 
 export default {
   components: { Fragment, UrlBar, Selector },
@@ -249,6 +250,7 @@ export default {
       this.rect = payload
     },
     createNewFragment(url) {
+      url = apiUrl.mirror(url)
       this.$store.commit('glueBoard/setMode', 'new')
       this.fragments.push({
         position: {
