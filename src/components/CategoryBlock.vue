@@ -308,7 +308,8 @@ export default {
 
   &.cloned {
     z-index: 99999;
-    box-shadow: 0 0.5rem 3rem rgba(#000, 0.3);
+    transition: box-shadow 0.3s ease;
+    box-shadow: 0 0.5rem 2rem rgba(#000, 0.2);
 
     &.returning {
       transition: all 300ms ease;
@@ -349,11 +350,18 @@ export default {
 
   .category-name,
   .category-name-input {
+    font-weight: fw(6);
     color: #f8f6f6;
     line-height: lh(2);
     min-width: 100%;
     display: block;
     padding: s(6);
+  }
+
+  .category-name span {
+    font-weight: fw(6);
+    color: #f8f6f6;
+    line-height: lh(2);
   }
 
   .category-name {
