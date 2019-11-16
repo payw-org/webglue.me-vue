@@ -232,6 +232,9 @@ export default {
         this.placeCaretAtEnd(this.$refs.categoryName)
       })
     },
+    blurInput() {
+      this.isContentEditable = false
+    },
     placeCaretAtEnd(el) {
       el.focus()
       if (
