@@ -261,6 +261,18 @@ export default {
       this.moving.elm.style.left = giwRect.left + 'px'
       this.moving.elm.style.top = giwRect.top + 'px'
 
+        Axios({
+          ...ApiUrl.glueBoard.update(
+            this.moving.elm.getAttribute('data-category-id')
+          ),
+          withCredentials: true,
+          data: {
+            name: this.moving.elm.getAttribute('data-name'),
+            color: this.moving.elm.getAttribute('data-color'),
+            position: this.moving.index
+          }
+        })
+
       const originalCloned = original
       setTimeout(() => {
         this.moving.elm.parentElement.removeChild(this.moving.elm)
@@ -342,6 +354,10 @@ export default {
       this.blocks.push(newBlock)
     },
     removeBlock(index) {
+      Axios({
+        ...ApiUrl.glueBoard.delete(this.blocks[index].id),
+        withCredentials: true
+      })
       this.isChangeColor = false
       const removeTarget = this.$el.querySelectorAll(
         '.category-box .grid-item-wrapper'
