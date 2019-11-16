@@ -153,10 +153,19 @@ export default {
               this.stat.isMoving = true
               const moveX = e.clientX - this.origin.pointer.x
               const moveY = e.clientY - this.origin.pointer.y
-              // this.fragInfo.position.x = this.origin.position.x + moveX
-              // this.fragInfo.position.y = this.origin.position.y + moveY
-              this.fragInfo.position.x = this.origin.position.x + moveX
-              this.fragInfo.position.y = this.origin.position.y + moveY
+
+              let newX = this.origin.position.x + moveX
+              let newY = this.origin.position.y + moveY
+
+              if (newX <= 0) {
+                newX = 0
+              }
+              if (newY <= 0) {
+                newY = 0
+              }
+
+              this.fragInfo.position.x = newX
+              this.fragInfo.position.y = newY
 
               const fragmentElms = document.querySelectorAll(
                 '.webglue-fragment.postit:not(.hover)'
