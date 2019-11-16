@@ -13,7 +13,8 @@ const color = {
   color12: 'dd7190',
   color13: '87919d',
   color14: '8d928e',
-  color15: '9c908b'
+  color15: '9c908b',
+  gray: 'cfcfcf'
 }
 
 export default color
