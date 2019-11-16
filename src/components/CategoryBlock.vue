@@ -27,8 +27,9 @@
         "
         spellcheck="false"
         @click="handleCategoryNameClick"
-        @blur="createCategory"
-        @keydown.enter="createCategory"
+        @blur="updateCategory"
+        @keydown.enter="updateCategory"
+        @keydown="categoryKeyDown"
       >
         <span>{{ catName }}</span>
       </h1>
@@ -71,6 +72,10 @@ export default {
     catName: {
       type: String,
       default: ''
+    },
+    catId: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -80,7 +85,9 @@ export default {
       isMouseEnter: false,
       isContentEditable: false,
       isClicked: false,
-      isMoving: false
+      isMoving: false,
+      isEditMode: false,
+      categoryNameBackup: ''
     }
   },
   computed: {
@@ -110,6 +117,11 @@ export default {
     }
   },
   methods: {
+    categoryKeyDown() {
+      if (this.isEditMode) {
+        this.$emit('colorchange', this.$el)
+      }
+    },
     mousedown() {
       if (this.type === 'category') {
         this.$emit('movecat', this.$el)
@@ -223,8 +235,6 @@ export default {
         }
         this.$emit('create', payload)
         this.isContentEditable = false
-      } else if (catName.length === 0) {
-        this.$emit('remove', this.index)
       } else {
         this.$el.classList.remove('unavailable')
         setTimeout(() => {
