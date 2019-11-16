@@ -205,14 +205,14 @@ export default {
       }
 
       /** @type {string} */
-      const catName = this.$refs.categoryName.textContent.trim()
+      const categoryName = this.$refs.categoryName.textContent.trim()
 
-      if (catName.length === 0) {
+      if (categoryName.length === 0) {
         this.$emit('remove', this.index)
         return
       }
 
-      this.$refs.categoryName.innerHTML = catName
+      this.$refs.categoryName.innerHTML = categoryName
       for (let i = 0; i < nameNodes.length; i += 1) {
         if (i === this.index) {
           continue
@@ -220,7 +220,7 @@ export default {
 
         if (
           nameNodes[i].textContent.trim() &&
-          nameNodes[i].textContent.trim() === catName
+          nameNodes[i].textContent.trim() === categoryName
         ) {
           isAvailable = false
           this.focusInput()
@@ -230,7 +230,7 @@ export default {
 
       if (isAvailable) {
         const payload = {
-          catName,
+          categoryName,
           index: this.index
         }
         this.$emit('create', payload)
