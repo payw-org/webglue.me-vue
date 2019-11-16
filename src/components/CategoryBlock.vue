@@ -194,12 +194,22 @@ export default {
 
       /** @type {string} */
       const catName = this.$refs.categoryName.textContent.trim()
+
+      if (catName.length === 0) {
+        this.$emit('remove', this.index)
+        return
+      }
+
+      this.$refs.categoryName.innerHTML = catName
       for (let i = 0; i < nameNodes.length; i += 1) {
         if (i === this.index) {
           continue
         }
 
-        if (nameNodes[i].textContent && nameNodes[i].textContent === catName) {
+        if (
+          nameNodes[i].textContent.trim() &&
+          nameNodes[i].textContent.trim() === catName
+        ) {
           isAvailable = false
           this.focusInput()
           break
