@@ -7,7 +7,7 @@
           v-if="isChangeColor"
           ref="colorPicker"
           class="colorpicker"
-          @select="invisibleColorPicker"
+          @select="inActivateColorPicker"
           @colorselect="selectColor"
           @chromecolorselect="chromeSelectColor"
         />
@@ -27,7 +27,7 @@
             :is-edit-mode="isEditMode"
             @create="createBlock"
             @remove="removeBlock"
-            @colorchange="visibleColorPicker($event, i)"
+            @colorchange="activateColorPicker($event, i)"
           />
         </div>
 
@@ -312,10 +312,10 @@ export default {
       const blockElms = document.getElementsByClassName('real-category')
       blockElms[this.willChangeCatBlockIndex].style.backgroundImage = ''
     },
-    invisibleColorPicker() {
+    inActivateColorPicker() {
       this.isChangeColor = false
     },
-    visibleColorPicker(catElem, index) {
+    activateColorPicker(catElem, index) {
       this.willChangeCatBlockIndex = index
       this.isChangeColor = true
       this.$nextTick(() => {
