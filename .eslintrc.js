@@ -7,11 +7,7 @@ module.exports = {
   parserOptions: {
     parser: 'babel-eslint'
   },
-  extends: [
-    '@nuxtjs',
-    '@nuxtjs/eslint-config-typescript',
-    'plugin:nuxt/recommended'
-  ],
+  extends: ['@nuxtjs', 'plugin:nuxt/recommended'],
   rules: {
     'arrow-parens': ['error', 'as-needed'],
     'no-console': ['warn', { allow: ['warn', 'error'] }],
