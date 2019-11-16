@@ -247,6 +247,7 @@ export default {
         window.location.href = glueBoardLink
       }
 
+      if (this.moving.elm) {
       this.stat.catch = false
       this.stat.move = false
       this.moving.elm.classList.add('returning')
@@ -279,7 +280,9 @@ export default {
         if (originalCloned) {
           originalCloned.classList.remove('ghost')
         }
+          this.moving.elm = null
       }, 300)
+      }
 
       original = null
     })
