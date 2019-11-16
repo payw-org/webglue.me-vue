@@ -86,6 +86,13 @@ export default {
   computed: {
     link() {
       return `/@${this.$store.state.auth.userInfo.nickname}/${this.catName}`
+    },
+    hexColor() {
+      if (!this.color.startsWith('#')) {
+        return '#' + this.color
+      } else {
+        return this.color
+    }
     }
   },
   watch: {
