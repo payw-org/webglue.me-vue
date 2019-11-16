@@ -99,7 +99,7 @@ export default {
         return '#' + this.color
       } else {
         return this.color
-    }
+      }
     }
   },
   watch: {
