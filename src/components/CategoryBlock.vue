@@ -29,7 +29,9 @@
         @click="handleCategoryNameClick"
         @blur="createCategory"
         @keydown.enter="createCategory"
-      />
+      >
+        <span>{{ catName }}</span>
+      </h1>
     </div>
     <div class="actions">
       <transition name="zoom-in">
@@ -94,6 +96,7 @@ export default {
   },
   mounted() {
     if (this.type === 'temp') {
+      this.$refs.categoryName.innerHTML = ''
       this.focusInput()
     }
   },
