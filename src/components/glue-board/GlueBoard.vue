@@ -1,6 +1,8 @@
 <template>
   <div class="glue-board-scroll-wrapper">
+    <div class="glue-board-sentinel" />
     <div class="glue-board-fragment-container">
+      <div></div>
       <Fragment
         v-for="(frag, i) in fragments"
         :key="frag.id"
@@ -174,13 +176,15 @@ export default {
         if (bottomOffset > this.maxBottom) {
           this.maxBottom = bottomOffset
         }
+
+        console.log('min left:', this.minLeft)
       }
 
-      const containerElm = document.getElementsByClassName(
-        'glue-board-fragment-container'
-      )[0]
-      containerElm.style.width = this.maxRight - this.minLeft + 'px'
-      containerElm.style.height = this.maxBottom - this.minTop + 'px'
+      const sentinel = document.getElementsByClassName('glue-board-sentinel')[0]
+      sentinel.style.width = this.maxRight - this.minLeft + 'px'
+      sentinel.style.height = this.maxBottom - this.minTop + 'px'
+      sentinel.style.left = this.minLeft + 'px'
+      sentinel.style.top = this.minTop + 'px'
     },
     updateFragmentData(payload, index) {
       console.log('position updated')
@@ -295,6 +299,10 @@ export default {
   bottom: 0;
   left: 0;
   overflow: auto;
+
+  .glue-board-sentinel {
+    position: absolute;
+  }
 
   .glue-board-fragment-container {
     display: inline-block;
