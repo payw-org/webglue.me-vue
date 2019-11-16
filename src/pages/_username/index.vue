@@ -313,9 +313,8 @@ export default {
           'px'
         colorPickerElm.style.top =
           catElem.getBoundingClientRect().top +
-          (catElem.getBoundingClientRect().height +
-            colorPickerElm.getBoundingClientRect().height) /
-            2 +
+          catElem.getBoundingClientRect().height -
+          10 +
           'px'
       })
     },
