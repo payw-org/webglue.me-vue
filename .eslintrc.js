@@ -33,6 +33,17 @@ module.exports = {
         math: 'always'
       }
     ],
-    'no-unused-vars': [1]
+    'no-unused-vars': [1],
+    'no-empty': [1],
+    'vue/max-attributes-per-line': [
+      2,
+      {
+        singleline: 20,
+        multiline: {
+          max: 1,
+          allowFirstLine: false
+        }
+      }
+    ]
   }
 }
