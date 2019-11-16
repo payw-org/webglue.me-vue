@@ -77,6 +77,7 @@ import CategoryBlock from '~/components/CategoryBlock'
 import requireAuth from '~/mixins/require-auth'
 import ApiUrl from '~/modules/api-url'
 import Color from '~/modules/color'
+import Utils from '~/modules/utils'
 
 export default {
   components: { Navigation, CategoryBlock, ColorPicker },
@@ -356,7 +357,7 @@ export default {
           color
         },
         type: 'temp',
-        id: Math.random(),
+        id: Utils.makeId(),
         color
       }
       this.blocks.push(newBlock)
