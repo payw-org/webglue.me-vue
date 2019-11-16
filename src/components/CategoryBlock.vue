@@ -49,7 +49,9 @@
 </template>
 
 <script>
+import Axios from 'axios'
 import IconPlus from '@/components/icons/IconPlus'
+import ApiUrl from '~/modules/api-url'
 
 export default {
   components: { IconPlus },
@@ -141,10 +143,39 @@ export default {
         e.preventDefault()
       }
 
-      /**
-       * No name duplication
-       * No empty name
-       */
+      // When press enter or blur the input
+      // on edit mode
+      if (this.isEditMode) {
+        this.blurInput()
+        const newCategoryName = this.$refs.categoryName.textContent.trim()
+        if (newCategoryName === '') {
+          this.$refs.categoryName.innerHTML = this.categoryNameBackup
+          return
+        } else {
+          this.$emit('update', {
+            name: newCategoryName
+          })
+        }
+        Axios({
+          ...ApiUrl.glueBoard.update(this.catId),
+          withCredentials: true,
+          data: {
+            name: this.$refs.categoryName.textContent.trim()
+          }
+        })
+          .then(() => {
+            console.log('Category name updated')
+          })
+          .catch(err => {
+            console.error(err)
+          })
+        return
+      }
+
+      // Creation
+
+      // No name duplication
+      // No empty name
       let isAvailable = true
       const nameNodes = document.querySelectorAll(
         '.real-category .category-name'
