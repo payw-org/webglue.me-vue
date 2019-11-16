@@ -1,7 +1,11 @@
 <template>
   <div
     class="add-category"
-    :class="[color, { 'real-category': type === 'category' }]"
+    :class="[{ 'real-category': type === 'category' }]"
+    :style="{ backgroundColor: hexColor }"
+    :data-category-id="catId"
+    :data-color="color"
+    :data-name="catName"
     @click="activatePopUp"
     @mousedown="mousedown"
     @mouseenter="handleMouseEnter(true)"
@@ -9,7 +13,7 @@
   >
     <a
       v-if="type === 'category'"
-      :href="glueboardLink"
+      :href="glueBoardLink"
       class="glueboard-link"
     />
     <!-- <a v-if="type === 'category'" :href="link" class="category-link" /> -->
@@ -23,9 +27,12 @@
         "
         spellcheck="false"
         @click="handleCategoryNameClick"
-        @blur="createCategory"
-        @keydown.enter="createCategory"
-      />
+        @blur="updateCategory"
+        @keydown.enter="updateCategory"
+        @keydown="categoryKeyDown"
+      >
+        <span>{{ catName }}</span>
+      </h1>
     </div>
     <div class="actions">
       <transition name="zoom-in">
@@ -43,7 +50,9 @@
 </template>
 
 <script>
+import Axios from 'axios'
 import IconPlus from '@/components/icons/IconPlus'
+import ApiUrl from '~/modules/api-url'
 
 export default {
   components: { IconPlus },
@@ -63,43 +72,65 @@ export default {
     catName: {
       type: String,
       default: ''
+    },
+    catId: {
+      type: String,
+      default: ''
     }
   },
   data() {
     return {
-      glueboardLink: '',
+      glueBoardLink: '',
       isPopUpActive: false,
       isMouseEnter: false,
       isContentEditable: false,
       isClicked: false,
-      isMoving: false
+      isMoving: false,
+      isEditMode: false,
+      categoryNameBackup: ''
     }
   },
   computed: {
     link() {
       return `/@${this.$store.state.auth.userInfo.nickname}/${this.catName}`
+    },
+    hexColor() {
+      if (!this.color.startsWith('#')) {
+        return '#' + this.color
+      } else {
+        return this.color
+      }
     }
   },
   watch: {
     catName(next) {
       this.$refs.categoryName.innerHTML = next
-      this.glueboardLink = `/@${
-        this.$store.state.auth.userInfo.nickname
-      }/${next}`
+      this.glueBoardLink = `/@${this.$store.state.auth.userInfo.nickname}/${next}`
     }
   },
   mounted() {
     if (this.type === 'temp') {
+      this.$refs.categoryName.innerHTML = ''
       this.focusInput()
+    } else {
+      this.glueBoardLink = `/@${this.$store.state.auth.userInfo.nickname}/${this.catId}`
     }
   },
   methods: {
+    categoryKeyDown() {
+      if (this.isEditMode) {
+        this.$emit('colorchange', this.$el)
+      }
+    },
     mousedown() {
       if (this.type === 'category') {
         this.$emit('movecat', this.$el)
       }
     },
     edit() {
+      this.categoryNameBackup = this.catName
+      this.isEditMode = true
+      this.$refs.categoryName.innerHTML = this.catName
       this.$emit('colorchange', this.$el)
       this.focusInput()
     },
@@ -126,15 +157,44 @@ export default {
      *
      * @param {KeyboardEvent} e
      */
-    createCategory(e) {
+    updateCategory(e) {
       if (e) {
         e.preventDefault()
       }
 
-      /**
-       * No name duplication
-       * No empty name
-       */
+      // When press enter or blur the input
+      // on edit mode
+      if (this.isEditMode) {
+        this.blurInput()
+        const newCategoryName = this.$refs.categoryName.textContent.trim()
+        if (newCategoryName === '') {
+          this.$refs.categoryName.innerHTML = this.categoryNameBackup
+          return
+        } else {
+          this.$emit('update', {
+            name: newCategoryName
+          })
+        }
+        Axios({
+          ...ApiUrl.glueBoard.update(this.catId),
+          withCredentials: true,
+          data: {
+            name: this.$refs.categoryName.textContent.trim()
+          }
+        })
+          .then(() => {
+            console.log('Category name updated')
+          })
+          .catch(err => {
+            console.error(err)
+          })
+        return
+      }
+
+      // Creation
+
+      // No name duplication
+      // No empty name
       let isAvailable = true
       const nameNodes = document.querySelectorAll(
         '.real-category .category-name'
@@ -146,12 +206,22 @@ export default {
 
       /** @type {string} */
       const catName = this.$refs.categoryName.textContent.trim()
+
+      if (catName.length === 0) {
+        this.$emit('remove', this.index)
+        return
+      }
+
+      this.$refs.categoryName.innerHTML = catName
       for (let i = 0; i < nameNodes.length; i += 1) {
         if (i === this.index) {
           continue
         }
 
-        if (nameNodes[i].textContent && nameNodes[i].textContent === catName) {
+        if (
+          nameNodes[i].textContent.trim() &&
+          nameNodes[i].textContent.trim() === catName
+        ) {
           isAvailable = false
           this.focusInput()
           break
@@ -165,8 +235,6 @@ export default {
         }
         this.$emit('create', payload)
         this.isContentEditable = false
-      } else if (catName.length === 0) {
-        this.$emit('remove', this.index)
       } else {
         this.$el.classList.remove('unavailable')
         setTimeout(() => {
@@ -183,6 +251,9 @@ export default {
         this.$refs.categoryName.focus()
         this.placeCaretAtEnd(this.$refs.categoryName)
       })
+    },
+    blurInput() {
+      this.isContentEditable = false
     },
     placeCaretAtEnd(el) {
       el.focus()
@@ -257,7 +328,8 @@ export default {
 
   &.cloned {
     z-index: 99999;
-    box-shadow: 0 0.5rem 3rem rgba(#000, 0.3);
+    transition: box-shadow 0.3s ease;
+    box-shadow: 0 0.5rem 2rem rgba(#000, 0.2);
 
     &.returning {
       transition: all 300ms ease;
@@ -298,11 +370,18 @@ export default {
 
   .category-name,
   .category-name-input {
+    font-weight: fw(6);
     color: #f8f6f6;
     line-height: lh(2);
     min-width: 100%;
     display: block;
     padding: s(6);
+  }
+
+  .category-name span {
+    font-weight: fw(6);
+    color: #f8f6f6;
+    line-height: lh(2);
   }
 
   .category-name {

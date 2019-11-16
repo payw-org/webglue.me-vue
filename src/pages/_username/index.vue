@@ -7,7 +7,7 @@
           v-if="isChangeColor"
           ref="colorPicker"
           class="colorpicker"
-          @select="invisibleColorPicker"
+          @select="inActivateColorPicker"
           @colorselect="selectColor"
           @chromecolorselect="chromeSelectColor"
         />
@@ -20,15 +20,16 @@
           :data-index="i"
         >
           <CategoryBlock
-            :cat-name="block.catName"
-            :color="block.color"
+            :cat-name="block.category.name"
+            :color="block.category.color"
+            :cat-id="block.id"
             :type="block.type"
             :index="i"
             :is-edit-mode="isEditMode"
-            :style="{ backgroundColor }"
             @create="createBlock"
+            @update="updateBlock(i, $event)"
             @remove="removeBlock"
-            @colorchange="visibleColorPicker($event, i)"
+            @colorchange="activateColorPicker($event, i)"
           />
         </div>
 
@@ -37,7 +38,12 @@
           key="category-block-new"
           class="grid-item-wrapper"
         >
-          <CategoryBlock type="add" @add="addBlock" @popup="checkPopupActive" />
+          <CategoryBlock
+            type="add"
+            class="gray"
+            @add="addBlock"
+            @popup="checkPopupActive"
+          />
         </div>
       </transition-group>
       <button class="mypage-btn">
@@ -73,6 +79,7 @@ import CategoryBlock from '~/components/CategoryBlock'
 import requireAuth from '~/mixins/require-auth'
 import ApiUrl from '~/modules/api-url'
 import Color from '~/modules/color'
+import Utils from '~/modules/utils'
 
 export default {
   components: { Navigation, CategoryBlock, ColorPicker },
@@ -131,7 +138,6 @@ export default {
       ...ApiUrl.glueBoard.list,
       withCredentials: true
     }).then(res => {
-      console.log(res.data)
       this.blocks = res.data.glueBoards
     })
 
@@ -150,10 +156,7 @@ export default {
       const target = e.target
 
       // Mousedown category element
-      if (
-        target.closest('.add-category:not(.gray)') &&
-        !target.closest('.actions')
-      ) {
+      if (target.closest('.real-category') && !target.closest('.actions')) {
         e.preventDefault()
         e.stopPropagation()
         // Init mousedown event information
@@ -248,32 +251,51 @@ export default {
         window.location.href = glueBoardLink
       }
 
-      this.stat.catch = false
-      this.stat.move = false
-      this.moving.elm.classList.add('returning')
-      this.moving.elm.getBoundingClientRect()
+      if (this.moving.elm) {
+        this.stat.catch = false
+        this.stat.move = false
+        this.moving.elm.classList.add('returning')
+        this.moving.elm.getBoundingClientRect()
 
-      // Move back the cloned element
-      // to the position where it was
-      const gridItemWrapper = document.getElementsByClassName(
-        'grid-item-wrapper'
-      )[this.moving.index]
-      const giwRect = gridItemWrapper.getBoundingClientRect()
-      this.moving.elm.style.left = giwRect.left + 'px'
-      this.moving.elm.style.top = giwRect.top + 'px'
+        // Move back the cloned element
+        // to the position where it was
+        const gridItemWrapper = document.getElementsByClassName(
+          'grid-item-wrapper'
+        )[this.moving.index]
+        const giwRect = gridItemWrapper.getBoundingClientRect()
+        this.moving.elm.style.left = giwRect.left + 'px'
+        this.moving.elm.style.top = giwRect.top + 'px'
 
-      const originalCloned = original
-      setTimeout(() => {
-        this.moving.elm.parentElement.removeChild(this.moving.elm)
-        if (originalCloned) {
-          originalCloned.classList.remove('ghost')
-        }
-      }, 300)
+        Axios({
+          ...ApiUrl.glueBoard.update(
+            this.moving.elm.getAttribute('data-category-id')
+          ),
+          withCredentials: true,
+          data: {
+            position: this.moving.index
+          }
+        })
+          .then(() => {
+            console.log('Position updated')
+          })
+          .catch(err => {
+            console.error(err)
+          })
+
+        const originalCloned = original
+        setTimeout(() => {
+          this.moving.elm.parentElement.removeChild(this.moving.elm)
+          if (originalCloned) {
+            originalCloned.classList.remove('ghost')
+          }
+          this.moving.elm = null
+        }, 300)
+      }
 
       original = null
     })
 
-    window.addEventListener('click', e => {
+    window.addEventListener('mousedown', e => {
       /** @type {HTMLElement} */
       const target = e.target
       if (
@@ -294,14 +316,14 @@ export default {
       this.isChangeColor = true
     },
     selectColor(newColor) {
-      this.blocks[this.willChangeCatBlockIndex].color = newColor
+      this.blocks[this.willChangeCatBlockIndex].color = Color[newColor]
       const blockElms = document.getElementsByClassName('real-category')
       blockElms[this.willChangeCatBlockIndex].style.backgroundImage = ''
     },
-    invisibleColorPicker() {
+    inActivateColorPicker() {
       this.isChangeColor = false
     },
-    visibleColorPicker(catElem, index) {
+    activateColorPicker(catElem, index) {
       this.willChangeCatBlockIndex = index
       this.isChangeColor = true
       this.$nextTick(() => {
@@ -314,9 +336,8 @@ export default {
           'px'
         colorPickerElm.style.top =
           catElem.getBoundingClientRect().top +
-          (catElem.getBoundingClientRect().height +
-            colorPickerElm.getBoundingClientRect().height) /
-            2 +
+          catElem.getBoundingClientRect().height -
+          10 +
           'px'
       })
     },
@@ -331,16 +352,25 @@ export default {
     deactivatePopUp() {
       this.isPopUp = false
     },
+    updateCategory() {},
     addBlock(color) {
+      color = Color[color] ? Color[color] : color
       const newBlock = {
-        catName: '',
+        category: {
+          name: '',
+          color
+        },
         type: 'temp',
-        id: Math.random(),
+        id: Utils.makeId(),
         color
       }
       this.blocks.push(newBlock)
     },
     removeBlock(index) {
+      Axios({
+        ...ApiUrl.glueBoard.delete(this.blocks[index].id),
+        withCredentials: true
+      })
       this.isChangeColor = false
       const removeTarget = this.$el.querySelectorAll(
         '.category-box .grid-item-wrapper'
@@ -356,7 +386,7 @@ export default {
 
       this.isCreating = true
 
-      const catName = payload.catName
+      const categoryName = payload.categoryName
       const color = Color[this.newColor] ? Color[this.newColor] : this.newColor
 
       // Change type from temp to category
@@ -366,37 +396,25 @@ export default {
         ...ApiUrl.glueBoard.create,
         withCredentials: true,
         data: {
-          name: catName,
+          name: categoryName,
           color
         }
       })
         .then(() => {
-          console.log('successfully created a category')
+          console.log('Created a category')
         })
         .catch(err => {
+          console.log('An error occurs while creating a category')
           console.error(err)
         })
         .finally(() => {
           this.isCreating = false
         })
-
-      /**
-       * If a category name is empty,
-       * removes it from the blocks array
-       */
-      // if (payload.catName.trim().length === 0) {
-      //   this.removeBlock(payload.index)
-      // } else {
-      //   // Check the name duplication
-      //   for (let i = 0; i < this.blocks.length; i++) {
-      //     if (this.blocks[i].catName === payload.catName) {
-      //       this.blocks[payload.index].available = false
-      //     } else {
-      //       this.blocks[payload.index].catName = payload.catName
-      //       this.blocks[payload.index].type = 'category'
-      //     }
-      //   }
-      // }
+    },
+    updateBlock(index, payload) {
+      const { name } = payload
+      this.blocks[index].category.name = name
+      this.inActivateColorPicker()
     }
   }
 }

@@ -1,7 +1,7 @@
 <template>
-  <div class="speech-bubble">
-    <div class="speech-pointer" />
-    <div class="speech-box">
+  <div class="color-picker">
+    <div class="arrow" />
+    <div class="cp-colors">
       <button
         v-for="i in 15"
         id="color-button"
@@ -61,12 +61,14 @@ export default {
 
 <style lang="scss">
 @import '~/assets/scss/main';
-.speech-bubble {
+.color-picker {
   position: fixed;
   top: 2rem;
   z-index: 200;
   transition: all 200ms ease;
-  .speech-pointer {
+
+  .arrow {
+    box-shadow: 0 0 1rem rgba(#000, 0.2);
     background-color: yellow;
     width: 2rem;
     height: 2rem;
@@ -79,7 +81,7 @@ export default {
     border-radius: 5px;
   }
 
-  .speech-box {
+  .cp-colors {
     background-color: #fff;
     box-shadow: 0 1rem 5rem rgba(#000, 0.2);
     border-radius: 0.84rem;
