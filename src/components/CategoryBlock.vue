@@ -107,6 +107,9 @@ export default {
       }
     },
     edit() {
+      this.categoryNameBackup = this.catName
+      this.isEditMode = true
+      this.$refs.categoryName.innerHTML = this.catName
       this.$emit('colorchange', this.$el)
       this.focusInput()
     },
