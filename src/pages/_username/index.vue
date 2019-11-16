@@ -36,7 +36,12 @@
           key="category-block-new"
           class="grid-item-wrapper"
         >
-          <CategoryBlock type="add" @add="addBlock" @popup="checkPopupActive" />
+          <CategoryBlock
+            type="add"
+            class="gray"
+            @add="addBlock"
+            @popup="checkPopupActive"
+          />
         </div>
       </transition-group>
       <button class="mypage-btn">
