@@ -1,7 +1,11 @@
 <template>
   <div
     class="add-category"
-    :class="[color, { 'real-category': type === 'category' }]"
+    :class="[{ 'real-category': type === 'category' }]"
+    :style="{ backgroundColor: hexColor }"
+    :data-category-id="catId"
+    :data-color="color"
+    :data-name="catName"
     @click="activatePopUp"
     @mousedown="mousedown"
     @mouseenter="handleMouseEnter(true)"
