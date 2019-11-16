@@ -13,7 +13,7 @@
   >
     <a
       v-if="type === 'category'"
-      :href="glueboardLink"
+      :href="glueBoardLink"
       class="glueboard-link"
     />
     <!-- <a v-if="type === 'category'" :href="link" class="category-link" /> -->
@@ -75,7 +75,7 @@ export default {
   },
   data() {
     return {
-      glueboardLink: '',
+      glueBoardLink: '',
       isPopUpActive: false,
       isMouseEnter: false,
       isContentEditable: false,
@@ -91,15 +91,15 @@ export default {
   watch: {
     catName(next) {
       this.$refs.categoryName.innerHTML = next
-      this.glueboardLink = `/@${
-        this.$store.state.auth.userInfo.nickname
-      }/${next}`
+      this.glueBoardLink = `/@${this.$store.state.auth.userInfo.nickname}/${next}`
     }
   },
   mounted() {
     if (this.type === 'temp') {
       this.$refs.categoryName.innerHTML = ''
       this.focusInput()
+    } else {
+      this.glueBoardLink = `/@${this.$store.state.auth.userInfo.nickname}/${this.catId}`
     }
   },
   methods: {
@@ -138,7 +138,7 @@ export default {
      *
      * @param {KeyboardEvent} e
      */
-    createCategory(e) {
+    updateCategory(e) {
       if (e) {
         e.preventDefault()
       }
