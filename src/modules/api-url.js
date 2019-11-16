@@ -5,7 +5,12 @@ export default {
     signInUp: `${host}/v1/oauth2/google`,
     profile: `${host}/v1/me/profile`
   },
-  mirror: `${host}/v1/mirroring/html`,
+  /**
+   * @param {string} url
+   */
+  mirror(url) {
+    return `${host}/v1/mirroring/html?url=${url}`
+  },
   glueBoard: {
     list: {
       method: 'get',
