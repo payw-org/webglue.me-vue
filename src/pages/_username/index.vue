@@ -287,7 +287,7 @@ export default {
       original = null
     })
 
-    window.addEventListener('click', e => {
+    window.addEventListener('mousedown', e => {
       /** @type {HTMLElement} */
       const target = e.target
       if (
