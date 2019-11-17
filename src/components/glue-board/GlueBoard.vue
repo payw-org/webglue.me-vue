@@ -35,9 +35,16 @@ import Fragment from '~/components/glue-board/Fragment'
 import UrlBar from '~/components/glue-board/UrlBar'
 import Selector from '~/components/glue-board/Selector'
 import apiUrl from '~/modules/api-url'
+import Axios from 'axios'
 
 export default {
   components: { Fragment, UrlBar, Selector },
+  props: {
+    glueBoardId: {
+      type: String,
+      default: ''
+    }
+  },
   data() {
     return {
       initialheight: null,
@@ -218,6 +225,13 @@ export default {
         .substr(2, 5)
     },
     loadFragments() {
+      Axios({
+        ...apiUrl.fragment.list(this.glueBoardId),
+        withCredentials: true
+      }).then(res => {
+        console.log(res.data)
+      })
+
       this.fragments = [
         {
           position: {
