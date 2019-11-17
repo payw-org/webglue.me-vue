@@ -43,7 +43,7 @@ export default {
   methods: {
     updateValue(colorData) {
       const color = colorData.hex
-      this.isChromePicker = false
+      // this.isChromePicker = false
       this.$emit('chromecolorselect', color)
     },
     selectChromeColor() {
