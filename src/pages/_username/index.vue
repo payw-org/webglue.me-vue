@@ -303,7 +303,7 @@ export default {
       /** @type {HTMLElement} */
       const target = e.target
       if (
-        !target.closest('.speech-bubble') &&
+        !target.closest('.color-picker') &&
         !target.closest('.add-category')
       ) {
         this.isChangeColor = false
@@ -320,7 +320,7 @@ export default {
       this.isChangeColor = true
     },
     selectColor(newColor) {
-      this.blocks[this.willChangeCatBlockIndex].color = Color[newColor]
+      this.blocks[this.willChangeCatBlockIndex].category.color = Color[newColor]
       const blockElms = document.getElementsByClassName('real-category')
       blockElms[this.willChangeCatBlockIndex].style.backgroundImage = ''
     },
@@ -423,7 +423,7 @@ export default {
     updateBlock(index, payload) {
       const { name } = payload
       this.blocks[index].category.name = name
-      this.inActivateColorPicker()
+      // this.inActivateColorPicker()
     }
   }
 }
