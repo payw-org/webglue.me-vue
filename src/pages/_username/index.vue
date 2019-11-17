@@ -399,6 +399,7 @@ export default {
 
       // Change type from temp to category
       this.blocks[payload.index].type = 'category'
+      this.blocks[payload.index].category.name = categoryName
 
       Axios({
         ...ApiUrl.glueBoard.create,
