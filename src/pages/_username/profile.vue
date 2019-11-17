@@ -56,6 +56,10 @@
         </div>
       </div>
     </div>
+    <button class="category-btn">
+      <a :href="categoryLink" class="category-link" />
+      <img src="~/assets/images/category.png" class="category-icon" />
+    </button>
   </div>
 </template>
 
@@ -68,11 +72,13 @@ export default {
     return {
       isPopUpActive: false,
       newNickname: '',
-      urlSrc: ''
+      urlSrc: '',
+      categoryLink: ''
     }
   },
   mounted() {
     this.urlSrc = this.$store.state.auth.userInfo.image
+    this.categoryLink = `/@${this.$store.state.auth.userInfo.nickname}`
   },
   methods: {
     activatePopUp() {
@@ -187,6 +193,33 @@ export default {
     }
   }
 
+  .category-btn {
+    position: fixed;
+    background-color: white;
+    opacity: 0.8;
+    width: 3.2rem;
+    height: 3.2rem;
+    left: 1rem;
+    bottom: 1rem;
+    border-radius: 50%;
+    box-shadow: 0 0.5rem 2rem rgba(#000, 0.3);
+    display: flex;
+    justify-content: center;
+
+    .category-link {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 3;
+    }
+
+    .category-icon {
+      width: 50%;
+      height: 50%;
+    }
+  }
   .popup {
     position: fixed;
     top: 0;
