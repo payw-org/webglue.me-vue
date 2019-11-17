@@ -483,13 +483,14 @@ export default {
 
   .mypage-btn {
     position: fixed;
-    background-image: linear-gradient(to bottom, #ff3952, #ff6f37);
+    background-color: white;
     opacity: 0.8;
-    width: 3rem;
-    height: 3rem;
+    width: 3.2rem;
+    height: 3.2rem;
     left: 1rem;
     bottom: 1rem;
     border-radius: 50%;
+    box-shadow: 0 0.5rem 2rem rgba(#000, 0.3);
 
     .mypage-link {
       position: absolute;
@@ -501,8 +502,8 @@ export default {
     }
 
     .mypage-icon {
-      width: 80%;
-      height: 80%;
+      width: 55%;
+      height: 55%;
     }
   }
   .popup {
