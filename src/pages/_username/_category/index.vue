@@ -1,7 +1,7 @@
 <template>
   <div class="glue-board-page">
     <Navigation />
-    <GlueBoard />
+    <GlueBoard :glue-board-id="$route.params.category" />
   </div>
 </template>
 
