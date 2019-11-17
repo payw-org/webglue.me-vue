@@ -42,10 +42,12 @@
         <div class="bg" @click="deactivatePopUp" />
         <div class="input-box">
           <input
+            ref="inputNickname"
             v-model="newNickname"
             class="input"
             type="text"
             placeholder="새 닉네임"
+            @keypress.enter="updateNickname"
           />
           <button class="edit" @click="updateNickname">
             수정
@@ -65,20 +67,42 @@
 
 <script>
 import Navigation from '~/components/Navigation'
+import Axios from 'axios'
+import ApiUrl from '~/modules/api-url'
 
 export default {
   components: { Navigation },
   data() {
     return {
       isPopUpActive: false,
-      newNickname: '',
       urlSrc: '',
-      categoryLink: ''
+      categoryLink: '',
+      newNickname: this.$store.state.auth.userInfo.nickname
     }
   },
   mounted() {
     this.urlSrc = this.$store.state.auth.userInfo.image
     this.categoryLink = `/@${this.$store.state.auth.userInfo.nickname}`
+    Axios.get(ApiUrl.user.profile, {
+      withCredentials: true
+    })
+      .then(res => {
+        this.$store.commit('auth/setUser', res.data)
+        this.$store.commit('auth/setSignedIn', true)
+
+        this.imgSrc = res.data.image
+        this.name = res.data.name
+        this.newNickname = res.data.nickname
+
+        this.$nextTick(() => {
+          // this.$refs.inputNickname.select()
+        })
+      })
+      .catch(err => {
+        if (err.response.status === 401) {
+          this.$store.commit('auth/setSignedIn', false)
+        }
+      })
   },
   methods: {
     activatePopUp() {
@@ -88,6 +112,25 @@ export default {
       this.isPopUpActive = false
     },
     updateNickname() {
+      if (this.newNickname.trim().length === 0) {
+        window.alert('공백은 안됩니다')
+        return
+      }
+      Axios({
+        method: 'patch',
+        url: ApiUrl.user.profile,
+        withCredentials: true,
+        data: {
+          nickname: this.newNickname
+        }
+      })
+        .then(() => {
+          window.location.replace(`/@${this.newNickname}/profile`)
+        })
+        .catch(err => {
+          console.error(err)
+        })
+
       this.deactivatePopUp()
     }
   }
