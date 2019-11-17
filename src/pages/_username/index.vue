@@ -371,6 +371,10 @@ export default {
         ...ApiUrl.glueBoard.delete(this.blocks[index].id),
         withCredentials: true
       })
+        .then(() => {})
+        .catch(err => {
+          console.error(err)
+        })
       this.isChangeColor = false
       const removeTarget = this.$el.querySelectorAll(
         '.category-box .grid-item-wrapper'

@@ -90,7 +90,9 @@ export default {
         .then(() => {
           window.location.replace(`/@${this.nickname}`)
         })
-        .catch(() => {})
+        .catch(err => {
+          console.error(err)
+        })
     }
   }
 }
