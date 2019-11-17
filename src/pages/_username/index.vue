@@ -137,9 +137,13 @@ export default {
     Axios({
       ...ApiUrl.glueBoard.list,
       withCredentials: true
-    }).then(res => {
-      this.blocks = res.data.glueBoards
     })
+      .then(res => {
+        this.blocks = res.data.glueBoards
+      })
+      .catch(err => {
+        console.error(err)
+      })
 
     this.profileLink = `/@${this.$store.state.auth.userInfo.nickname}/profile`
 
