@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   // Custom global id of html dom
   globalName: 'webglue',
 
