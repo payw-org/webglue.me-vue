@@ -165,6 +165,9 @@ $nav-height: 3.5rem;
         }
 
         .add-icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
           width: 55%;
         }
       }
