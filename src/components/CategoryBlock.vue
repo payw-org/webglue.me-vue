@@ -4,6 +4,7 @@
     :class="[{ 'real-category': type === 'category' }]"
     :style="{ backgroundColor: hexColor }"
     :data-category-id="catId"
+    :data-category-local-id="catLocalId"
     :data-color="color"
     :data-name="catName"
     @click="activatePopUp"
@@ -76,6 +77,10 @@ export default {
     catId: {
       type: String,
       default: ''
+    },
+    catLocalId: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -130,6 +135,7 @@ export default {
     edit() {
       this.categoryNameBackup = this.catName
       this.isEditMode = true
+      console.log('edit', this.catName)
       this.$refs.categoryName.innerHTML = this.catName
       this.$emit('colorchange', this.$el)
       this.focusInput()
@@ -152,50 +158,9 @@ export default {
       this.$emit('add')
     },
     /**
-     * Check and emit create event
-     * when press enter or blur event occurs
-     *
-     * @param {KeyboardEvent} e
+     * @returns {boolean}
      */
-    updateCategory(e) {
-      if (e) {
-        e.preventDefault()
-      }
-
-      // When press enter or blur the input
-      // on edit mode
-      if (this.isEditMode) {
-        this.blurInput()
-        const newCategoryName = this.$refs.categoryName.textContent.trim()
-        if (newCategoryName === '') {
-          this.$refs.categoryName.innerHTML = this.categoryNameBackup
-          return
-        } else {
-          this.$emit('update', {
-            name: newCategoryName
-          })
-        }
-        Axios({
-          ...ApiUrl.glueBoard.update(this.catId),
-          withCredentials: true,
-          data: {
-            name: this.$refs.categoryName.textContent.trim()
-          }
-        })
-          .then(() => {
-            console.log('Category name updated')
-          })
-          .catch(err => {
-            console.error(err)
-          })
-        return
-      }
-
-      // Creation
-
-      // No name duplication
-      // No empty name
-      let isAvailable = true
+    validateDuplication() {
       const nameNodes = document.querySelectorAll(
         '.real-category .category-name'
       )
@@ -209,7 +174,7 @@ export default {
 
       if (categoryName.length === 0) {
         this.$emit('remove', this.index)
-        return
+        return false
       }
 
       this.$refs.categoryName.innerHTML = categoryName
@@ -222,11 +187,78 @@ export default {
           nameNodes[i].textContent.trim() &&
           nameNodes[i].textContent.trim() === categoryName
         ) {
-          isAvailable = false
           this.focusInput()
-          break
+          return false
         }
       }
+
+      return true
+    },
+    /**
+     * Check and emit create event
+     * when press enter or blur event occurs
+     *
+     * @param {KeyboardEvent} e
+     */
+    updateCategory(e) {
+      console.log('update category')
+      if (e) {
+        e.preventDefault()
+      }
+
+      const categoryName = this.$refs.categoryName.textContent.trim()
+      const isAvailable = this.validateDuplication()
+
+      // When press enter or blur the input
+      // on edit mode
+      if (this.isEditMode) {
+        this.blurInput()
+        const newCategoryName = this.$refs.categoryName.textContent.trim()
+        if (newCategoryName === '') {
+          console.log('Category name is empty')
+          this.$refs.categoryName.innerHTML = this.categoryNameBackup
+          return
+        } else {
+          this.$emit('update', {
+            name: newCategoryName
+          })
+        }
+
+        if (isAvailable) {
+          Axios({
+            ...ApiUrl.glueBoard.update(this.catId),
+            withCredentials: true,
+            data: {
+              name: this.$refs.categoryName.textContent.trim()
+            }
+          })
+            .then(() => {
+              console.log('Category name updated')
+            })
+            .catch(err => {
+              console.error(err)
+            })
+        } else {
+          if (e.key) {
+            this.focusInput()
+          } else {
+            this.$refs.categoryName.innerHTML = this.categoryNameBackup
+          }
+          this.$el.classList.remove('unavailable')
+          setTimeout(() => {
+            this.$el.classList.add('unavailable')
+            setTimeout(() => {
+              this.$el.classList.remove('unavailable')
+            }, 700)
+          }, 0)
+        }
+        return
+      }
+
+      // Creation
+
+      // No name duplication
+      // No empty name
 
       if (isAvailable) {
         const payload = {
@@ -239,6 +271,9 @@ export default {
         this.$el.classList.remove('unavailable')
         setTimeout(() => {
           this.$el.classList.add('unavailable')
+          setTimeout(() => {
+            this.$el.classList.remove('unavailable')
+          }, 700)
         }, 0)
       }
     },
