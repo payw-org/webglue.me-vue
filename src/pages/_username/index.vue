@@ -138,12 +138,16 @@ export default {
     Axios({
       ...ApiUrl.glueBoard.list,
       withCredentials: true
-    }).then(res => {
-      this.blocks = res.data.glueBoards.map(item => {
-        item.localId = Utils.makeId()
-        return item
-      })
     })
+      .then(res => {
+        this.blocks = res.data.glueBoards.map(item => {
+          item.localId = Utils.makeId()
+          return item
+        })
+      })
+      .catch(err => {
+        console.error(err)
+      })
 
     this.profileLink = `/@${this.$store.state.auth.userInfo.nickname}/profile`
 
@@ -305,7 +309,7 @@ export default {
       /** @type {HTMLElement} */
       const target = e.target
       if (
-        !target.closest('.speech-bubble') &&
+        !target.closest('.color-picker') &&
         !target.closest('.add-category')
       ) {
         this.isChangeColor = false
@@ -322,7 +326,7 @@ export default {
       this.isChangeColor = true
     },
     selectColor(newColor) {
-      this.blocks[this.willChangeCatBlockIndex].color = Color[newColor]
+      this.blocks[this.willChangeCatBlockIndex].category.color = Color[newColor]
       const blockElms = document.getElementsByClassName('real-category')
       blockElms[this.willChangeCatBlockIndex].style.backgroundImage = ''
     },
@@ -378,6 +382,10 @@ export default {
         ...ApiUrl.glueBoard.delete(this.blocks[index].id),
         withCredentials: true
       })
+        .then(() => {})
+        .catch(err => {
+          console.error(err)
+        })
       this.isChangeColor = false
       const removeTarget = this.$el.querySelectorAll(
         '.category-box .grid-item-wrapper'
@@ -397,6 +405,7 @@ export default {
       // Change type from temp to category
       this.blocks[payload.index].category.name = categoryName
       this.blocks[payload.index].type = 'category'
+      this.blocks[payload.index].category.name = categoryName
 
       this.isCreating = true
 
@@ -424,7 +433,7 @@ export default {
     updateBlock(index, payload) {
       const { name } = payload
       this.blocks[index].category.name = name
-      this.inActivateColorPicker()
+      // this.inActivateColorPicker()
     }
   }
 }
@@ -484,13 +493,14 @@ export default {
 
   .mypage-btn {
     position: fixed;
-    background-image: linear-gradient(to bottom, #ff3952, #ff6f37);
+    background-color: white;
     opacity: 0.8;
-    width: 3rem;
-    height: 3rem;
+    width: 3.2rem;
+    height: 3.2rem;
     left: 1rem;
     bottom: 1rem;
     border-radius: 50%;
+    box-shadow: 0 0.5rem 2rem rgba(#000, 0.3);
 
     .mypage-link {
       position: absolute;
@@ -502,8 +512,8 @@ export default {
     }
 
     .mypage-icon {
-      width: 80%;
-      height: 80%;
+      width: 55%;
+      height: 55%;
     }
   }
   .popup {

@@ -8,7 +8,7 @@
         :key="`color-picker-${i}`"
         class="color-choose"
         :class="'color' + i"
-        @click="isSelectColor($event)"
+        @click="selectColor($event)"
       />
       <button class="chrome-picker" @click="selectChromeColor" />
     </div>
@@ -43,13 +43,13 @@ export default {
   methods: {
     updateValue(colorData) {
       const color = colorData.hex
-      this.isChromePicker = false
+      // this.isChromePicker = false
       this.$emit('chromecolorselect', color)
     },
     selectChromeColor() {
       this.isChromePicker = true
     },
-    isSelectColor(event) {
+    selectColor(event) {
       this.$emit('select')
       const list = event.target.classList
       const selectedColorName = list[1]

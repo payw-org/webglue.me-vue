@@ -230,6 +230,8 @@ export default {
         withCredentials: true
       }).then(res => {
         this.fragments = res.data.fragments
+      }).catch(err => {
+        console.error(err)
       })
 
       // this.fragments = [
