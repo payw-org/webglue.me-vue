@@ -92,3 +92,6 @@ sw.*
 # VSCode
 .vscode/*
 !.vscode/settings.json
+
+# npm
+package-lock.json
