@@ -15,7 +15,7 @@
       <transition-group class="grid-layout category-box" name="scale" tag="div">
         <div
           v-for="(block, i) in blocks"
-          :key="block.id"
+          :key="block.localId"
           class="grid-item-wrapper"
           :data-index="i"
         >
@@ -23,6 +23,7 @@
             :cat-name="block.category.name"
             :color="block.category.color"
             :cat-id="block.id"
+            :cat-local-id="block.localId"
             :type="block.type"
             :index="i"
             :is-edit-mode="isEditMode"
@@ -139,7 +140,10 @@ export default {
       withCredentials: true
     })
       .then(res => {
-        this.blocks = res.data.glueBoards
+        this.blocks = res.data.glueBoards.map(item => {
+          item.localId = Utils.makeId()
+          return item
+        })
       })
       .catch(err => {
         console.error(err)
@@ -270,6 +274,8 @@ export default {
         this.moving.elm.style.left = giwRect.left + 'px'
         this.moving.elm.style.top = giwRect.top + 'px'
 
+        console.log('updating category position')
+
         Axios({
           ...ApiUrl.glueBoard.update(
             this.moving.elm.getAttribute('data-category-id')
@@ -366,6 +372,7 @@ export default {
         },
         type: 'temp',
         id: Utils.makeId(),
+        localId: Utils.makeId(),
         color
       }
       this.blocks.push(newBlock)
@@ -392,14 +399,15 @@ export default {
         return
       }
 
-      this.isCreating = true
-
       const categoryName = payload.categoryName
       const color = Color[this.newColor] ? Color[this.newColor] : this.newColor
 
       // Change type from temp to category
+      this.blocks[payload.index].category.name = categoryName
       this.blocks[payload.index].type = 'category'
       this.blocks[payload.index].category.name = categoryName
+
+      this.isCreating = true
 
       Axios({
         ...ApiUrl.glueBoard.create,
@@ -409,8 +417,10 @@ export default {
           color
         }
       })
-        .then(() => {
+        .then(res => {
+          console.log(res.data.createdID)
           console.log('Created a category')
+          this.blocks[payload.index].id = res.data.createdID
         })
         .catch(err => {
           console.log('An error occurs while creating a category')
