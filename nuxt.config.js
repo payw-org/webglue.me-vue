@@ -1,4 +1,7 @@
-module.exports = {
+/**
+ * @type {import("@nuxt/types").Configuration}
+ */
+const config = {
   // Custom global id of html dom
   globalName: 'webglue',
 
@@ -38,5 +41,12 @@ module.exports = {
   // Build modules
   buildModules: ['@nuxtjs/eslint-module'],
 
-  plugins: ['~/plugins/init.js']
+  plugins: ['~/plugins/init.js'],
+
+  serverMiddleware: [
+    // API middleware
+    '~/server/index.js'
+  ]
 }
+
+module.exports = config
