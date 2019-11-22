@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "dev": "nuxt",
-    "dev:express": "cross-env NODE_ENV=development nodemon ./src/server/index.js --watch server",
+    "dev:express": "cross-env NODE_ENV=development nodemon ./src/server/index.js --watch ./src/",
     "dev:live": "nuxt dev --port=3100",
     "build": "nuxt build",
     "start": "nuxt start --port=3100",
