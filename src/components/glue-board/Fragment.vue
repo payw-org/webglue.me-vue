@@ -171,81 +171,30 @@ export default {
                 '.webglue-fragment.postit:not(.hover)'
               )
 
+              this.stat.isValidPos = true
+
               for (let i = 0; i < fragmentElms.length; i += 1) {
-                let isInvalid = false
-                const fragElm = fragmentElms[i]
-                const fragElmRect = fragElm.getBoundingClientRect()
-                const vertices = []
-                vertices[0] = {
-                  x: fragElmRect.left,
-                  y: fragElmRect.top
-                }
-                vertices[1] = {
-                  x: fragElmRect.right,
-                  y: fragElmRect.top
-                }
-                vertices[2] = {
-                  x: fragElmRect.left,
-                  y: fragElmRect.bottom
-                }
-                vertices[3] = {
-                  x: fragElmRect.right,
-                  y: fragElmRect.bottom
-                }
+                const otherFragRect = fragmentElms[i].getBoundingClientRect()
+                const otherFragHalfWidth = otherFragRect.width / 2
+                const otherFragHalfHeight = otherFragRect.height / 2
+                const otherFragCenterX = otherFragRect.left + otherFragHalfWidth
+                const otherFragCenterY = otherFragRect.top + otherFragHalfHeight
 
-                const thisRect = this.$el.getBoundingClientRect()
+                const thisFragRect = this.$el.getBoundingClientRect()
+                const thisFragHalfWidth = thisFragRect.width / 2
+                const thisFragHalfHeight = thisFragRect.height / 2
+                const thisFragCenterX = thisFragRect.left + thisFragHalfWidth
+                const thisFragCenterY = thisFragRect.top + thisFragHalfHeight
 
-                for (let j = 0; j < vertices.length; j += 1) {
-                  const vertex = vertices[j]
-                  if (
-                    vertex.x >= thisRect.left &&
-                    vertex.x <= thisRect.right &&
-                    vertex.y >= thisRect.top &&
-                    vertex.y <= thisRect.bottom
-                  ) {
-                    this.stat.isValidPos = false
-                    isInvalid = true
-                    break
-                  } else {
-                    this.stat.isValidPos = true
-                    isInvalid = false
-                  }
-                }
-
-                if (isInvalid) {
+                if (
+                  Math.abs(thisFragCenterX - otherFragCenterX) <=
+                    thisFragHalfWidth + otherFragHalfWidth &&
+                  Math.abs(thisFragCenterY - otherFragCenterY) <=
+                    thisFragHalfHeight
+                ) {
+                  this.stat.isValidPos = false
                   break
                 }
-              }
-
-              const topLeftElm = document.elementFromPoint(
-                this.fragInfo.position.x,
-                this.fragInfo.position.y
-              )
-              const topRightElm = document.elementFromPoint(
-                this.fragInfo.position.x + this.$el.clientWidth,
-                this.fragInfo.position.y
-              )
-              const bottomLeftElm = document.elementFromPoint(
-                this.fragInfo.position.x,
-                this.fragInfo.position.y + this.$el.clientHeight
-              )
-              const bottomRightElm = document.elementFromPoint(
-                this.fragInfo.position.x + this.$el.clientWidth,
-                this.fragInfo.position.y + this.$el.clientHeight
-              )
-              if (
-                (topLeftElm &&
-                  topLeftElm.classList.contains('webglue-fragment')) ||
-                (topRightElm &&
-                  topRightElm.classList.contains('webglue-fragment')) ||
-                (bottomLeftElm &&
-                  bottomLeftElm.classList.contains('webglue-fragment')) ||
-                (bottomRightElm &&
-                  bottomRightElm.classList.contains('webglue-fragment'))
-              ) {
-                this.stat.isValidPos = false
-              } else {
-                this.stat.isValidPos = true
               }
               this.$emit('fragmentmove')
             }
