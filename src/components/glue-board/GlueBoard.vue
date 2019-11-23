@@ -182,8 +182,6 @@ export default {
         if (bottomOffset > this.maxBottom) {
           this.maxBottom = bottomOffset
         }
-
-        console.log('min left:', this.minLeft)
       }
 
       const sentinel = document.getElementsByClassName('glue-board-sentinel')[0]
