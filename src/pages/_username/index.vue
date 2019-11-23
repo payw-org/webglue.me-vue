@@ -494,7 +494,7 @@ export default {
   .mypage-btn {
     position: fixed;
     background-color: white;
-    opacity: 0.8;
+    opacity: 1;
     width: 3.2rem;
     height: 3.2rem;
     left: 1rem;
