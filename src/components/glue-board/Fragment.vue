@@ -42,7 +42,7 @@
       name="webview"
       allowtransparency="true"
       style="background: #fff;"
-      :src="fragInfo.url"
+      :src="`/api/mirror?url=${fragInfo.url}`"
       frameborder="0"
       class="wf-iframe"
       :scrolling="fragInfo.mode === 'new' ? 'yes' : 'no'"
