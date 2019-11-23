@@ -304,6 +304,8 @@ export default {
           (newMouseDownEventCallback = e => {
             e.stopPropagation()
             e.preventDefault()
+            /** @type {HTMLElement} */
+            const target = e.target
             const rect = e.target.getBoundingClientRect()
             const moveX = rect.left + fragWindow.scrollX
             const moveY = rect.top
@@ -339,6 +341,15 @@ export default {
 
             this.$store.commit('glueBoard/setMode', 'idle')
 
+            let selector = ''
+            if (target.id) {
+              selector = `#${target.id}`
+            } else if (target.className) {
+              for (let i = 0; i < target.classList.length; i += 1) {
+                selector += `.${target.classList[i]}`
+              }
+            }
+
             this.$emit('exitnewmode', {
               position: {
                 x: rect.left,
@@ -347,7 +358,9 @@ export default {
               size: {
                 width: rect.width,
                 height: rect.height
-              }
+              },
+              selector,
+              url: this.fragInfo.url
             })
 
             // Remove mousedown event listener

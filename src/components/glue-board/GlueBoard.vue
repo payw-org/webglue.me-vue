@@ -212,12 +212,26 @@ export default {
       this.$emit('sniff', payload)
     },
     changeModeTo(payload, mode, index) {
-      console.log('change mode to ' + mode)
       this.fragments[index].mode = mode
-      console.log(payload)
       this.fragments[index].position = payload.position
       this.fragments[index].size = payload.size
-      console.log(JSON.stringify(this.fragments, null, 2))
+
+      Axios({
+        ...apiUrl.fragment.create(this.glueBoardId),
+        withCredentials: true,
+        data: {
+          url: payload.url,
+          selector: payload.selector,
+          xPos: payload.position.x,
+          yPos: payload.position.y
+        }
+      })
+        .then(res => {
+          console.log('서버에 저장됨')
+        })
+        .catch(err => {
+          console.error(err)
+        })
     },
     generateRandomId() {
       return Math.random()
