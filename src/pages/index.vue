@@ -56,15 +56,15 @@ export default {
       }
     }
   },
-  head() {
-    return {
-      title: 'webglue'
-    }
-  },
   mounted() {
     this.isMounted = true
     if (this.isSignedIn) {
       this.signInUrl = '/@' + this.$store.state.auth.userInfo.nickname
+    }
+  },
+  head() {
+    return {
+      title: 'webglue'
     }
   },
   methods: {
@@ -125,16 +125,6 @@ export default {
     display: block;
     margin: auto;
     max-width: 20rem;
-    opacity: 0;
-    transform: scale(20);
-
-    &.appear {
-      $time: 2s;
-      $curve: cubic-bezier(0.5, 0.03, 0, 0.99);
-      transition: opacity $time/2 $curve, transform $time $curve;
-      opacity: 1;
-      transform: scale(1);
-    }
   }
 
   .signin-btn {
@@ -144,12 +134,6 @@ export default {
     align-items: center;
     justify-content: center;
     padding-top: f(2);
-    opacity: 0;
-
-    &.appear {
-      animation: springSlideUp 1s linear both;
-      animation-delay: 2s;
-    }
 
     .google-login {
       background-color: #fff;

@@ -70,10 +70,16 @@ export default {
   },
   watch: {
     fragments(frags) {
-      console.log(frags)
+      // console.log(frags)
     }
   },
   mounted() {
+    Axios({
+      ...apiUrl.fragment.list(this.glueBoardId),
+      withCredentials: true
+    }).then(res => {
+      console.log(res.data)
+    })
     window.addEventListener('mousemove', event => {
       if (this.resizedirection === 'right') {
         if (event.pageX < this.initialposition) {
@@ -182,8 +188,6 @@ export default {
         if (bottomOffset > this.maxBottom) {
           this.maxBottom = bottomOffset
         }
-
-        console.log('min left:', this.minLeft)
       }
 
       const sentinel = document.getElementsByClassName('glue-board-sentinel')[0]
