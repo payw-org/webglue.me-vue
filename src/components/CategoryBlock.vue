@@ -283,7 +283,12 @@ export default {
     focusInput() {
       this.isContentEditable = true
       this.$nextTick(() => {
-        this.$refs.categoryName.focus()
+        const sel = window.getSelection()
+        sel.removeAllRanges()
+        const range = new Range()
+        range.setStart(this.$refs.categoryName, 0)
+        range.setEnd(this.$refs.categoryName, 0)
+        sel.addRange(range)
         this.placeCaretAtEnd(this.$refs.categoryName)
       })
     },
