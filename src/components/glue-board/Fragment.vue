@@ -280,9 +280,90 @@ export default {
       }
     })
 
-    this.$refs.webview.addEventListener('load', () => {
-      console.log('iframe loaded')
-    })
+    if (this.fragInfo.mode === 'new') {
+      this.$refs.webview.addEventListener('load', () => {
+        /** @type {Window} */
+        const fragWindow = this.$refs.webview.contentWindow
+        /** @type {Document} */
+        const fragDocument = this.$refs.webview.contentDocument
+
+        fragWindow.addEventListener('mousemove', e => {
+          const rect = e.target.getBoundingClientRect()
+          const payload = {
+            x: rect.left,
+            y: rect.top,
+            width: rect.width,
+            height: rect.height
+          }
+          this.$emit('sniff', payload)
+        })
+
+        let newMouseDownEventCallback
+        fragWindow.addEventListener(
+          'mousedown',
+          (newMouseDownEventCallback = e => {
+            e.stopPropagation()
+            e.preventDefault()
+            const rect = e.target.getBoundingClientRect()
+            const moveX = rect.left + fragWindow.scrollX
+            const moveY = rect.top
+            const fragBody = this.$refs.webview.contentDocument.body
+            this.$refs.webview.style.transition =
+              'top 300ms ease, left 300ms ease'
+            this.$refs.webview.style.position = 'absolute'
+            this.$refs.webview.style.width = fragBody.clientWidth + 'px'
+            this.$refs.webview.style.height = fragBody.clientHeight + 'px'
+            this.$refs.webview.style.left = 0
+            this.$refs.webview.style.top = 0
+            // eslint-disable-next-line no-unused-expressions
+            this.$refs.webview.getBoundingClientRect().left
+
+            this.$refs.webview.style.left = -moveX + 'px'
+            this.$refs.webview.style.top = -moveY + 'px'
+
+            this.$el.style.transition =
+              'top 300ms ease, left 300ms ease, width 300ms ease, height 300ms ease'
+            // eslint-disable-next-line no-unused-expressions
+            this.$el.getBoundingClientRect().left
+            this.$el.classList.remove('new')
+            this.$el.style.left = rect.left + 'px'
+            this.$el.style.top = rect.top + 'px'
+            this.$el.style.width = rect.width + 'px'
+            this.$el.style.height = rect.height + 'px'
+
+            setTimeout(() => {
+              this.$el.style.transition = ''
+            }, 300)
+
+            this.fragInfo.mode = 'postit'
+
+            this.$store.commit('glueBoard/setMode', 'idle')
+
+            this.$emit('exitnewmode', {
+              position: {
+                x: rect.left,
+                y: rect.top
+              },
+              size: {
+                width: rect.width,
+                height: rect.height
+              }
+            })
+
+            // Remove mousedown event listener
+            fragWindow.removeEventListener(
+              'mousedown',
+              newMouseDownEventCallback
+            )
+          })
+        )
+
+        fragWindow.addEventListener('click', e => {
+          e.stopPropagation()
+          e.preventDefault()
+        })
+      })
+    }
 
     // this.$refs.webview.contentwindow.addEventListener('message', e => {
     //   // IMPORTANT: check the origin of the data!
