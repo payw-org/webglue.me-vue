@@ -10,6 +10,9 @@ router.get('/mirror', (req, response) => {
   const mirroringUrl = url.replace(/^\/mirror\?url=/, '')
   Axios({
     url: apiUrl.mirror(mirroringUrl),
+    headers: {
+      'user-agent': req.headers['user-agent']
+    },
     method: 'get',
     withCredentials: true
   }).then(res => {
