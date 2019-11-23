@@ -272,7 +272,7 @@ export default {
         )[this.moving.index]
         const giwRect = gridItemWrapper.getBoundingClientRect()
         this.moving.elm.style.left = giwRect.left + 'px'
-        this.moving.elm.style.top = giwRect.top + 'px'
+        this.moving.elm.style.top = giwRect.top + window.scrollY + 'px'
 
         console.log('updating category position')
 
