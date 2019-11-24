@@ -174,22 +174,23 @@ export default {
 
               for (let i = 0; i < fragmentElms.length; i += 1) {
                 const otherFragRect = fragmentElms[i].getBoundingClientRect()
-                const otherFragHalfWidth = otherFragRect.width / 2
-                const otherFragHalfHeight = otherFragRect.height / 2
-                const otherFragCenterX = otherFragRect.left + otherFragHalfWidth
-                const otherFragCenterY = otherFragRect.top + otherFragHalfHeight
+                const otherFragHalfX = otherFragRect.width / 2
+                const otherFragHalfY = otherFragRect.height / 2
+                const otherFragCenterX = otherFragRect.left + otherFragHalfX
+                const otherFragCenterY = otherFragRect.top + otherFragHalfY
 
-                const thisFragRect = this.$el.getBoundingClientRect()
-                const thisFragHalfWidth = thisFragRect.width / 2
-                const thisFragHalfHeight = thisFragRect.height / 2
-                const thisFragCenterX = thisFragRect.left + thisFragHalfWidth
-                const thisFragCenterY = thisFragRect.top + thisFragHalfHeight
+                const thisFragRect = rootElm.getBoundingClientRect()
+                const thisFragHalfX = thisFragRect.width / 2
+                const thisFragHalfY = thisFragRect.height / 2
+                const thisFragCenterX = thisFragRect.left + thisFragHalfX
+                const thisFragCenterY = thisFragRect.top + thisFragHalfY
+
+                const distanceX = Math.abs(thisFragCenterX - otherFragCenterX)
+                const distanceY = Math.abs(thisFragCenterY - otherFragCenterY)
 
                 if (
-                  Math.abs(thisFragCenterX - otherFragCenterX) <=
-                    thisFragHalfWidth + otherFragHalfWidth &&
-                  Math.abs(thisFragCenterY - otherFragCenterY) <=
-                    thisFragHalfHeight
+                  distanceX <= thisFragHalfX + otherFragHalfX &&
+                  distanceY <= thisFragHalfY + otherFragHalfY
                 ) {
                   this.stat.isValidPos = false
                   break
