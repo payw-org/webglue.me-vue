@@ -393,7 +393,7 @@ export default {
   height: 550px;
   position: absolute;
   // transition: box-shadow 300ms ease, transform 200ms ease;
-  transition: box-shadow 300ms ease;
+  transition: box-shadow 300ms ease, opacity 500ms ease;
   cursor: default;
   border-radius: 0px;
   box-shadow: 0 0.3rem 0.5rem rgba(#000, 0.2);
