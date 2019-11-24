@@ -41,6 +41,7 @@
       allowtransparency="true"
       style="background: #fff;"
       :src="`/api/mirror?url=${fragInfo.url}`"
+      sandbox="allow-forms allow-popups allow-pointer-lock allow-same-origin allow-scripts"
       frameborder="0"
       class="wf-iframe"
       :scrolling="fragInfo.mode === 'new' ? 'yes' : 'no'"
@@ -72,7 +73,8 @@
 <script>
 import Axios from 'axios'
 import IconPlus from '~/components/icons/IconPlus'
-import ApiUrl from '~/modules/api-url'
+import apiUrl from '~/modules/api-url'
+import { CEM } from '~/modules/custom-event-manager'
 
 export default {
   components: { IconPlus },
@@ -121,6 +123,10 @@ export default {
     const rootElm = this.$el
     /** @type {HTMLIFrameElement} */
     const webview = this.$refs.webview
+
+    // When the postit fragment is loaded
+    // find the user's target with the selector
+    // and adjust its position to the right place
     if (this.fragInfo.mode === 'postit') {
       rootElm.style.opacity = '0'
       rootElm.style.width = '1280px'
@@ -128,33 +134,70 @@ export default {
       webview.style.width = '1280px'
       webview.style.height = '800px'
       webview.addEventListener('load', e => {
-        console.log(this.fragInfo.selector)
         const fDocument = webview.contentDocument
         const fHtml = fDocument.documentElement
+        const fBody = fDocument.body
 
         fHtml.style.width = '1280px'
         fHtml.style.height = '800px'
 
-        /** @type {HTMLElement} */
-        const userTarget = fDocument.querySelector(this.fragInfo.selector)
-        const userTargetRect = userTarget.getBoundingClientRect()
-        const userTargetX = userTargetRect.left
-        const userTargetY = userTargetRect.top
-        const userTargetWidth = userTargetRect.width
-        const userTargetHeight = userTargetRect.height
+        try {
+          /** @type {HTMLElement} */
+          const userTarget = fDocument.querySelector(this.fragInfo.selector)
 
-        fHtml.style.position = 'fixed'
-        fHtml.style.left = '0px'
-        fHtml.style.top = '0px'
-        fHtml.style.transform = `translateX(-${userTargetX}px) translateY(-${userTargetY}px)`
+          let travelNode = userTarget
+          while (1) {
+            console.log('traverse', travelNode)
+            if (travelNode.parentElement.isSameNode(fBody)) {
+              break
+            } else {
+              const parentElement = travelNode.parentElement
+              const parentChildren = parentElement.children
+              for (let i = 0; i < parentChildren.length; i += 1) {
+                if (!parentChildren[i].isSameNode(travelNode)) {
+                  console.log('prune')
+                  parentElement.removeChild(parentChildren[i])
+                }
+              }
+              travelNode = travelNode.parentElement
+            }
+          }
 
-        rootElm.style.width = `${userTargetWidth}px`
-        rootElm.style.height = `${userTargetHeight}px`
+          const surfaceElements = fBody.children
+          for (let i = 0; i < surfaceElements.length; i += 1) {
+            if (!surfaceElements[i].isSameNode(travelNode)) {
+              fBody.removeChild(surfaceElements[i])
+            }
+          }
+
+          const userTargetRect = userTarget.getBoundingClientRect()
+          const userTargetX = userTargetRect.left
+          const userTargetY = userTargetRect.top
+          const userTargetWidth = userTargetRect.width
+          const userTargetHeight = userTargetRect.height
+
+          fHtml.style.position = 'fixed'
+          fHtml.style.left = '0px'
+          fHtml.style.top = '0px'
+          fHtml.style.transform = `translateX(-${userTargetX}px) translateY(-${userTargetY}px)`
+
+          rootElm.style.width = `${userTargetWidth}px`
+          rootElm.style.height = `${userTargetHeight}px`
+        } catch (error) {
+          console.error(error)
+        }
 
         console.log('iframe loaded on postit mode', this.fragInfo.id)
         rootElm.style.opacity = '1'
       })
     }
+
+    rootElm.addEventListener('contextmenu', e => {
+      e.preventDefault()
+      CEM.dispatchEvent('context', {
+        target: this.$el
+      })
+    })
 
     rootElm.addEventListener('mouseenter', () => {
       if (this.fragInfo.mode === 'postit') {
@@ -169,102 +212,124 @@ export default {
     })
 
     rootElm.addEventListener('mousedown', e => {
+      if (e.which === 3) {
+        return
+      }
+
       if (this.fragInfo.mode === 'postit') {
         if (e.target.closest('.boundary-line')) {
           return
         }
+
         e.preventDefault()
         this.stat.catched = true
         this.origin.pointer.x = e.clientX
         this.origin.pointer.y = e.clientY
         this.origin.position.x = this.fragInfo.position.x
         this.origin.position.y = this.fragInfo.position.y
-
-        let mouseMoveCallback
-        window.addEventListener(
-          'mousemove',
-          (mouseMoveCallback = e => {
-            if (this.stat.catched) {
-              this.$store.commit('glueBoard/setMode', 'dragging')
-              this.stat.isMoving = true
-              const moveX = e.clientX - this.origin.pointer.x
-              const moveY = e.clientY - this.origin.pointer.y
-
-              let newX = this.origin.position.x + moveX
-              let newY = this.origin.position.y + moveY
-
-              if (newX <= 0) {
-                newX = 0
-              }
-              if (newY <= 0) {
-                newY = 0
-              }
-
-              this.fragInfo.position.x = newX
-              this.fragInfo.position.y = newY
-
-              const fragmentElms = document.querySelectorAll(
-                '.webglue-fragment.postit:not(.hover)'
-              )
-
-              this.stat.isValidPos = true
-
-              for (let i = 0; i < fragmentElms.length; i += 1) {
-                const otherFragRect = fragmentElms[i].getBoundingClientRect()
-                const otherFragHalfX = otherFragRect.width / 2
-                const otherFragHalfY = otherFragRect.height / 2
-                const otherFragCenterX = otherFragRect.left + otherFragHalfX
-                const otherFragCenterY = otherFragRect.top + otherFragHalfY
-
-                const thisFragRect = rootElm.getBoundingClientRect()
-                const thisFragHalfX = thisFragRect.width / 2
-                const thisFragHalfY = thisFragRect.height / 2
-                const thisFragCenterX = thisFragRect.left + thisFragHalfX
-                const thisFragCenterY = thisFragRect.top + thisFragHalfY
-
-                const distanceX = Math.abs(thisFragCenterX - otherFragCenterX)
-                const distanceY = Math.abs(thisFragCenterY - otherFragCenterY)
-
-                if (
-                  distanceX <= thisFragHalfX + otherFragHalfX &&
-                  distanceY <= thisFragHalfY + otherFragHalfY
-                ) {
-                  this.stat.isValidPos = false
-                  break
-                }
-              }
-              this.$emit('fragmentmove')
-            }
-          })
-        )
-
-        window.addEventListener('mouseup', () => {
-          this.isfragmentmove = 0
-          if (!this.stat.isValidPos) {
-            this.stat.isTransitioning = true
-            setTimeout(() => {
-              this.fragInfo.position.x = this.origin.position.x
-              this.fragInfo.position.y = this.origin.position.y
-              this.stat.isValidPos = true
-              setTimeout(() => {
-                this.stat.isTransitioning = false
-              }, 300)
-            }, 10)
-          }
-          this.$store.commit('glueBoard/setMode', 'idle')
-          this.stat.catched = false
-          window.removeEventListener('mousemove', mouseMoveCallback)
-
-          // Emit mouseup event and change the fragments
-          // position data from the parent
-          this.$emit('donemove', {
-            x: this.fragInfo.position.x,
-            y: this.fragInfo.position.y
-          })
-          this.$emit('fragmentmove')
-        })
       }
     })
+
+    let mouseMoveCallback
+    window.addEventListener(
+      'mousemove',
+      (mouseMoveCallback = e => {
+        if (!this.stat.catched || this.fragInfo.mode !== 'postit') {
+          return
+        }
+        if (this.stat.catched) {
+          this.$store.commit('glueBoard/setMode', 'dragging')
+          this.stat.isMoving = true
+          const moveX = e.clientX - this.origin.pointer.x
+          const moveY = e.clientY - this.origin.pointer.y
+
+          let newX = this.origin.position.x + moveX
+          let newY = this.origin.position.y + moveY
+
+          if (newX <= 0) {
+            newX = 0
+          }
+          if (newY <= 0) {
+            newY = 0
+          }
+
+          this.fragInfo.position.x = newX
+          this.fragInfo.position.y = newY
+
+          const fragmentElms = document.querySelectorAll(
+            '.webglue-fragment.postit:not(.hover)'
+          )
+
+          this.stat.isValidPos = true
+
+          for (let i = 0; i < fragmentElms.length; i += 1) {
+            const otherFragRect = fragmentElms[i].getBoundingClientRect()
+            const otherFragHalfX = otherFragRect.width / 2
+            const otherFragHalfY = otherFragRect.height / 2
+            const otherFragCenterX = otherFragRect.left + otherFragHalfX
+            const otherFragCenterY = otherFragRect.top + otherFragHalfY
+
+            const thisFragRect = rootElm.getBoundingClientRect()
+            const thisFragHalfX = thisFragRect.width / 2
+            const thisFragHalfY = thisFragRect.height / 2
+            const thisFragCenterX = thisFragRect.left + thisFragHalfX
+            const thisFragCenterY = thisFragRect.top + thisFragHalfY
+
+            const distanceX = Math.abs(thisFragCenterX - otherFragCenterX)
+            const distanceY = Math.abs(thisFragCenterY - otherFragCenterY)
+
+            if (
+              distanceX <= thisFragHalfX + otherFragHalfX &&
+              distanceY <= thisFragHalfY + otherFragHalfY
+            ) {
+              this.stat.isValidPos = false
+              break
+            }
+          }
+          this.$emit('fragmentmove')
+        }
+      })
+    )
+
+    let mouseUpCallback
+    window.addEventListener(
+      'mouseup',
+      (mouseUpCallback = () => {
+        if (!this.stat.isMoving || this.fragInfo.mode !== 'postit') {
+          return
+        }
+        this.isfragmentmove = 0
+        if (!this.stat.isValidPos) {
+          this.stat.isTransitioning = true
+          setTimeout(() => {
+            this.fragInfo.position.x = this.origin.position.x
+            this.fragInfo.position.y = this.origin.position.y
+            this.stat.isValidPos = true
+            setTimeout(() => {
+              this.stat.isTransitioning = false
+            }, 300)
+          }, 10)
+        }
+        this.$store.commit('glueBoard/setMode', 'idle')
+        this.stat.catched = false
+        // window.removeEventListener('mousemove', mouseMoveCallback)
+        // window.removeEventListener('mouseup', mouseUpCallback)
+
+        // Emit mouseup event and change the fragments
+        // position data from the parent
+        // this.$emit('donemove', {
+        //   x: this.fragInfo.position.x,
+        //   y: this.fragInfo.position.y
+        // })
+        this.$emit('fragmentmove')
+        console.log('fragment mouseup')
+        this.$emit('donemove', {
+          x: this.fragInfo.position.x,
+          y: this.fragInfo.position.y,
+          fragmentId: this.fragInfo.id
+        })
+      })
+    )
 
     // When new mode, use selector
     if (this.fragInfo.mode === 'new') {

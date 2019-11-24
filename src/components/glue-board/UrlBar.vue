@@ -34,12 +34,12 @@ export default {
       this.$store.commit('glueBoard/setUrlBarActive', false)
     },
     handleEnter() {
-      const regExp = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=.]+$/g
-      const regExpResult = regExp.exec(this.url)
-      if (!regExpResult) {
-        alert('잘못된 URL입니다. 다시 입력해주세요.')
-        return
-      }
+      // const regExp = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=.]+$/g
+      // const regExpResult = regExp.exec(this.url)
+      // if (!regExpResult) {
+      //   alert('잘못된 URL입니다. 다시 입력해주세요.')
+      //   return
+      // }
       this.closeURLBar()
       this.$emit('urlentered', this.url)
     }
