@@ -1,5 +1,10 @@
 <template>
   <div class="glue-board-scroll-wrapper">
+    <Context
+      :context-data="{
+        glueBoardId
+      }"
+    />
     <div class="glue-board-sentinel" />
     <div class="glue-board-fragment-container">
       <Fragment
@@ -11,6 +16,7 @@
         @sniff="updateSelector"
         @exitnewmode="changeModeTo($event, 'postit', i)"
         @fragmentmove="calculateWrapperSize"
+        @donemove="updateFragmentData"
         @fragmentselect="fragmentSelect"
       />
     </div>
@@ -34,11 +40,12 @@
 import Fragment from '~/components/glue-board/Fragment'
 import UrlBar from '~/components/glue-board/UrlBar'
 import Selector from '~/components/glue-board/Selector'
+import Context from '~/components/glue-board/Context'
 import apiUrl from '~/modules/api-url'
 import Axios from 'axios'
 
 export default {
-  components: { Fragment, UrlBar, Selector },
+  components: { Fragment, UrlBar, Selector, Context },
   props: {
     glueBoardId: {
       type: String,
@@ -197,9 +204,22 @@ export default {
       sentinel.style.left = this.minLeft + 'px'
       sentinel.style.top = this.minTop + 'px'
     },
-    updateFragmentData(payload, index) {
+    updateFragmentData(payload) {
       console.log('position updated')
-      console.log(index, payload)
+      Axios({
+        ...apiUrl.fragment.update(this.glueBoardId, payload.fragmentId),
+        withCredentials: true,
+        data: {
+          xPos: payload.x,
+          yPos: payload.y
+        }
+      })
+        .then(() => {
+          console.log('프래그먼트 업데이트')
+        })
+        .catch(err => {
+          console.error(err)
+        })
     },
     zoomIn() {
       this.glueboardsize += 0.2
