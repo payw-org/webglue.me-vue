@@ -18,11 +18,21 @@
         </a>
       </button>
       <div class="icon-container">
+        <div v-if="$route.params.category" class="sharing">
+          <Button class="share-icon-wrapper" @click="activatePopUp">
+            <img
+              v-if="sharingState"
+              src="~/assets/images/share.svg"
+              class="share-icon"
+            />
+          </Button>
           <div class="toggle">
             <label class="switch">
               <input type="checkbox" @click="toggleOn" />
               <span class="slider round" />
             </label>
+          </div>
+        </div>
         <Button class="logout" @click="logout">
           로그아웃
         </Button>
@@ -44,7 +54,9 @@ export default {
   components: { IconPlus },
   data() {
     return {
-      homeLink: ''
+      homeLink: '',
+      sharingState: false,
+      popupState: false
     }
   },
   computed: {
@@ -57,6 +69,16 @@ export default {
     }
   },
   methods: {
+    activatePopUp() {
+      this.$emit('sharing')
+    },
+    toggleOff() {
+      this.sharingState = false
+      this.$emit('deactivate')
+    },
+    toggleOn() {
+      this.sharingState = true
+    },
     gotoHome() {
       this.homeLink = `/@${this.$store.state.auth.userInfo.nickname}`
     },
