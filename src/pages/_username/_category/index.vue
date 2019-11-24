@@ -1,6 +1,6 @@
 <template>
   <div class="glue-board-page">
-    <Navigation @sharing="activatePopUp" />
+    <Navigation @sharing="activatePopUp" @deactivatepopup="deactivatePopUp" />
     <GlueBoard :glue-board-id="$route.params.category" />
     <div v-if="isActivatePopUp" class="popup">
       <div class="arrow" />
@@ -46,11 +46,14 @@ export default {
       document.execCommand('copy')
       textArea.remove()
     },
+    deactivatePopUp() {
+      this.isActivatePopUp = false
+    },
     activatePopUp() {
       if (this.isActivatePopUp === false) {
         this.isActivatePopUp = true
       } else {
-        this.isActivatePopUp = false
+        this.deactivatePopUp()
       }
     }
   }

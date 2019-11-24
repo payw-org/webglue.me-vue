@@ -19,16 +19,16 @@
       </button>
       <div class="icon-container">
         <div v-if="$route.params.category" class="sharing">
-          <Button class="share-icon-wrapper" @click="activatePopUp">
-            <img
-              v-if="sharingState"
-              src="~/assets/images/share.svg"
-              class="share-icon"
-            />
+          <Button
+            v-if="sharingState"
+            class="share-icon-wrapper"
+            @click="activatePopUp"
+          >
+            <img src="~/assets/images/share.svg" class="share-icon" />
           </Button>
           <div class="toggle">
             <label class="switch">
-              <input type="checkbox" @click="toggleOn" />
+              <input type="checkbox" @click="toggleClicked" />
               <span class="slider round" />
             </label>
           </div>
@@ -72,12 +72,13 @@ export default {
     activatePopUp() {
       this.$emit('sharing')
     },
-    toggleOff() {
-      this.sharingState = false
-      this.$emit('deactivate')
-    },
-    toggleOn() {
-      this.sharingState = true
+    toggleClicked() {
+      if (this.sharingState === false) {
+        this.sharingState = true
+      } else {
+        this.sharingState = false
+        this.$emit('deactivatepopup')
+      }
     },
     gotoHome() {
       this.homeLink = `/@${this.$store.state.auth.userInfo.nickname}`
