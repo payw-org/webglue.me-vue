@@ -19,9 +19,41 @@
 <script>
 import Navigation from '~/components/Navigation'
 import GlueBoard from '~/components/glue-board/GlueBoard'
+import { text } from 'body-parser'
 
 export default {
-  components: { Navigation, GlueBoard }
+  components: { Navigation, GlueBoard },
+  data() {
+    return {
+      isActivatePopUp: false,
+      glueboardLink: ''
+    }
+  },
+  computed: {
+    publicUrl() {
+      const username = this.$route.params.username
+      const glueBoardId = this.$route.params.category
+      const link = 'https://webglue.me/' + username + '/' + glueBoardId
+      return link
+    }
+  },
+  methods: {
+    copyLink() {
+      var textArea = document.createElement('textarea')
+      textArea.value = this.publicUrl
+      document.body.appendChild(textArea)
+      textArea.select()
+      document.execCommand('copy')
+      textArea.remove()
+    },
+    activatePopUp() {
+      if (this.isActivatePopUp === false) {
+        this.isActivatePopUp = true
+      } else {
+        this.isActivatePopUp = false
+      }
+    }
+  }
 }
 </script>
 
