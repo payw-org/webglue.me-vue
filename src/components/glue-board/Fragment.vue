@@ -119,6 +119,10 @@ export default {
     }
   },
   mounted() {
+    /** @type {HTMLElement} */
+    const rootElm = this.$el
+    /** @type {HTMLIFrameElement} */
+    const webview = this.$refs.webview
     rootElm.addEventListener('mouseenter', () => {
       if (this.fragInfo.mode === 'postit') {
         this.stat.hover = true
@@ -229,12 +233,13 @@ export default {
       }
     })
 
+    // When new mode, use selector
     if (this.fragInfo.mode === 'new') {
-      this.$refs.webview.addEventListener('load', () => {
+      webview.addEventListener('load', () => {
         /** @type {Window} */
-        const fragWindow = this.$refs.webview.contentWindow
+        const fragWindow = webview.contentWindow
         /** @type {Document} */
-        const fragDocument = this.$refs.webview.contentDocument
+        const fragDocument = webview.contentDocument
 
         let newMouseMoveEventCallback
         fragWindow.addEventListener(
@@ -249,6 +254,7 @@ export default {
           }
           this.$emit('sniff', payload)
         })
+        )
 
         let newMouseDownEventCallback
         fragWindow.addEventListener(
@@ -261,32 +267,31 @@ export default {
             const rect = e.target.getBoundingClientRect()
             const moveX = rect.left + fragWindow.scrollX
             const moveY = rect.top
-            const fragBody = this.$refs.webview.contentDocument.body
-            this.$refs.webview.style.transition =
-              'top 300ms ease, left 300ms ease'
-            this.$refs.webview.style.position = 'absolute'
-            this.$refs.webview.style.width = fragBody.clientWidth + 'px'
-            this.$refs.webview.style.height = fragBody.clientHeight + 'px'
-            this.$refs.webview.style.left = 0
-            this.$refs.webview.style.top = 0
+            const fragBody = webview.contentDocument.body
+            webview.style.transition = 'top 300ms ease, left 300ms ease'
+            webview.style.position = 'absolute'
+            webview.style.width = fragBody.clientWidth + 'px'
+            webview.style.height = fragBody.clientHeight + 'px'
+            webview.style.left = 0
+            webview.style.top = 0
             // eslint-disable-next-line no-unused-expressions
-            this.$refs.webview.getBoundingClientRect().left
+            webview.getBoundingClientRect().left
 
-            this.$refs.webview.style.left = -moveX + 'px'
-            this.$refs.webview.style.top = -moveY + 'px'
+            webview.style.left = -moveX + 'px'
+            webview.style.top = -moveY + 'px'
 
-            this.$el.style.transition =
+            rootElm.style.transition =
               'top 300ms ease, left 300ms ease, width 300ms ease, height 300ms ease'
             // eslint-disable-next-line no-unused-expressions
-            this.$el.getBoundingClientRect().left
-            this.$el.classList.remove('new')
-            this.$el.style.left = rect.left + 'px'
-            this.$el.style.top = rect.top + 'px'
-            this.$el.style.width = rect.width + 'px'
-            this.$el.style.height = rect.height + 'px'
+            rootElm.getBoundingClientRect().left
+            rootElm.classList.remove('new')
+            rootElm.style.left = rect.left + 'px'
+            rootElm.style.top = rect.top + 'px'
+            rootElm.style.width = rect.width + 'px'
+            rootElm.style.height = rect.height + 'px'
 
             setTimeout(() => {
-              this.$el.style.transition = ''
+              rootElm.style.transition = ''
             }, 300)
 
             this.fragInfo.mode = 'postit'
