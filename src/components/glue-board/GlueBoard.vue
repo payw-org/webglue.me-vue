@@ -74,6 +74,12 @@ export default {
     }
   },
   mounted() {
+    Axios({
+      ...apiUrl.fragment.list(this.glueBoardId),
+      withCredentials: true
+    }).then(res => {
+      console.log(res.data)
+    })
     window.addEventListener('mousemove', event => {
       if (this.resizedirection === 'right') {
         if (event.pageX < this.initialposition) {
