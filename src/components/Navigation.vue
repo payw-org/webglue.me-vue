@@ -23,6 +23,9 @@
               <input type="checkbox" @click="toggleOn" />
               <span class="slider round" />
             </label>
+        <Button class="logout" @click="logout">
+          로그아웃
+        </Button>
         <div v-if="$route.params.category">
           <button class="add-btn" @click="onClickAddBtn">
             <IconPlus class="add-icon" color="#ff176b" />
