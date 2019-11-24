@@ -70,7 +70,7 @@ export default {
   },
   watch: {
     fragments(frags) {
-      console.log(frags)
+      // console.log(frags)
     }
   },
   mounted() {
@@ -128,6 +128,7 @@ export default {
     window.addEventListener('mouseup', () => {
       this.resizedirection = null
     })
+
     this.loadFragments()
   },
   methods: {
