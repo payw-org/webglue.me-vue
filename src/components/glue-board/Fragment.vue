@@ -278,15 +278,15 @@ export default {
         fragWindow.addEventListener(
           'mousemove',
           (newMouseMoveEventCallback = e => {
-          const rect = e.target.getBoundingClientRect()
-          const payload = {
-            x: rect.left,
-            y: rect.top,
-            width: rect.width,
-            height: rect.height
-          }
-          this.$emit('sniff', payload)
-        })
+            const rect = e.target.getBoundingClientRect()
+            const payload = {
+              x: rect.left,
+              y: rect.top,
+              width: rect.width,
+              height: rect.height
+            }
+            this.$emit('sniff', payload)
+          })
         )
 
         let newMouseDownEventCallback
