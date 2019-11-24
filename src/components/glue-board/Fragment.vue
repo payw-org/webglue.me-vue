@@ -138,6 +138,32 @@ export default {
 
         /** @type {HTMLElement} */
         const userTarget = fDocument.querySelector(this.fragInfo.selector)
+
+          let travelNode = userTarget
+          while (1) {
+            console.log('traverse', travelNode)
+            if (travelNode.parentElement.isSameNode(fBody)) {
+              break
+            } else {
+              const parentElement = travelNode.parentElement
+              const parentChildren = parentElement.children
+              for (let i = 0; i < parentChildren.length; i += 1) {
+                if (!parentChildren[i].isSameNode(travelNode)) {
+                  console.log('prune')
+                  parentElement.removeChild(parentChildren[i])
+                }
+              }
+              travelNode = travelNode.parentElement
+            }
+          }
+
+          const surfaceElements = fBody.children
+          for (let i = 0; i < surfaceElements.length; i += 1) {
+            if (!surfaceElements[i].isSameNode(travelNode)) {
+              fBody.removeChild(surfaceElements[i])
+            }
+          }
+
         const userTargetRect = userTarget.getBoundingClientRect()
         const userTargetX = userTargetRect.left
         const userTargetY = userTargetRect.top
