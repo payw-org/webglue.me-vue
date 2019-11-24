@@ -1,20 +1,22 @@
 <template>
   <nav class="webglue-navigation" :class="{ hidden: isHidden }">
     <div class="gn-menu-container">
-      <div class="logo-wrapper">
-        <div class="logo-box">
-          <div class="logo-container">
-            <img
-              src="~/assets/images/logo-simplified.svg"
-              alt="logo"
-              class="logo-img"
-            />
+      <button class="logo-wrapper" @click="gotoHome">
+        <a :href="homeLink" class="home-link">
+          <div class="logo-box">
+            <div class="logo-container">
+              <img
+                src="~/assets/images/logo-simplified.svg"
+                alt="logo"
+                class="logo-img"
+              />
+            </div>
           </div>
-        </div>
-        <h1 class="name">
-          webglue
-        </h1>
-      </div>
+          <h1 class="name">
+            webglue
+          </h1>
+        </a>
+      </button>
       <div class="icon-container">
         <div class="logout" @click="logout">
           로그아웃
@@ -35,6 +37,11 @@ import IconPlus from '~/components/icons/IconPlus.vue'
 
 export default {
   components: { IconPlus },
+  data() {
+    return {
+      homeLink: ''
+    }
+  },
   computed: {
     isHidden() {
       if (this.$store.state.glueBoard.mode !== 'idle') {
@@ -45,6 +52,9 @@ export default {
     }
   },
   methods: {
+    gotoHome() {
+      this.homeLink = `/@${this.$store.state.auth.userInfo.nickname}`
+    },
     onClickAddBtn() {
       this.$store.commit('glueBoard/setUrlBarActive', true)
     },
@@ -104,24 +114,26 @@ $nav-height: 3.5rem;
     padding: 0 1rem;
 
     .logo-wrapper {
-      display: flex;
-      align-items: center;
-
-      .logo-box {
-        padding-right: 0.5rem;
-        .logo-container {
-          display: flex;
-          align-items: center;
-          width: $nav-height * 0.6;
-          height: $nav-height * 0.6;
-          animation-name: rotation;
-          animation-duration: 5s;
-          animation-timing-function: linear;
-          animation-iteration-count: infinite;
-
-          .logo-img {
+      .home-link {
+        display: flex;
+        align-items: center;
+        z-index: 10000;
+        .logo-box {
+          padding-right: 0.5rem;
+          .logo-container {
+            display: flex;
+            align-items: center;
             width: $nav-height * 0.6;
-            height: auto;
+            height: $nav-height * 0.6;
+            animation-name: rotation;
+            animation-duration: 5s;
+            animation-timing-function: linear;
+            animation-iteration-count: infinite;
+
+            .logo-img {
+              width: $nav-height * 0.6;
+              height: auto;
+            }
           }
         }
       }
@@ -130,6 +142,7 @@ $nav-height: 3.5rem;
         font-weight: 700;
         font-size: $nav-height * 0.45;
         user-select: none;
+        color: #000000;
       }
     }
 
