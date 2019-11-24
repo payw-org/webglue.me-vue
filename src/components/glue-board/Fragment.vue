@@ -119,21 +119,20 @@ export default {
     }
   },
   mounted() {
-    this.$el.addEventListener('mouseenter', () => {
-      if (this.fragInfo.mode === 'new') {
-      } else {
+    rootElm.addEventListener('mouseenter', () => {
+      if (this.fragInfo.mode === 'postit') {
         this.stat.hover = true
       }
     })
-    this.$el.addEventListener('mouseleave', () => {
-      if (this.fragInfo.mode === 'new') {
-      } else {
+
+    rootElm.addEventListener('mouseleave', () => {
+      if (this.fragInfo.mode === 'postit') {
         this.stat.hover = false
       }
     })
-    this.$el.addEventListener('mousedown', e => {
-      if (this.fragInfo.mode === 'new') {
-      } else {
+
+    rootElm.addEventListener('mousedown', e => {
+      if (this.fragInfo.mode === 'postit') {
         if (e.target.closest('.boundary-line')) {
           return
         }
