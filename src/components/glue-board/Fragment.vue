@@ -12,9 +12,7 @@
     ]"
     :style="{
       left: `${fragInfo.position.x}px`,
-      top: `${fragInfo.position.y}px`,
-      width: `${fragInfo.size.width}px`,
-      height: `${fragInfo.size.height}px`
+      top: `${fragInfo.position.y}px`
     }"
   >
     <div
@@ -123,6 +121,41 @@ export default {
     const rootElm = this.$el
     /** @type {HTMLIFrameElement} */
     const webview = this.$refs.webview
+    if (this.fragInfo.mode === 'postit') {
+      rootElm.style.opacity = '0'
+      rootElm.style.width = '1280px'
+      rootElm.style.height = '800px'
+      webview.style.width = '1280px'
+      webview.style.height = '800px'
+      webview.addEventListener('load', e => {
+        console.log(this.fragInfo.selector)
+        const fDocument = webview.contentDocument
+        const fHtml = fDocument.documentElement
+
+        fHtml.style.width = '1280px'
+        fHtml.style.height = '800px'
+
+        /** @type {HTMLElement} */
+        const userTarget = fDocument.querySelector(this.fragInfo.selector)
+        const userTargetRect = userTarget.getBoundingClientRect()
+        const userTargetX = userTargetRect.left
+        const userTargetY = userTargetRect.top
+        const userTargetWidth = userTargetRect.width
+        const userTargetHeight = userTargetRect.height
+
+        fHtml.style.position = 'fixed'
+        fHtml.style.left = '0px'
+        fHtml.style.top = '0px'
+        fHtml.style.transform = `translateX(-${userTargetX}px) translateY(-${userTargetY}px)`
+
+        rootElm.style.width = `${userTargetWidth}px`
+        rootElm.style.height = `${userTargetHeight}px`
+
+        console.log('iframe loaded on postit mode', this.fragInfo.id)
+        rootElm.style.opacity = '1'
+      })
+    }
+
     rootElm.addEventListener('mouseenter', () => {
       if (this.fragInfo.mode === 'postit') {
         this.stat.hover = true
