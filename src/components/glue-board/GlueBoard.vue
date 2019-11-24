@@ -238,47 +238,57 @@ export default {
         .substr(2, 5)
     },
     loadFragments() {
-      // Axios({
-      //   ...apiUrl.fragment.list(this.glueBoardId),
-      //   withCredentials: true
-      // })
-      //   .then(res => {
-      //     this.fragments = res.data.fragments
-      //   })
-      //   .catch(err => {
-      //     console.error(err)
-      //   })
+      Axios({
+        ...apiUrl.fragment.list(this.glueBoardId),
+        withCredentials: true
+      }).then(res => {
+        /** @type {Array} */
+        const fragments = res.data.fragments.map(frag => {
+          return {
+            id: frag.id,
+            mode: 'postit',
+            position: {
+              x: frag.xPos,
+              y: frag.yPos
+            },
+            url: frag.url,
+            selector: frag.selector
+          }
+        })
 
-      this.fragments = [
-        {
-          position: {
-            x: 50,
-            y: 100
-          },
-          size: {
-            width: 400,
-            height: 550
-          },
-          url: 'https://naver.com',
-          mode: 'postit',
-          selector: '',
-          id: this.generateRandomId()
-        },
-        {
-          position: {
-            x: 500,
-            y: 150
-          },
-          size: {
-            width: 400,
-            height: 550
-          },
-          url: 'https://naver.com',
-          mode: 'postit',
-          selector: '',
-          id: this.generateRandomId()
-        }
-      ]
+        this.fragments = fragments
+      })
+
+      // this.fragments = [
+      //   {
+      //     position: {
+      //       x: 50,
+      //       y: 100
+      //     },
+      //     size: {
+      //       width: 400,
+      //       height: 550
+      //     },
+      //     url: 'https://naver.com',
+      //     mode: 'postit',
+      //     selector: '',
+      //     id: this.generateRandomId()
+      //   },
+      //   {
+      //     position: {
+      //       x: 500,
+      //       y: 150
+      //     },
+      //     size: {
+      //       width: 400,
+      //       height: 550
+      //     },
+      //     url: 'https://naver.com',
+      //     mode: 'postit',
+      //     selector: '',
+      //     id: this.generateRandomId()
+      //   }
+      // ]
     },
     updateSelector(payload) {
       this.rect = payload
