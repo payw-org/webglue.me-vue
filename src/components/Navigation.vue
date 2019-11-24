@@ -18,9 +18,11 @@
         </a>
       </button>
       <div class="icon-container">
-        <div class="logout" @click="logout">
-          로그아웃
-        </div>
+          <div class="toggle">
+            <label class="switch">
+              <input type="checkbox" @click="toggleOn" />
+              <span class="slider round" />
+            </label>
         <div v-if="$route.params.category">
           <button class="add-btn" @click="onClickAddBtn">
             <IconPlus class="add-icon" color="#ff176b" />
@@ -149,6 +151,79 @@ $nav-height: 3.5rem;
     .icon-container {
       display: flex;
       flex-direction: row;
+      .sharing {
+        display: flex;
+        flex-direction: row;
+        .share-icon-wrapper {
+          height: inherit;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          margin-right: 0.8rem;
+          .share-icon {
+            height: 1.5rem;
+          }
+        }
+        .toggle {
+          user-select: none;
+          height: inherit;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          .switch {
+            position: relative;
+            display: inline-block;
+            width: 3rem;
+            height: 1.7rem;
+            margin-right: 0.8rem;
+          }
+          .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+          }
+          .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            -webkit-transition: 0.4s;
+            transition: 0.4s;
+          }
+
+          .slider:before {
+            position: absolute;
+            content: '';
+            height: 1.2rem;
+            width: 1.2rem;
+            left: 0.2rem;
+            bottom: 0.25rem;
+            background-color: white;
+            -webkit-transition: 0.4s;
+            transition: 0.4s;
+          }
+
+          input:checked + .slider {
+            background-color: #88e264;
+          }
+
+          input:checked + .slider:before {
+            -webkit-transform: translateX(26px);
+            -ms-transform: translateX(26px);
+            transform: translateX(1.4rem);
+          }
+          .slider.round {
+            border-radius: 0.84rem;
+          }
+
+          .slider.round:before {
+            border-radius: 50%;
+          }
+        }
+      }
       .logout {
         color: #8b8b8b;
         font-size: 1rem;
