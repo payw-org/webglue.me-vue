@@ -236,7 +236,10 @@ export default {
         /** @type {Document} */
         const fragDocument = this.$refs.webview.contentDocument
 
-        fragWindow.addEventListener('mousemove', e => {
+        let newMouseMoveEventCallback
+        fragWindow.addEventListener(
+          'mousemove',
+          (newMouseMoveEventCallback = e => {
           const rect = e.target.getBoundingClientRect()
           const payload = {
             x: rect.left,
@@ -312,10 +315,14 @@ export default {
               url: this.fragInfo.url
             })
 
-            // Remove mousedown event listener
+            // Remove mouse event listeners
             fragWindow.removeEventListener(
               'mousedown',
               newMouseDownEventCallback
+            )
+            fragWindow.removeEventListener(
+              'mousemove',
+              newMouseMoveEventCallback
             )
           })
         )
