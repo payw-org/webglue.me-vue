@@ -41,6 +41,7 @@
       allowtransparency="true"
       style="background: #fff;"
       :src="`/api/mirror?url=${fragInfo.url}`"
+      sandbox="allow-forms allow-popups allow-pointer-lock allow-same-origin allow-scripts"
       frameborder="0"
       class="wf-iframe"
       :scrolling="fragInfo.mode === 'new' ? 'yes' : 'no'"
