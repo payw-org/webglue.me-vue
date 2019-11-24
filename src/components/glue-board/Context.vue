@@ -45,6 +45,10 @@ export default {
       this.$el.style.top = `${fragRect.top + fragRect.height / 2}px`
       this.$el.classList.add('active')
     })
+
+    CEM.addEventListener('closecontext', this.$el, e => {
+      this.$el.classList.remove('active')
+    })
   }
 }
 </script>
