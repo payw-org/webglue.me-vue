@@ -183,6 +183,13 @@ export default {
       })
     }
 
+    rootElm.addEventListener('contextmenu', e => {
+      e.preventDefault()
+      CEM.dispatchEvent('context', {
+        target: this.$el
+      })
+    })
+
     rootElm.addEventListener('mouseenter', () => {
       if (this.fragInfo.mode === 'postit') {
         this.stat.hover = true
@@ -196,6 +203,10 @@ export default {
     })
 
     rootElm.addEventListener('mousedown', e => {
+      if (e.which === 3) {
+        return
+      }
+
       if (this.fragInfo.mode === 'postit') {
         if (e.target.closest('.boundary-line')) {
           return
