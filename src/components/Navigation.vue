@@ -56,7 +56,9 @@ export default {
     return {
       homeLink: '',
       sharingState: false,
-      popupState: false
+      popupState: false,
+      glueBoardId: '',
+      glueBoardHash: ''
     }
   },
   computed: {
@@ -70,13 +72,46 @@ export default {
   },
   methods: {
     activatePopUp() {
-      this.$emit('sharing')
+      this.$emit('sharing', this.glueBoardHash)
     },
     toggleClicked() {
       if (this.sharingState === false) {
         this.sharingState = true
+        this.glueBoardId = this.$route.params.category
+        Axios({
+          method: 'patch',
+          url: `https://api.webglue.me/v1/me/glueboards/${this.glueBoardId}`,
+          withCredentials: true,
+          data: {
+            sharing: true
+          }
+        })
+          .then(() => {})
+          .catch(error => {
+            console.error(error)
+          })
+        Axios({
+          method: 'get',
+          url: `https://api.webglue.me/v1/me/glueboards/${this.glueBoardId}/sharing`,
+          withCredentials: true
+        }).then(res => {
+          this.glueBoardHash = res.data.hash
+        })
       } else {
         this.sharingState = false
+        Axios({
+          method: 'patch',
+          url: `https://api.webglue.me/v1/me/glueboards/${this.glueBoardId}`,
+          withCredentials: true,
+          data: {
+            sharing: false
+          }
+        })
+          .then(() => {
+          })
+          .catch(error => {
+            console.error(error)
+          })
         this.$emit('deactivatepopup')
       }
     },
@@ -87,7 +122,7 @@ export default {
       this.$store.commit('glueBoard/setUrlBarActive', true)
     },
     logout() {
-      Axios.delete('https://api.dev.webglue.me/v1/oauth2/google', {
+      Axios.delete('https://api.webglue.me/v1/oauth2/google', {
         withCredentials: true
       })
         .then(() => {
