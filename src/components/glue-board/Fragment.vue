@@ -133,6 +133,7 @@ export default {
       rootElm.style.height = '800px'
       webview.style.width = '1280px'
       webview.style.height = '800px'
+
       webview.addEventListener('load', e => {
         const fDocument = webview.contentDocument
         const fHtml = fDocument.documentElement
@@ -140,6 +141,14 @@ export default {
 
         fHtml.style.width = '1280px'
         fHtml.style.height = '800px'
+        fHtml.style.position = 'absolute'
+        fHtml.style.left = '0px'
+        fHtml.style.top = '0px'
+
+        const inputs = fDocument.getElementsByTagName('input')
+        for (let i = 0; i < inputs.length; i += 1) {
+          inputs[i].disabled = true
+        }
 
         try {
           /** @type {HTMLElement} */
