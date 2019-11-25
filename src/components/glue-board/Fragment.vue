@@ -84,6 +84,10 @@ export default {
       default: () => {
         return {}
       }
+    },
+    isReadOnly: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -219,6 +223,10 @@ export default {
         this.stat.hover = false
       }
     })
+
+    if (this.isReadOnly) {
+      return
+    }
 
     rootElm.addEventListener('mousedown', e => {
       if (e.which === 3) {
