@@ -28,7 +28,7 @@ export default async context => {
 
         // Redirect to home
         if (window.location.pathname !== '/') {
-          window.location.replace('/')
+          // window.location.replace('/')
         }
       }
     }

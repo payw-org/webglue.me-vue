@@ -84,6 +84,10 @@ export default {
       default: () => {
         return {}
       }
+    },
+    isReadOnly: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -133,6 +137,7 @@ export default {
       rootElm.style.height = '800px'
       webview.style.width = '1280px'
       webview.style.height = '800px'
+
       webview.addEventListener('load', e => {
         const fDocument = webview.contentDocument
         const fHtml = fDocument.documentElement
@@ -140,32 +145,38 @@ export default {
 
         fHtml.style.width = '1280px'
         fHtml.style.height = '800px'
+        fHtml.style.position = 'absolute'
+        fHtml.style.left = '0px'
+        fHtml.style.top = '0px'
+
+        const inputs = fDocument.getElementsByTagName('input')
+        for (let i = 0; i < inputs.length; i += 1) {
+          inputs[i].disabled = true
+        }
 
         try {
           /** @type {HTMLElement} */
           const userTarget = fDocument.querySelector(this.fragInfo.selector)
 
           // TODO: Tree Pruning
-
+          
           const userTargetRect = userTarget.getBoundingClientRect()
           const userTargetX = userTargetRect.left
           const userTargetY = userTargetRect.top
           const userTargetWidth = userTargetRect.width
           const userTargetHeight = userTargetRect.height
 
-          fHtml.style.position = 'fixed'
-          fHtml.style.left = '0px'
-          fHtml.style.top = '0px'
-          fHtml.style.transform = `translateX(-${userTargetX}px) translateY(-${userTargetY}px)`
+          // fHtml.style.transform = `translateX(-${userTargetX}px) translateY(-${userTargetY}px)`
+          fHtml.style.left = -userTargetX + 'px'
+          fHtml.style.top = -userTargetY + 'px'
 
           rootElm.style.width = `${userTargetWidth}px`
           rootElm.style.height = `${userTargetHeight}px`
-        } catch (error) {
-          console.error(error)
-        }
 
-        console.log('iframe loaded on postit mode', this.fragInfo.id)
-        rootElm.style.opacity = '1'
+          rootElm.style.opacity = '1'
+        } catch (error) {
+          console.error('WEBGLUE Error', error)
+        }
       })
     }
 
@@ -187,6 +198,10 @@ export default {
         this.stat.hover = false
       }
     })
+
+    if (this.isReadOnly) {
+      return
+    }
 
     rootElm.addEventListener('mousedown', e => {
       if (e.which === 3) {

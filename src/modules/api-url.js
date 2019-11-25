@@ -37,6 +37,13 @@ export default {
         method: 'delete',
         url: `${host}/v1/me/glueboards/${glueBoardId}`
       }
+    },
+    /** @param {string} glueBoardHash */
+    shared(glueBoardHash) {
+      return {
+        method: 'get',
+        url: `${host}/v1/sharing/${glueBoardHash}`
+      }
     }
   },
   fragment: {
