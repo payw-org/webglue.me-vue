@@ -189,19 +189,17 @@ export default {
           const userTargetWidth = userTargetRect.width
           const userTargetHeight = userTargetRect.height
 
-          fHtml.style.position = 'fixed'
-          fHtml.style.left = '0px'
-          fHtml.style.top = '0px'
-          fHtml.style.transform = `translateX(-${userTargetX}px) translateY(-${userTargetY}px)`
+          // fHtml.style.transform = `translateX(-${userTargetX}px) translateY(-${userTargetY}px)`
+          fHtml.style.left = -userTargetX + 'px'
+          fHtml.style.top = -userTargetY + 'px'
 
           rootElm.style.width = `${userTargetWidth}px`
           rootElm.style.height = `${userTargetHeight}px`
-        } catch (error) {
-          console.error(error)
-        }
 
-        console.log('iframe loaded on postit mode', this.fragInfo.id)
-        rootElm.style.opacity = '1'
+          rootElm.style.opacity = '1'
+        } catch (error) {
+          console.error('WEBGLUE Error', error)
+        }
       })
     }
 
