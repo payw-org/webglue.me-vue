@@ -12,6 +12,7 @@
         :key="frag.id"
         :frag-info="frag"
         :class="`fragment-${frag.id}`"
+        :is-read-only="glueBoardHash !== undefined"
         @cancel="cancelNewFragment(i)"
         @sniff="updateSelector"
         @exitnewmode="changeModeTo($event, 'postit', i)"
@@ -50,6 +51,10 @@ export default {
     glueBoardId: {
       type: String,
       default: ''
+    },
+    glueBoardHash: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -72,7 +77,8 @@ export default {
       minLeft: Infinity,
       maxRight: -Infinity,
       minTop: Infinity,
-      maxBottom: -Infinity
+      maxBottom: -Infinity,
+      isReadOnly: false
     }
   },
   watch: {
@@ -81,12 +87,15 @@ export default {
     }
   },
   mounted() {
-    Axios({
-      ...apiUrl.fragment.list(this.glueBoardId),
-      withCredentials: true
-    }).then(res => {
-      console.log(res.data)
-    })
+    console.log('glueboard mounted')
+    console.log(this.glueBoardHash)
+    if (this.glueBoardHash) {
+      this.isReadOnly = true
+      this.loadFragments()
+
+      return
+    }
+
     window.addEventListener('mousemove', event => {
       if (this.resizedirection === 'right') {
         if (event.pageX < this.initialposition) {
@@ -264,8 +273,17 @@ export default {
         .substr(2, 5)
     },
     loadFragments() {
+      let api
+      if (this.glueBoardHash) {
+        api = apiUrl.glueBoard.shared(this.glueBoardHash)
+        console.log('load shared glueboard')
+      } else {
+        api = apiUrl.fragment.list(this.glueBoardId)
+        console.log('load glueboard')
+      }
+
       Axios({
-        ...apiUrl.fragment.list(this.glueBoardId),
+        ...api,
         withCredentials: true
       }).then(res => {
         /** @type {Array} */
