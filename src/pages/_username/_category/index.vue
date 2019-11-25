@@ -26,14 +26,13 @@ export default {
   data() {
     return {
       isActivatePopUp: false,
-      glueboardLink: ''
+      glueboardLink: '',
+      glueboardHash: ''
     }
   },
   computed: {
     publicUrl() {
-      const username = this.$route.params.username
-      const glueBoardId = this.$route.params.category
-      const link = 'https://webglue.me/' + username + '/' + glueBoardId
+      const link = 'https://webglue.me/public/' + this.glueboardHash
       return link
     }
   },
@@ -49,9 +48,10 @@ export default {
     deactivatePopUp() {
       this.isActivatePopUp = false
     },
-    activatePopUp() {
+    activatePopUp(hash) {
       if (this.isActivatePopUp === false) {
         this.isActivatePopUp = true
+        this.glueboardHash = hash
       } else {
         this.deactivatePopUp()
       }
