@@ -158,6 +158,8 @@ export default {
           /** @type {HTMLElement} */
           const userTarget = fDocument.querySelector(this.fragInfo.selector)
 
+          // TODO: Tree Pruning
+          
           const userTargetRect = userTarget.getBoundingClientRect()
           const userTargetX = userTargetRect.left
           const userTargetY = userTargetRect.top
