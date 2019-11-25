@@ -67,7 +67,7 @@ export default {
   z-index: 99999999999999;
   pointer-events: none;
   opacity: 0;
-  transition: all 200ms ease;
+  // transition: all 200ms ease;
   transform: translateX(-50%) translateY(-50%);
 
   &.active {
