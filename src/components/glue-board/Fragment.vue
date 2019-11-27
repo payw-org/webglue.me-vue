@@ -159,7 +159,7 @@ export default {
           const userTarget = fDocument.querySelector(this.fragInfo.selector)
 
           // TODO: Tree Pruning
-          
+
           const userTargetRect = userTarget.getBoundingClientRect()
           const userTargetX = userTargetRect.left
           const userTargetY = userTargetRect.top
@@ -199,9 +199,9 @@ export default {
       }
     })
 
-    if (this.isReadOnly) {
-      return
-    }
+    // if (this.isReadOnly) {
+    //   return
+    // }
 
     rootElm.addEventListener('mousedown', e => {
       if (e.which === 3) {
