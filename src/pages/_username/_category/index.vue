@@ -30,11 +30,21 @@ export default {
       glueboardHash: ''
     }
   },
+
   computed: {
     publicUrl() {
       const link = 'https://webglue.me/public/' + this.glueboardHash
       return link
     }
+  },
+  mounted() {
+    window.addEventListener('mousedown', e => {
+      /** @type {HTMLElement} */
+      const target = e.target
+      if (!target.closest('.popup') && !target.closest('.share-icon-wrapper')) {
+        this.isActivatePopUp = false
+      }
+    })
   },
   methods: {
     copyLink() {
