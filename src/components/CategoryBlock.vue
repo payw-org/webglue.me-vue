@@ -120,6 +120,10 @@ export default {
     } else {
       this.glueBoardLink = `/@${this.$store.state.auth.userInfo.nickname}/${this.catId}`
     }
+
+    this.$el.addEventListener('touchstart', e => {
+      console.log('touchstart on category block')
+    })
   },
   methods: {
     categoryKeyDown() {
@@ -410,8 +414,9 @@ export default {
 
   .category-name,
   .category-name-input {
+    user-select: none;
     font-weight: fw(6);
-    color: #f8f6f6;
+    color: #ffffff;
     line-height: lh(2);
     min-width: 100%;
     display: block;
@@ -456,7 +461,7 @@ export default {
     width: $btn-size;
     height: $btn-size;
     z-index: 101;
-    top: -5%;
+    top: -$btn-size/3;
     position: absolute;
     display: flex;
     align-items: center;
@@ -465,7 +470,7 @@ export default {
   }
 
   .edit-btn {
-    right: calc(-5% + #{$btn-size + 0.3rem});
+    right: -$btn-size/3 + $btn-size + 0.3rem;
 
     .edit-icon {
       $icon-size: 55%;
@@ -478,11 +483,14 @@ export default {
   }
 
   .remove-btn {
-    right: -5%;
+    right: -$btn-size/3;
     flex-direction: column;
 
     .icon-x {
       width: 55%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
   }
 
