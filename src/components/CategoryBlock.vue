@@ -410,8 +410,9 @@ export default {
 
   .category-name,
   .category-name-input {
+    user-select: none;
     font-weight: fw(6);
-    color: #f8f6f6;
+    color: #ffffff;
     line-height: lh(2);
     min-width: 100%;
     display: block;
