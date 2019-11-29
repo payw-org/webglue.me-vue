@@ -456,7 +456,7 @@ export default {
     width: $btn-size;
     height: $btn-size;
     z-index: 101;
-    top: -5%;
+    top: -$btn-size/3;
     position: absolute;
     display: flex;
     align-items: center;
@@ -465,7 +465,7 @@ export default {
   }
 
   .edit-btn {
-    right: calc(-5% + #{$btn-size + 0.3rem});
+    right: -$btn-size/3 + $btn-size + 0.3rem;
 
     .edit-icon {
       $icon-size: 55%;
@@ -478,11 +478,14 @@ export default {
   }
 
   .remove-btn {
-    right: -5%;
+    right: -$btn-size/3;
     flex-direction: column;
 
     .icon-x {
       width: 55%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
   }
 
