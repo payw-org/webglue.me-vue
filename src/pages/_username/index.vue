@@ -537,7 +537,7 @@ export default {
     }
     .color-picker-bg {
       background-color: #fff;
-      border-radius: 0.7rem;
+      border-radius: r(4);
       z-index: 1;
       display: block;
       justify-content: center;
@@ -548,11 +548,14 @@ export default {
         text-align: center;
         color: #6b6b6b;
         padding-top: 1.2rem;
-        padding-bottom: 1.2rem;
+        padding-bottom: 0.7rem;
       }
+
       .button-box {
         padding-right: 0.7rem;
         padding-left: 0.7em;
+        padding-bottom: 0.7em;
+
         .color-choose {
           width: 10%;
           display: inline-block;
