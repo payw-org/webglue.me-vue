@@ -120,6 +120,10 @@ export default {
     } else {
       this.glueBoardLink = `/@${this.$store.state.auth.userInfo.nickname}/${this.catId}`
     }
+
+    this.$el.addEventListener('touchstart', e => {
+      console.log('touchstart on category block')
+    })
   },
   methods: {
     categoryKeyDown() {
