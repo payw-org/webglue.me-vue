@@ -1,7 +1,7 @@
 <template>
   <div id="glueboard-context">
     <ol>
-      <li class="delete">
+      <li class="delete" @click="deleteFragment">
         삭제
       </li>
       <li
@@ -53,9 +53,12 @@ export default {
     CEM.addEventListener('context', this.$el, e => {
       /** @type {HTMLElement} */
       const fragment = e.detail.target
+      this.targetFrag = fragment
+      this.fragmentId = e.detail.target.classList[3]
+      this.glueboardId = this.$route.params.category
       const fragRect = fragment.getBoundingClientRect()
-      this.$el.style.left = `${fragRect.left + fragRect.width / 2}px`
-      this.$el.style.top = `${fragRect.top + fragRect.height / 2}px`
+      this.$el.style.left = `${fragRect.left + fragRect.width}px`
+      this.$el.style.top = `${fragRect.top + fragRect.height}px`
       this.$el.classList.add('active')
     })
 
@@ -126,10 +129,11 @@ export default {
   width: 13rem;
   max-width: 100%;
   position: fixed;
-  z-index: 99999999999999;
+  z-index: 10000;
   pointer-events: none;
   opacity: 0;
-  // transition: all 200ms ease;
+  top: 2rem;
+  // hover: all 200ms ease;
   transform: translateX(-50%) translateY(-50%);
 
   &.active {
@@ -142,11 +146,11 @@ export default {
       color: #fff;
       padding: s(3) s(4);
       cursor: pointer;
-      transition: background-color 200ms ease, color 200ms ease,
-        transform 200ms ease;
+      hover: background-color 200ms ease, color 200ms ease, transform 200ms ease;
       user-select: none;
       border-bottom: 1px solid rgba(#fff, 0.15);
       text-align: center;
+      z-index: 12000;
 
       &:first-child {
         padding-top: s(4);
