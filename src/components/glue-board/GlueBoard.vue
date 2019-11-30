@@ -164,6 +164,10 @@ export default {
       this.resizedirection = null
     })
     window.addEventListener('mousedown', event => {
+      if (event.target.closest('.webglue-fragment')) {
+        return
+      }
+      console.log('aaa')
       this.initialX = event.clientX
       this.initialY = event.clientY
       const glueboardScroll = document.querySelector(
