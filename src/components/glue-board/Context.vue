@@ -4,7 +4,12 @@
       <li class="delete">
         삭제
       </li>
-      <li v-for="gBoard in glueBoards" :key="gBoard.id">
+      <li
+        v-for="gBoard in glueBoards"
+        :key="gBoard.id"
+        :data-glueboard-id="gBoard.id"
+        @click="moveFragment"
+      >
         → {{ gBoard.category.name }}
       </li>
     </ol>
@@ -35,9 +40,14 @@ export default {
     }).then(res => {
       this.glueBoards = res.data.glueBoards
     })
-
+    window.addEventListener('mouseup', e => {
+      /** @type {HTMLElement} */
+      const target = e.target
+      CEM.dispatchEvent('closecontext', {
+        target: this.$el
+      })
+    })
     CEM.addEventListener('context', this.$el, e => {
-      console.log('open context')
       /** @type {HTMLElement} */
       const fragment = e.detail.target
       const fragRect = fragment.getBoundingClientRect()
@@ -49,6 +59,36 @@ export default {
     CEM.addEventListener('closecontext', this.$el, e => {
       this.$el.classList.remove('active')
     })
+  },
+  methods: {
+    /**
+     * @param {MouseEvent} e
+     */
+    moveFragment(e) {
+      /** @type {HTMLElement} */
+      const target = e.target
+      const gboardId = target.getAttribute('data-glueboard-id')
+      const splitFragId = this.fragmentId.split('-')
+      const fragId = splitFragId[1]
+      Axios({
+        ...apiUrl.fragment.update(this.glueboardId, fragId),
+        data: {
+          transferGlueBoardID: gboardId
+        },
+        withCredentials: true
+      })
+        .then(res => {
+          console.log('서버에 저장됨')
+          const updatingFragIndex = Number(
+            this.targetFrag.getAttribute('data-fragment-index')
+          )
+          console.log('updating frag index', updatingFragIndex)
+          CEM.dispatchEvent('removefragment', updatingFragIndex)
+        })
+        .catch(err => {
+          console.error(err)
+        })
+    },
   }
 }
 </script>
