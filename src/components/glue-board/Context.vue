@@ -30,7 +30,10 @@ export default {
   },
   data() {
     return {
-      glueBoards: []
+      glueBoards: [],
+      glueboardId: '',
+      fragmentId: '',
+      targetFrag: undefined
     }
   },
   mounted() {
@@ -89,6 +92,25 @@ export default {
           console.error(err)
         })
     },
+    deleteFragment() {
+      console.log(this.fragmentId)
+      const splitFragId = this.fragmentId.split('-')
+      const fragId = splitFragId[1]
+      Axios({
+        ...apiUrl.fragment.delete(this.glueboardId, fragId),
+        withCredentials: true
+      })
+        .then(res => {
+          console.log('deleted')
+          const deletingFragIndex = Number(
+            this.targetFrag.getAttribute('data-fragment-index')
+          )
+          CEM.dispatchEvent('removefragment', deletingFragIndex)
+        })
+        .catch(err => {
+          console.error(err)
+        })
+    }
   }
 }
 </script>
