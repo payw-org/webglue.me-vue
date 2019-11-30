@@ -110,6 +110,8 @@ export default {
   watch: {
     catName(next) {
       this.$refs.categoryName.innerHTML = next
+    },
+    catId(next) {
       this.glueBoardLink = `/@${this.$store.state.auth.userInfo.nickname}/${next}`
     }
   },
@@ -120,10 +122,6 @@ export default {
     } else {
       this.glueBoardLink = `/@${this.$store.state.auth.userInfo.nickname}/${this.catId}`
     }
-
-    this.$el.addEventListener('touchstart', e => {
-      console.log('touchstart on category block')
-    })
   },
   methods: {
     categoryKeyDown() {
@@ -145,6 +143,10 @@ export default {
       this.focusInput()
     },
     handleMouseEnter(bool) {
+      if (window.isTouchDevice) {
+        return
+      }
+
       if (this.type === 'category') {
         this.isMouseEnter = bool
       }
@@ -412,13 +414,18 @@ export default {
 
   .category-name,
   .category-name-input {
-    user-select: none;
     font-weight: fw(6);
     color: #ffffff;
     line-height: lh(2);
     min-width: 100%;
     display: block;
     padding: s(6);
+  }
+
+  &.long-pressed {
+    .category-name {
+      user-select: none;
+    }
   }
 
   .category-name span {

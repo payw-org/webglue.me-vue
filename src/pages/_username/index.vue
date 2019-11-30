@@ -151,6 +151,190 @@ export default {
 
     this.profileLink = `/@${this.$store.state.auth.userInfo.nickname}/profile`
 
+    // Touch actions
+    this.$el.addEventListener('touchstart', e => {
+      if (!e.target.closest('.real-category')) {
+        return
+      }
+
+      /** @type {HTMLElement} */
+      const target = e.target.closest('.real-category')
+      const targetRect = target.getBoundingClientRect()
+
+      const touchOrgX = e.pageX
+      const touchOrgY = e.pageY - window.scrollY
+      const posOrgX = targetRect.left
+      const posOrgY = targetRect.top
+
+      console.log('touchstart on category block', touchOrgX, touchOrgY)
+
+      let touchmoveCallback, touchendCallback
+
+      // Set timeout for long press detection
+      const timeout = setTimeout(() => {
+        console.log('long press')
+
+        setTimeout(() => {
+          console.log('long long press')
+        }, 900)
+
+        target.classList.add('long-pressed')
+
+        document.body.classList.add('touch-interactive')
+
+        // If long press is detected
+        // remove event listener of touchmove and touchend
+        // to prevent additional wrong touch actions
+        this.$el.removeEventListener('touchmove', touchmoveCallback)
+        this.$el.removeEventListener('touchend', touchendCallback)
+
+        // Clone node
+        const clonedNode = target.cloneNode(true)
+        clonedNode.removeChild(clonedNode.querySelector('.actions'))
+        clonedNode.classList.add('cloned')
+        clonedNode.style.position = 'fixed'
+        clonedNode.style.width = targetRect.width + 'px'
+        clonedNode.style.height = targetRect.height + 'px'
+        clonedNode.style.left = targetRect.left + 'px'
+        clonedNode.style.top = targetRect.top + 'px'
+
+        target.classList.add('ghost')
+        clonedNode.classList.add('bounce')
+        document.body.appendChild(clonedNode)
+
+        let LPTMCB, LPTECB
+        let movingIndex = Number(
+          target.parentElement.getAttribute('data-index')
+        )
+
+        window.addEventListener(
+          'touchmove',
+          (LPTMCB = e => {
+            console.log(e.pageX)
+            console.log(e)
+            const moveX = e.pageX - touchOrgX
+            const moveY = e.pageY - window.scrollY - touchOrgY
+
+            // Set clonedNode's style
+            clonedNode.style.left = posOrgX + moveX + 'px'
+            clonedNode.style.top = posOrgY + moveY + 'px'
+            clonedNode.style.zIndex = '8888'
+
+            const clonedNodeRect = clonedNode.getBoundingClientRect()
+
+            // Calculate center axis
+            const center = {
+              x: clonedNodeRect.left + clonedNodeRect.width / 2,
+              y: clonedNodeRect.top + clonedNodeRect.height / 2
+            }
+
+            // Scroll up or down
+            // if cloned boundary exceeds window
+            if (clonedNodeRect.top < 0) {
+              window.scrollTo(0, window.scrollY + clonedNodeRect.top)
+            } else if (clonedNodeRect.bottom > window.innerHeight) {
+              window.scrollTo(
+                0,
+                window.scrollY + clonedNodeRect.bottom - window.innerHeight
+              )
+            }
+
+            // Get elms from the pointer axis
+            const elms = document.elementsFromPoint(center.x, center.y)
+
+            if (this.isCatMoving) {
+              return
+            }
+
+            elms.forEach(elm => {
+              if (
+                elm.classList.contains('grid-item-wrapper') &&
+                elm.getAttribute('data-index')
+              ) {
+                const targetIndex = Number(elm.getAttribute('data-index'))
+                movingIndex = Number(
+                  target.parentElement.getAttribute('data-index')
+                )
+                console.log('movingIndex', movingIndex)
+                const tempBlocks = this.blocks.slice()
+
+                const cutOut = tempBlocks.splice(movingIndex, 1)[0]
+                tempBlocks.splice(targetIndex, 0, cutOut)
+
+                movingIndex = targetIndex
+
+                this.blocks = tempBlocks
+                this.isCatMoving = true
+
+                setTimeout(() => {
+                  this.isCatMoving = false
+                }, 400)
+              }
+            })
+          })
+        )
+
+        window.addEventListener(
+          'touchend',
+          (LPTECB = e => {
+            target.classList.remove('long-pressed')
+            window.removeEventListener('touchmove', LPTMCB)
+            window.removeEventListener('touchmove', LPTECB)
+
+            const gridItemWrapper = document.getElementsByClassName(
+              'grid-item-wrapper'
+            )[movingIndex]
+            const giwRect = gridItemWrapper.getBoundingClientRect()
+            clonedNode.classList.add('returning')
+            clonedNode.style.left = giwRect.left + 'px'
+            clonedNode.style.top = giwRect.top + 'px'
+            clonedNode.style.transform = 'scale(1)'
+
+            setTimeout(() => {
+              target.classList.remove('ghost')
+              if (clonedNode && clonedNode.parentElement) {
+                clonedNode.parentElement.removeChild(clonedNode)
+              }
+              document.body.classList.remove('touch-interactive')
+            }, 300)
+          })
+        )
+      }, 400)
+
+      // Touch move event
+      this.$el.addEventListener(
+        'touchmove',
+        (touchmoveCallback = e => {
+          console.log('touchmove', e.pageX, e.pageY)
+          // Clear timeout for long press detection
+          // when touchmove
+          if (
+            Math.abs(touchOrgX - e.pageX) > 8 ||
+            Math.abs(touchOrgY - e.pageY) > 8
+          ) {
+            clearTimeout(timeout)
+            this.$el.removeEventListener('touchmove', touchmoveCallback)
+          }
+        })
+      )
+
+      // Touch end event
+      this.$el.addEventListener(
+        'touchend',
+        (touchendCallback = e => {
+          if (
+            Math.abs(touchOrgX - e.pageX) < 5 &&
+            Math.abs(touchOrgY - e.pageY) < 5 &&
+            e.target &&
+            e.target.querySelector('.glueboard')
+          ) {
+          }
+          clearTimeout(timeout)
+          this.$el.removeEventListener('touchmove', touchendCallback)
+        })
+      )
+    })
+
     /** @type {HTMLElement} */
     let original
 
@@ -160,6 +344,8 @@ export default {
     // and apply the movement changes
     // to category block when mousemove
     window.addEventListener('mousedown', e => {
+      if (window.isTouchDevice) return
+
       /** @type {HTMLElement} */
       const target = e.target
 
@@ -204,6 +390,8 @@ export default {
     })
 
     window.addEventListener('mousemove', e => {
+      if (window.isTouchDevice) return
+
       if (this.stat.catch) {
         if (original) {
           original.classList.add('ghost')
@@ -254,9 +442,14 @@ export default {
     })
 
     window.addEventListener('mouseup', () => {
+      if (window.isTouchDevice) {
+        return
+      }
+
       if (original && !this.stat.move) {
         const glueBoardLink = original.querySelector('.glueboard-link').href
         window.location.href = glueBoardLink
+        console.log('move to link')
       }
 
       if (this.moving.elm) {
@@ -306,6 +499,8 @@ export default {
     })
 
     window.addEventListener('mousedown', e => {
+      if (window.isTouchDevice) return
+
       /** @type {HTMLElement} */
       const target = e.target
       if (
@@ -459,6 +654,24 @@ export default {
   position: absolute;
   -webkit-transform: scale(0);
   transform: scale(0);
+}
+
+@keyframes bounce {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1.03);
+  }
+}
+
+.bounce {
+  animation-name: bounce;
+  animation-duration: 700ms;
+  animation-fill-mode: forwards;
 }
 
 .webglue-category {
