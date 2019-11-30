@@ -150,6 +150,41 @@ export default {
     window.addEventListener('mouseup', () => {
       this.resizedirection = null
     })
+    window.addEventListener('mousedown', event => {
+      this.initialX = event.clientX
+      this.initialY = event.clientY
+      const glueboardScroll = document.querySelector(
+        '.glue-board-scroll-wrapper'
+      )
+      let scrollLeft = glueboardScroll.scrollLeft
+      let scrollTop = glueboardScroll.scrollTop
+      this.scrollLeft = scrollLeft
+      this.scrollTop = scrollTop
+
+      let mousemoveCallback, mouseupCallback
+
+      window.addEventListener(
+        'mousemove',
+        (mousemoveCallback = event => {
+          scrollLeft = this.scrollLeft
+          scrollTop = this.scrollTop
+          const mouseXPos = event.clientX
+          const mouseYPos = event.clientY
+
+          scrollLeft += (mouseXPos - this.initialX) / 2
+          scrollTop += (mouseYPos - this.initialY) / 2
+          glueboardScroll.scrollTo(scrollLeft, scrollTop)
+        })
+      )
+
+      window.addEventListener(
+        'mouseup',
+        (mouseupCallback = event => {
+          window.removeEventListener('mousemove', mousemoveCallback)
+          window.removeEventListener('mouseup', mouseupCallback)
+        })
+      )
+    })
 
     this.loadFragments()
   },
