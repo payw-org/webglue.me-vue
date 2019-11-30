@@ -1,6 +1,7 @@
 <template>
   <div class="glue-board-scroll-wrapper">
     <Context
+      class="contextmenu"
       :context-data="{
         glueBoardId
       }"
@@ -11,6 +12,7 @@
         v-for="(frag, i) in fragments"
         :key="frag.id"
         :frag-info="frag"
+        :frag-index="i"
         :class="`fragment-${frag.id}`"
         :is-read-only="glueBoardHash !== undefined"
         @cancel="cancelNewFragment(i)"
@@ -44,6 +46,7 @@ import Selector from '~/components/glue-board/Selector'
 import Context from '~/components/glue-board/Context'
 import apiUrl from '~/modules/api-url'
 import Axios from 'axios'
+import { CEM } from '~/modules/custom-event-manager'
 
 export default {
   components: { Fragment, UrlBar, Selector, Context },
@@ -78,7 +81,11 @@ export default {
       maxRight: -Infinity,
       minTop: Infinity,
       maxBottom: -Infinity,
-      isReadOnly: false
+      isReadOnly: false,
+      initialX: 0,
+      initialY: 0,
+      scrollLeft: 0,
+      scrollTop: 0
     }
   },
   watch: {
@@ -87,6 +94,12 @@ export default {
     }
   },
   mounted() {
+    // Remove fragment custom event
+    CEM.addEventListener('removefragment', this.$el, e => {
+      const index = e.detail
+      this.fragments.splice(index, 1)
+    })
+
     console.log('glueboard mounted')
     console.log(this.glueBoardHash)
     if (this.glueBoardHash) {
@@ -258,9 +271,7 @@ export default {
           yPos: payload.y
         }
       })
-        .then(() => {
-          console.log('프래그먼트 업데이트')
-        })
+        .then(() => {})
         .catch(err => {
           console.error(err)
         })
