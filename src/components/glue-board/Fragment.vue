@@ -363,8 +363,6 @@ export default {
             const rect = e.target.getBoundingClientRect()
             const moveX = rect.left + fragWindow.scrollX
             const moveY = rect.top
-            // const moveX = e.pageX
-            // const moveY = e.pageY
             const initialX = e.pageX
             const initialY = e.pageY
 
@@ -409,12 +407,15 @@ export default {
                 selector += `.${target.classList[i]}`
               }
             }
+            const a = initialX - parseInt(this.$el.style.left)
+            const b = initialY - parseInt(this.$el.style.top)
             let mouseX, mouseY
+            console.log(a)
             window.addEventListener(
               'mousemove',
               (mousemoveCallback = e => {
-                mouseX = e.pageX
-                mouseY = e.pageY
+                mouseX = e.pageX - a
+                mouseY = e.pageY - b
                 this.$el.style.left = mouseX + 'px'
                 this.$el.style.top = mouseY + 'px'
               })
