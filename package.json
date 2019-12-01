@@ -19,6 +19,7 @@
     "axios": "^0.19.0",
     "canvas-confetti": "^0.4.2",
     "cross-env": "^6.0.3",
+    "disable-scroll": "^0.5.0",
     "express": "^4.17.1",
     "frameguard": "^3.1.0",
     "nuxt": "^2.10.0",

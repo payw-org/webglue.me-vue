@@ -3620,6 +3620,13 @@ dimport@^1.0.0:
   dependencies:
     rewrite-imports "^2.0.3"
 
+disable-scroll@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/disable-scroll/-/disable-scroll-0.5.0.tgz#c06bebbe5e246f77a332573afaebb09a8e270022"
+  integrity sha512-esLJZORACXLVCIupsak9tJ+nfOH6nrj+iRSGTD8wj9HdHer6qSJCNs+ZCFXJ+d1kpgiasJ+lwNMEC7jmXzatZA==
+  dependencies:
+    scrollingelement "^1.5.2"
+
 doctrine@1.5.0:
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/doctrine/-/doctrine-1.5.0.tgz#379dce730f6166f76cefa4e6707a159b02c5a6fa"
@@ -9061,6 +9068,11 @@ scriptjs@^2.5.9:
   version "2.5.9"
   resolved "https://registry.yarnpkg.com/scriptjs/-/scriptjs-2.5.9.tgz#343915cd2ec2ed9bfdde2b9875cd28f59394b35f"
   integrity sha512-qGVDoreyYiP1pkQnbnFAUIS5AjenNwwQBdl7zeos9etl+hYKWahjRTfzAZZYBv5xNHx7vNKCmaLDQZ6Fr2AEXg==
+
+scrollingelement@^1.5.2:
+  version "1.5.2"
+  resolved "https://registry.yarnpkg.com/scrollingelement/-/scrollingelement-1.5.2.tgz#b63b71114d864e3671ca1e854ea1f93af61f107e"
+  integrity sha1-tjtxEU2GTjZxyh6FTqH5OvYfEH4=
 
 scss-tokenizer@^0.2.3:
   version "0.2.3"
