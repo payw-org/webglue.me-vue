@@ -5,7 +5,21 @@
       :context-data="{
         glueBoardId
       }"
+      @selecttime="activateTimePopUp"
     />
+    <div class="time-selector">
+      <ol v-if="selectTime">
+        <li class="thirty-m" @click="deactivateTimePopUp">
+30분
+</li>
+        <li class="one-h" @click="deactivateTimePopUp">
+1시간
+</li>
+        <li class="three-h" @click="deactivateTimePopUp">
+3시간
+</li>
+      </ol>
+    </div>
     <div class="glue-board-sentinel" />
     <div class="glue-board-fragment-container">
       <Fragment
@@ -86,7 +100,8 @@ export default {
       initialX: 0,
       initialY: 0,
       scrollLeft: 0,
-      scrollTop: 0
+      scrollTop: 0,
+      selectTime: false
     }
   },
   watch: {
@@ -206,6 +221,12 @@ export default {
     this.loadFragments()
   },
   methods: {
+    deactivateTimePopUp() {
+      this.selectTime = false
+    },
+    activateTimePopUp() {
+      this.selectTime = true
+    },
     fragmentSelect(payload, data) {
       this.willResizeElm = payload
       if (data === 'right') {
@@ -491,6 +512,20 @@ export default {
         padding-right: 0.1rem;
       }
     }
+  }
+}
+.time-selector {
+  background-color: black;
+  width: 4rem;
+  height: 6rem;
+  border-radius: 0.5rem;
+  .thirty-m,
+  .one-h,
+  .three-h {
+    font-size: 1rem;
+    text-align: center;
+    color: white;
+    height: 2rem;
   }
 }
 </style>
