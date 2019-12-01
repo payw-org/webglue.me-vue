@@ -54,7 +54,7 @@ export default {
       /** @type {HTMLElement} */
       const fragment = e.detail.target
       this.targetFrag = fragment
-      this.fragmentId = e.detail.target.classList[3]
+      this.fragmentId = fragment.getAttribute('data-fragment-id')
       this.glueboardId = this.$route.params.category
       const fragRect = fragment.getBoundingClientRect()
       this.$el.style.left = `${fragRect.left + fragRect.width}px`
@@ -74,10 +74,8 @@ export default {
       /** @type {HTMLElement} */
       const target = e.target
       const gboardId = target.getAttribute('data-glueboard-id')
-      const splitFragId = this.fragmentId.split('-')
-      const fragId = splitFragId[1]
       Axios({
-        ...apiUrl.fragment.update(this.glueboardId, fragId),
+        ...apiUrl.fragment.update(this.glueboardId, this.fragmentId),
         data: {
           transferGlueBoardID: gboardId
         },
@@ -97,10 +95,8 @@ export default {
     },
     deleteFragment() {
       console.log(this.fragmentId)
-      const splitFragId = this.fragmentId.split('-')
-      const fragId = splitFragId[1]
       Axios({
-        ...apiUrl.fragment.delete(this.glueboardId, fragId),
+        ...apiUrl.fragment.delete(this.glueboardId, this.fragmentId),
         withCredentials: true
       })
         .then(res => {
