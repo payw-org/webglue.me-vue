@@ -363,6 +363,13 @@ export default {
             const rect = e.target.getBoundingClientRect()
             const moveX = rect.left + fragWindow.scrollX
             const moveY = rect.top
+            // const moveX = e.pageX
+            // const moveY = e.pageY
+            const initialX = e.pageX
+            const initialY = e.pageY
+
+            let mousemoveCallback, mouseupCallback
+
             const fragBody = webview.contentDocument.body
             webview.style.transition = 'top 300ms ease, left 300ms ease'
             webview.style.position = 'absolute'
@@ -402,19 +409,35 @@ export default {
                 selector += `.${target.classList[i]}`
               }
             }
-
-            this.$emit('exitnewmode', {
-              position: {
-                x: rect.left,
-                y: rect.top
-              },
-              size: {
-                width: rect.width,
-                height: rect.height
-              },
-              selector,
-              url: this.fragInfo.url
-            })
+            let mouseX, mouseY
+            window.addEventListener(
+              'mousemove',
+              (mousemoveCallback = e => {
+                mouseX = e.pageX
+                mouseY = e.pageY
+                this.$el.style.left = mouseX + 'px'
+                this.$el.style.top = mouseY + 'px'
+              })
+            )
+            window.addEventListener(
+              'mouseup',
+              (mouseupCallback = e => {
+                this.$emit('exitnewmode', {
+                  position: {
+                    x: mouseX,
+                    y: mouseY
+                  },
+                  size: {
+                    width: rect.width,
+                    height: rect.height
+                  },
+                  selector,
+                  url: this.fragInfo.url
+                })
+                window.removeEventListener('mousemove', mousemoveCallback)
+                window.removeEventListener('mouseup', mouseupCallback)
+              })
+            )
 
             // Remove mouse event listeners
             fragWindow.removeEventListener(
