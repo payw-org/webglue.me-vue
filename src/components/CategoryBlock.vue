@@ -54,6 +54,7 @@
 import Axios from 'axios'
 import IconPlus from '@/components/icons/IconPlus'
 import ApiUrl from '~/modules/api-url'
+import { CEM } from '~/modules/custom-event-manager'
 
 export default {
   components: { IconPlus },
@@ -240,6 +241,7 @@ export default {
           })
             .then(() => {
               console.log('Category name updated')
+              CEM.dispatchEvent('hidecolorpicker')
             })
             .catch(err => {
               console.error(err)
@@ -370,6 +372,7 @@ export default {
 
   &.ghost {
     opacity: 0 !important;
+    pointer-events: none;
   }
 
   &.cloned {
@@ -380,6 +383,14 @@ export default {
     &.returning {
       transition: all 300ms ease;
       box-shadow: 0 0 0 transparent;
+    }
+
+    &.transition-all {
+      transition: all 200ms ease;
+    }
+
+    &.popup-mode {
+      z-index: 11000;
     }
   }
 
