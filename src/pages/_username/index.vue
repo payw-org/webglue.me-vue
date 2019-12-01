@@ -661,10 +661,10 @@ export default {
     transform: scale(1);
   }
   50% {
-    transform: scale(0.9);
+    transform: scale(0.85);
   }
   100% {
-    transform: scale(1.03);
+    transform: scale(1.04);
   }
 }
 
