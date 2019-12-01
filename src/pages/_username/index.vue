@@ -591,6 +591,19 @@ export default {
       const blockElms = document.getElementsByClassName('real-category')
       blockElms[this.willChangeCatBlockIndex].style.backgroundColor = newColor
       blockElms[this.willChangeCatBlockIndex].style.backgroundImage = 'none'
+      const glueBoardId = this.blocks[this.willChangeCatBlockIndex].id
+
+      Axios({
+        ...ApiUrl.glueBoard.update(glueBoardId),
+        withCredentials: true,
+        data: {
+          color: newColor
+        }
+      })
+        .then(res => {})
+        .catch(err => {
+          console.error(err)
+        })
     },
     clickColorPicker() {
       this.isColorPickerVisible = true
@@ -599,6 +612,19 @@ export default {
       this.blocks[this.willChangeCatBlockIndex].category.color = Color[newColor]
       const blockElms = document.getElementsByClassName('real-category')
       blockElms[this.willChangeCatBlockIndex].style.backgroundImage = ''
+      const glueBoardId = this.blocks[this.willChangeCatBlockIndex].id
+
+      Axios({
+        ...ApiUrl.glueBoard.update(glueBoardId),
+        withCredentials: true,
+        data: {
+          color: Color[newColor]
+        }
+      })
+        .then(res => {})
+        .catch(err => {
+          console.error(err)
+        })
     },
     inActivateColorPicker() {
       this.isColorPickerVisible = false

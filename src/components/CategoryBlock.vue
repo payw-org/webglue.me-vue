@@ -241,7 +241,6 @@ export default {
           })
             .then(() => {
               console.log('Category name updated')
-              CEM.dispatchEvent('hidecolorpicker')
             })
             .catch(err => {
               console.error(err)
