@@ -35,9 +35,6 @@ export default {
       const y = this.targetInfo.y
       const width = this.targetInfo.width
       const height = this.targetInfo.height
-      const glueBoardIndex = this.targetInfo.glueBoardIndex
-
-      console.log('top:', y)
 
       this.$el.style.left = x + 'px'
       this.$el.style.top = y + height - 50 + 10 + 'px'
