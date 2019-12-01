@@ -1,5 +1,5 @@
 /**
- * @typedef {'context'} AvailableEventNames
+ * @typedef {'context'|'closecontext'|'activateblurrylayer'|'deactivateblurrylayer'|'activatecategorycontext'|'deactivatecategorycontext'|'removefragment'|'hidecolorpicker'|'removecategory'|'deactivatepopupmode'} AvailableEventNames
  */
 
 /**
@@ -16,7 +16,7 @@
 export class CEM {
   /**
    * If the array with a key of event name is not set, create one
-   * @param {string} eventName
+   * @param {AvailableEventNames} eventName
    */
   static initEventKeyArray(eventName) {
     if (!this.storage[eventName] || !Array.isArray(this.storage[eventName])) {
@@ -26,7 +26,7 @@ export class CEM {
 
   /**
    * Remove event listener with the same event name and callback
-   * @param {string} eventName
+   * @param {AvailableEventNames} eventName
    * @param {EventListenerOrEventListenerObject} listener
    */
   static removeEventListener(eventName, listener) {
