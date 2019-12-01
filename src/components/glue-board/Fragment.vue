@@ -14,6 +14,8 @@
       left: `${fragInfo.position.x}px`,
       top: `${fragInfo.position.y}px`
     }"
+    :data-fragment-id="fragInfo.id"
+    :data-fragment-index="fragIndex"
   >
     <div
       class="boundary-line top-line"
@@ -84,6 +86,10 @@ export default {
       default: () => {
         return {}
       }
+    },
+    fragIndex: {
+      type: Number,
+      default: 0
     },
     isReadOnly: {
       type: Boolean,
