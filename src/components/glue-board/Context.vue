@@ -4,6 +4,9 @@
       <li class="delete" @click="deleteFragment">
         삭제
       </li>
+      <li class="alarm" @click="timeSelected">
+        알림
+      </li>
       <li
         v-for="gBoard in glueBoards"
         :key="gBoard.id"
@@ -46,6 +49,9 @@ export default {
     window.addEventListener('mouseup', e => {
       /** @type {HTMLElement} */
       const target = e.target
+      if (e.target.closest('.alarm')) {
+        return
+      }
       CEM.dispatchEvent('closecontext', {
         target: this.$el
       })
@@ -54,7 +60,7 @@ export default {
       /** @type {HTMLElement} */
       const fragment = e.detail.target
       this.targetFrag = fragment
-      this.fragmentId = e.detail.target.classList[3]
+      this.fragmentId = fragment.getAttribute('data-fragment-id')
       this.glueboardId = this.$route.params.category
       const fragRect = fragment.getBoundingClientRect()
       this.$el.style.left = `${fragRect.left + fragRect.width}px`
@@ -67,6 +73,9 @@ export default {
     })
   },
   methods: {
+    timeSelected() {
+      this.$emit('selecttime')
+    },
     /**
      * @param {MouseEvent} e
      */
@@ -74,10 +83,8 @@ export default {
       /** @type {HTMLElement} */
       const target = e.target
       const gboardId = target.getAttribute('data-glueboard-id')
-      const splitFragId = this.fragmentId.split('-')
-      const fragId = splitFragId[1]
       Axios({
-        ...apiUrl.fragment.update(this.glueboardId, fragId),
+        ...apiUrl.fragment.update(this.glueboardId, this.fragmentId),
         data: {
           transferGlueBoardID: gboardId
         },
@@ -97,10 +104,8 @@ export default {
     },
     deleteFragment() {
       console.log(this.fragmentId)
-      const splitFragId = this.fragmentId.split('-')
-      const fragId = splitFragId[1]
       Axios({
-        ...apiUrl.fragment.delete(this.glueboardId, fragId),
+        ...apiUrl.fragment.delete(this.glueboardId, this.fragmentId),
         withCredentials: true
       })
         .then(res => {
@@ -172,6 +177,16 @@ export default {
 
         &:hover {
           background-color: #ff2f2f;
+          color: #fff;
+        }
+      }
+      &.alarm {
+        color: #7dd666;
+        font-weight: fw(5);
+        background-color: rgba(#fff, 0.1);
+
+        &:hover {
+          background-color: #7dd666;
           color: #fff;
         }
       }

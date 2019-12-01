@@ -5,12 +5,26 @@
       :context-data="{
         glueBoardId
       }"
+      @selecttime="activateTimePopUp"
     />
+    <div class="time-selector">
+      <ol v-if="selectTime">
+        <li class="thirty-m" @click="deactivateTimePopUp">
+30분
+</li>
+        <li class="one-h" @click="deactivateTimePopUp">
+1시간
+</li>
+        <li class="three-h" @click="deactivateTimePopUp">
+3시간
+</li>
+      </ol>
+    </div>
     <div class="glue-board-sentinel" />
     <div class="glue-board-fragment-container">
       <Fragment
         v-for="(frag, i) in fragments"
-        :key="frag.id"
+        :key="frag.localId"
         :frag-info="frag"
         :frag-index="i"
         :class="`fragment-${frag.id}`"
@@ -47,6 +61,7 @@ import Context from '~/components/glue-board/Context'
 import apiUrl from '~/modules/api-url'
 import Axios from 'axios'
 import { CEM } from '~/modules/custom-event-manager'
+import Utils from '../../modules/utils'
 
 export default {
   components: { Fragment, UrlBar, Selector, Context },
@@ -85,7 +100,8 @@ export default {
       initialX: 0,
       initialY: 0,
       scrollLeft: 0,
-      scrollTop: 0
+      scrollTop: 0,
+      selectTime: false
     }
   },
   watch: {
@@ -167,7 +183,6 @@ export default {
       if (event.target.closest('.webglue-fragment')) {
         return
       }
-      console.log('aaa')
       this.initialX = event.clientX
       this.initialY = event.clientY
       const glueboardScroll = document.querySelector(
@@ -206,6 +221,12 @@ export default {
     this.loadFragments()
   },
   methods: {
+    deactivateTimePopUp() {
+      this.selectTime = false
+    },
+    activateTimePopUp() {
+      this.selectTime = true
+    },
     fragmentSelect(payload, data) {
       this.willResizeElm = payload
       if (data === 'right') {
@@ -299,7 +320,6 @@ export default {
       this.fragments[index].mode = mode
       this.fragments[index].position = payload.position
       this.fragments[index].size = payload.size
-
       Axios({
         ...apiUrl.fragment.create(this.glueBoardId),
         withCredentials: true,
@@ -311,6 +331,7 @@ export default {
         }
       })
         .then(res => {
+          this.fragments[index].id = res.data.createdID
           console.log('서버에 저장됨')
         })
         .catch(err => {
@@ -339,6 +360,7 @@ export default {
         /** @type {Array} */
         const fragments = res.data.fragments.map(frag => {
           return {
+            localId: Utils.makeId(),
             id: frag.id,
             mode: 'postit',
             position: {
@@ -402,7 +424,7 @@ export default {
         url,
         mode: 'new',
         selector: '',
-        id: this.generateRandomId()
+        localId: Utils.makeId()
       })
     },
     cancelNewFragment(index) {
@@ -490,6 +512,20 @@ export default {
         padding-right: 0.1rem;
       }
     }
+  }
+}
+.time-selector {
+  background-color: black;
+  width: 4rem;
+  height: 6rem;
+  border-radius: 0.5rem;
+  .thirty-m,
+  .one-h,
+  .three-h {
+    font-size: 1rem;
+    text-align: center;
+    color: white;
+    height: 2rem;
   }
 }
 </style>
