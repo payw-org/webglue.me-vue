@@ -9,6 +9,7 @@ html {
   overflow: auto;
   -ms-overflow-style: none; /* Edge */
   scrollbar-width: none; /* Firefox */
+  scroll-behavior: smooth;
 
   &.dark-mode {
     .mode--light {
@@ -84,6 +85,10 @@ body {
   color: #333;
   @include bg;
   @include text-color;
+
+  &.touch-interactive {
+    user-select: none;
+  }
 }
 
 * {

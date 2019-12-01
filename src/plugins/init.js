@@ -37,5 +37,12 @@ export default async context => {
       const userInfo = res.data
       store.dispatch('auth/signIn', userInfo)
     }
+
+    // Detect touch device
+    if ('ontouchstart' in window || navigator.maxTouchPoints) {
+      window.isTouchDevice = true
+    } else {
+      window.isTouchDevice = false
+    }
   }
 }
