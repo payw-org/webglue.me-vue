@@ -10,7 +10,7 @@
     <div class="glue-board-fragment-container">
       <Fragment
         v-for="(frag, i) in fragments"
-        :key="frag.id"
+        :key="frag.localId"
         :frag-info="frag"
         :frag-index="i"
         :class="`fragment-${frag.id}`"
@@ -47,6 +47,7 @@ import Context from '~/components/glue-board/Context'
 import apiUrl from '~/modules/api-url'
 import Axios from 'axios'
 import { CEM } from '~/modules/custom-event-manager'
+import Utils from '../../modules/utils'
 
 export default {
   components: { Fragment, UrlBar, Selector, Context },
@@ -167,7 +168,6 @@ export default {
       if (event.target.closest('.webglue-fragment')) {
         return
       }
-      console.log('aaa')
       this.initialX = event.clientX
       this.initialY = event.clientY
       const glueboardScroll = document.querySelector(
@@ -299,7 +299,6 @@ export default {
       this.fragments[index].mode = mode
       this.fragments[index].position = payload.position
       this.fragments[index].size = payload.size
-
       Axios({
         ...apiUrl.fragment.create(this.glueBoardId),
         withCredentials: true,
@@ -311,6 +310,7 @@ export default {
         }
       })
         .then(res => {
+          this.fragments[index].id = res.data.createdID
           console.log('서버에 저장됨')
         })
         .catch(err => {
@@ -339,6 +339,7 @@ export default {
         /** @type {Array} */
         const fragments = res.data.fragments.map(frag => {
           return {
+            localId: Utils.makeId(),
             id: frag.id,
             mode: 'postit',
             position: {
@@ -402,7 +403,7 @@ export default {
         url,
         mode: 'new',
         selector: '',
-        id: this.generateRandomId()
+        localId: Utils.makeId()
       })
     },
     cancelNewFragment(index) {
