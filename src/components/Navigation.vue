@@ -107,8 +107,7 @@ export default {
             sharing: false
           }
         })
-          .then(() => {
-          })
+          .then(() => {})
           .catch(error => {
             console.error(error)
           })
