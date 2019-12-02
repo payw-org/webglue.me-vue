@@ -4,11 +4,11 @@
       <li class="delete" @click="deleteFragment">
         삭제
       </li>
-      <li class="alarm" @click="timeSelected">
+      <li class="alarm" @click="setNotifier">
         <div class="alarm-btn">
           <img src="~assets/images/bell.svg" class="alarm-image" />
           <div class="alarm-text">
-            알림
+            {{ notifyTitle }}
           </div>
         </div>
       </li>
@@ -39,9 +39,10 @@ export default {
   data() {
     return {
       glueBoards: [],
-      glueboardId: '',
+      glueBoardId: '',
       fragmentId: '',
-      targetFrag: undefined
+      targetFrag: undefined,
+      notifyTitle: ''
     }
   },
   mounted() {
@@ -49,7 +50,9 @@ export default {
       ...apiUrl.glueBoard.list,
       withCredentials: true
     }).then(res => {
-      this.glueBoards = res.data.glueBoards
+      this.glueBoards = res.data.glueBoards.filter(gb => {
+        return gb.id !== this.$route.params.category
+      })
     })
 
     window.addEventListener('mousedown', e => {
@@ -61,9 +64,16 @@ export default {
     CEM.addEventListener('context', this.$el, e => {
       /** @type {HTMLElement} */
       const fragment = e.detail.target
+
+      if (fragment.getAttribute('is-subscribed')) {
+        this.notifyTitle = '알림 해제'
+      } else {
+        this.notifyTitle = '알림 등록'
+      }
+
       this.targetFrag = fragment
       this.fragmentId = fragment.getAttribute('data-fragment-id')
-      this.glueboardId = this.$route.params.category
+      this.glueBoardId = this.$route.params.category
       const fragRect = fragment.getBoundingClientRect()
       this.$el.style.left = `${fragRect.left + fragRect.width / 2}px`
       this.$el.style.top = `${fragRect.top + fragRect.height / 2}px`
@@ -76,8 +86,41 @@ export default {
     })
   },
   methods: {
-    timeSelected() {
-      this.$emit('selecttime', this.$el)
+    setNotifier() {
+      let subscription = true
+      if (this.targetFrag.getAttribute('is-subscribed')) {
+        subscription = false
+      }
+
+      Axios({
+        ...apiUrl.fragment.update(this.glueBoardId, this.fragmentId),
+        withCredentials: true,
+        data: {
+          subscription
+        }
+      })
+        .then(res => {
+          console.log(
+            'update subscription',
+            subscription,
+            this.glueBoardId,
+            this.fragmentId
+          )
+          CEM.dispatchEvent('closecontext')
+          const targetFrag = document.querySelector(
+            `[data-fragment-id="${this.fragmentId}"]`
+          )
+
+          if (subscription) {
+            targetFrag.setAttribute('is-subscribed', 'true')
+          } else {
+            targetFrag.removeAttribute('is-subscribed')
+          }
+        })
+        .catch(err => {
+          console.error('subscription failed')
+          console.error(err)
+        })
     },
     /**
      * @param {MouseEvent} e
@@ -87,7 +130,7 @@ export default {
       const target = e.target
       const gboardId = target.getAttribute('data-glueboard-id')
       Axios({
-        ...apiUrl.fragment.update(this.glueboardId, this.fragmentId),
+        ...apiUrl.fragment.update(this.glueBoardId, this.fragmentId),
         data: {
           transferGlueBoardID: gboardId
         },
@@ -106,7 +149,7 @@ export default {
     },
     deleteFragment() {
       Axios({
-        ...apiUrl.fragment.delete(this.glueboardId, this.fragmentId),
+        ...apiUrl.fragment.delete(this.glueBoardId, this.fragmentId),
         withCredentials: true
       })
         .then(res => {
@@ -152,11 +195,14 @@ export default {
       color: #fff;
       padding: s(3) s(4);
       cursor: pointer;
-      hover: background-color 200ms ease, color 200ms ease, transform 200ms ease;
+      height: 3rem;
       user-select: none;
       border-bottom: 1px solid rgba(#fff, 0.15);
       text-align: center;
       z-index: 12000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
       &:first-child {
         padding-top: s(4);
@@ -182,27 +228,30 @@ export default {
         }
       }
       &.alarm {
-        color: #7dd666;
+        color: #66d679;
         font-weight: fw(5);
         background-color: rgba(#fff, 0.1);
         align-items: center;
+
         .alarm-btn {
           display: flex;
-          padding-left: 2.5rem;
           flex-direction: row;
           align-items: center;
+
           .alarm-image {
             padding-right: 0.4rem;
-            width: 2rem;
-            height: 2rem;
+            width: 1.5rem;
+            height: 1.5rem;
           }
+
           .alarm-text {
             padding-left: 0.1rem;
+            padding-right: 0.2rem;
           }
         }
 
         &:hover {
-          background-color: #7dd666;
+          background-color: #25b32c;
           color: #fff;
         }
       }
