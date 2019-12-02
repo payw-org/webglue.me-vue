@@ -151,7 +151,7 @@ export default {
         const fBody = fDocument.body
 
         fHtml.style.width = '1280px'
-        fHtml.style.height = '800px'
+        fHtml.style.height = '1000px'
         fHtml.style.position = 'absolute'
         fHtml.style.left = '0px'
         fHtml.style.top = '0px'
@@ -176,8 +176,8 @@ export default {
           const userTargetHeight = userTargetRect.height
 
           // fHtml.style.transform = `translateX(-${userTargetX}px) translateY(-${userTargetY}px)`
-          fHtml.style.left = -userTargetX + 'px'
-          fHtml.style.top = -userTargetY + 'px'
+          webview.style.left = -userTargetX + 'px'
+          webview.style.top = -userTargetY + 'px'
 
           rootElm.style.width = `${userTargetWidth}px`
           rootElm.style.height = `${userTargetHeight}px`
@@ -379,10 +379,12 @@ export default {
             let mousemoveCallback, mouseupCallback
 
             const fragBody = webview.contentDocument.body
-            webview.style.transition = 'top 300ms ease, left 300ms ease'
+            const transitionTime = 1300
+            webview.style.transition = `top ${transitionTime}ms ease, left ${transitionTime}ms ease`
             webview.style.position = 'absolute'
             webview.style.width = fragBody.clientWidth + 'px'
-            webview.style.height = fragBody.clientHeight + 'px'
+            // webview.style.height = fragBody.clientHeight + 'px'
+            webview.style.height = webview.contentWindow.innerHeight + 'px'
             webview.style.left = 0
             webview.style.top = 0
             // eslint-disable-next-line no-unused-expressions
@@ -391,8 +393,7 @@ export default {
             webview.style.left = -moveX + 'px'
             webview.style.top = -moveY + 'px'
 
-            rootElm.style.transition =
-              'top 300ms ease, left 300ms ease, width 300ms ease, height 300ms ease'
+            rootElm.style.transition = `all ${transitionTime}ms`
             // eslint-disable-next-line no-unused-expressions
             rootElm.getBoundingClientRect().left
             rootElm.classList.remove('new')
@@ -403,7 +404,7 @@ export default {
 
             setTimeout(() => {
               rootElm.style.transition = ''
-            }, 300)
+            }, 1300)
 
             this.fragInfo.mode = 'postit'
 
