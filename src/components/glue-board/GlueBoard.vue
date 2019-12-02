@@ -5,20 +5,24 @@
       :context-data="{
         glueBoardId
       }"
-      @selecttime="activateTimePopUp"
+      @selecttime="activateTimePopUp($event)"
+      @closeselector="deactivateTimePopUp"
     />
-    <div class="time-selector">
-      <ol v-if="selectTime">
-        <li class="thirty-m" @click="deactivateTimePopUp">
-30분
-</li>
-        <li class="one-h" @click="deactivateTimePopUp">
-1시간
-</li>
-        <li class="three-h" @click="deactivateTimePopUp">
-3시간
-</li>
-      </ol>
+    <div v-if="selectTime" class="selector">
+      <div class="speech-point" />
+      <div class="time-selector">
+        <div>
+          <button class="thirty-m" @click="deactivateTimePopUp">
+            30분
+          </button>
+          <button class="one-h" @click="deactivateTimePopUp">
+            1시간
+          </button>
+          <button class="three-h" @click="deactivateTimePopUp">
+            3시간
+          </button>
+        </div>
+      </div>
     </div>
     <div class="glue-board-sentinel" />
     <div class="glue-board-fragment-container">
@@ -105,9 +109,7 @@ export default {
     }
   },
   watch: {
-    fragments(frags) {
-      // console.log(frags)
-    }
+    fragments(frags) {}
   },
   mounted() {
     // Remove fragment custom event
@@ -116,8 +118,6 @@ export default {
       this.fragments.splice(index, 1)
     })
 
-    console.log('glueboard mounted')
-    console.log(this.glueBoardHash)
     if (this.glueBoardHash) {
       this.isReadOnly = true
       this.loadFragments()
@@ -224,8 +224,20 @@ export default {
     deactivateTimePopUp() {
       this.selectTime = false
     },
-    activateTimePopUp() {
+    activateTimePopUp(conElem) {
       this.selectTime = true
+      this.$nextTick(() => {
+        const timeSelectorElm = document.querySelector('.selector')
+        timeSelectorElm.style.left =
+          conElem.getBoundingClientRect().width +
+          conElem.getBoundingClientRect().left +
+          10 +
+          'px'
+        timeSelectorElm.style.top =
+          conElem.getBoundingClientRect().top +
+          conElem.getBoundingClientRect().height / 3 +
+          'px'
+      })
     },
     fragmentSelect(payload, data) {
       this.willResizeElm = payload
@@ -513,18 +525,50 @@ export default {
     }
   }
 }
-.time-selector {
-  background-color: black;
+.selector {
+  display: flex;
+  flex-direction: row;
+  position: fixed;
   width: 4rem;
-  height: 6rem;
-  border-radius: 0.5rem;
-  .thirty-m,
-  .one-h,
-  .three-h {
-    font-size: 1rem;
-    text-align: center;
-    color: white;
-    height: 2rem;
+  height: 5.4rem;
+  z-index: 100000;
+
+  .speech-point {
+    width: 1rem;
+    height: 1rem;
+    transform: rotate(45deg) translateY(50%);
+    position: absolute;
+    top: 0.8rem;
+    left: 0rem;
+    background-color: #4e4e4e;
+    border-radius: 3px;
+    z-index: -1;
+  }
+  .time-selector {
+    background-color: #4e4e4e;
+    border-radius: 0.5rem;
+    width: 3rem;
+    .thirty-m,
+    .one-h,
+    .three-h {
+      font-size: 0.7rem;
+      width: 100%;
+      text-align: center;
+      color: white;
+      height: 1.8rem;
+      &:hover {
+        transition: transform 200ms ease;
+        background-color: #a7a6a6;
+      }
+    }
+    .thirty-m {
+      border-top-left-radius: 0.5rem;
+      border-top-right-radius: 0.5rem;
+    }
+    .three-h {
+      border-bottom-left-radius: 0.5rem;
+      border-bottom-right-radius: 0.5rem;
+    }
   }
 }
 </style>
