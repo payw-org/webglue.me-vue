@@ -141,6 +141,7 @@ export default {
       rootElm.style.opacity = '0'
       rootElm.style.width = '1280px'
       rootElm.style.height = '800px'
+      rootElm.style.pointerEvents = 'none'
       webview.style.width = '1280px'
       webview.style.height = '800px'
 
@@ -162,7 +163,9 @@ export default {
 
         try {
           /** @type {HTMLElement} */
-          const userTarget = fDocument.querySelector(this.fragInfo.selector)
+          const userTarget = Array.from(
+            fDocument.querySelectorAll(this.fragInfo.selector.name)
+          )[this.fragInfo.selector.offset]
 
           // TODO: Tree Pruning
 
@@ -180,6 +183,7 @@ export default {
           rootElm.style.height = `${userTargetHeight}px`
 
           rootElm.style.opacity = '1'
+          rootElm.style.pointerEvents = 'all'
         } catch (error) {
           console.error('WEBGLUE Error', error)
         }
@@ -214,6 +218,9 @@ export default {
         return
       }
 
+      console.log('mousedown')
+      console.log('mousedown')
+
       if (this.fragInfo.mode === 'postit') {
         if (e.target.closest('.boundary-line')) {
           return
@@ -235,11 +242,14 @@ export default {
         if (!this.stat.catched || this.fragInfo.mode !== 'postit') {
           return
         }
+        console.log('mousemove')
         if (this.stat.catched) {
           this.$store.commit('glueBoard/setMode', 'dragging')
           this.stat.isMoving = true
           const moveX = e.clientX - this.origin.pointer.x
           const moveY = e.clientY - this.origin.pointer.y
+
+          console.log(moveX, moveY)
 
           let newX = this.origin.position.x + moveX
           let newY = this.origin.position.y + moveY
@@ -404,7 +414,21 @@ export default {
             } else if (target.className) {
               if (target.parentElement && target.parentElement.id) {
                 selector = `#${target.parentElement.id} `
+              } else if (
+                target.parentElement &&
+                target.parentElement.className
+              ) {
+                for (
+                  let i = 0;
+                  i < target.parentElement.classList.length;
+                  i += 1
+                ) {
+                  selector += `.${target.parentElement.classList[i]}`
+                }
+
+                selector += ' '
               }
+
               for (let i = 0; i < target.classList.length; i += 1) {
                 selector += `.${target.classList[i]}`
               }
@@ -416,7 +440,8 @@ export default {
 
             const a = initialX - parseInt(this.$el.style.left)
             const b = initialY - parseInt(this.$el.style.top)
-            let mouseX, mouseY
+            let mouseX = e.pageX - a
+            let mouseY = e.pageY - b
             window.addEventListener(
               'mousemove',
               (mousemoveCallback = e => {

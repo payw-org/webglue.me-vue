@@ -331,6 +331,7 @@ export default {
       this.fragments[index].mode = mode
       this.fragments[index].position = payload.position
       this.fragments[index].size = payload.size
+
       const data = {
         url: payload.url,
         selector: {
@@ -340,6 +341,7 @@ export default {
         xPos: payload.position.x,
         yPos: payload.position.y
       }
+
       console.log('creating data', data)
       Axios({
         ...apiUrl.fragment.create(this.glueBoardId),

@@ -2,9 +2,10 @@
   <div>
     <div class="webglue-category">
       <Navigation class="navigation" />
+      <CategoryContext />
       <transition name="fade">
         <ColorPicker
-          v-if="isChangeColor"
+          v-if="isColorPickerVisible"
           ref="colorPicker"
           class="colorpicker"
           @select="inActivateColorPicker"
@@ -27,6 +28,7 @@
             :type="block.type"
             :index="i"
             :is-edit-mode="isEditMode"
+            :data-category-index="i"
             @create="createBlock"
             @update="updateBlock(i, $event)"
             @remove="removeBlock"
@@ -77,13 +79,15 @@ import Axios from 'axios'
 import ColorPicker from '~/components/ColorPicker'
 import Navigation from '~/components/Navigation'
 import CategoryBlock from '~/components/CategoryBlock'
+import CategoryContext from '~/components/CategoryContext'
 import requireAuth from '~/mixins/require-auth'
 import ApiUrl from '~/modules/api-url'
 import Color from '~/modules/color'
 import Utils from '~/modules/utils'
+import { CEM } from '~/modules/custom-event-manager'
 
 export default {
-  components: { Navigation, CategoryBlock, ColorPicker },
+  components: { Navigation, CategoryBlock, CategoryContext, ColorPicker },
   mixins: [requireAuth],
   props: {
     color: {
@@ -101,7 +105,7 @@ export default {
       isEditMode: false,
       isPopUp: false,
       profileLink: '',
-      isChangeColor: false,
+      isColorPickerVisible: false,
       willChangeCatBlockIndex: null,
       isMovePosition: false,
       points: {
@@ -134,6 +138,37 @@ export default {
     }
   },
   mounted() {
+    // Hide color picker
+    CEM.addEventListener('hidecolorpicker', this.$el, () => {
+      this.isColorPickerVisible = false
+    })
+
+    // Remove category
+    CEM.addEventListener('removecategory', this.$el, e => {
+      this.removeBlock(e.detail)
+
+      const cloned = document.querySelector('.real-category.cloned')
+      if (cloned) {
+        cloned.parentElement.removeChild(cloned)
+      }
+
+      document.body.classList.remove('touch-interactive')
+    })
+
+    CEM.addEventListener('deactivatepopupmode', this.$el, () => {
+      const ghost = document.querySelector('.real-category.ghost')
+      if (ghost) {
+        ghost.classList.remove('ghost')
+      }
+
+      const cloned = document.querySelector('.real-category.cloned')
+      if (cloned) {
+        cloned.parentElement.removeChild(cloned)
+      }
+
+      document.body.classList.remove('touch-interactive')
+    })
+
     // Load blocks(glueboards)
     Axios({
       ...ApiUrl.glueBoard.list,
@@ -151,7 +186,9 @@ export default {
 
     this.profileLink = `/@${this.$store.state.auth.userInfo.nickname}/profile`
 
-    // Touch actions
+    /**
+     * Touch Actions
+     */
     this.$el.addEventListener('touchstart', e => {
       if (!e.target.closest('.real-category')) {
         return
@@ -170,7 +207,7 @@ export default {
 
       // Set timeout for long press detection
       const timeout = setTimeout(() => {
-        setTimeout(() => {}, 900)
+        // *** Long Press ***
 
         target.classList.add('long-pressed')
 
@@ -183,6 +220,7 @@ export default {
         this.$el.removeEventListener('touchend', touchendCallback)
 
         // Clone node
+        /** @type {HTMLElement} */
         const clonedNode = target.cloneNode(true)
         clonedNode.removeChild(clonedNode.querySelector('.actions'))
         clonedNode.classList.add('cloned')
@@ -194,16 +232,31 @@ export default {
 
         target.classList.add('ghost')
         clonedNode.classList.add('bounce')
+
+        // Clear bounce animation class
+        // and add bounce-end class to keep scaling
+        setTimeout(() => {
+          clonedNode.classList.remove('bounce')
+          clonedNode.classList.add('bounce-end')
+        }, 700)
+
+        // Append cloned node to body
         document.body.appendChild(clonedNode)
 
         let LPTMCB, LPTECB
+        let LLPTIMEOUT = 0
         let movingIndex = Number(
           target.parentElement.getAttribute('data-index')
         )
 
+        // Touch move event after long press
         window.addEventListener(
           'touchmove',
           (LPTMCB = e => {
+            // Clear long long press timeout
+            window.clearTimeout(LLPTIMEOUT)
+
+            // Calculate touch move distance
             const moveX = e.pageX - touchOrgX
             const moveY = e.pageY - window.scrollY - touchOrgY
 
@@ -248,7 +301,6 @@ export default {
                   target.parentElement.getAttribute('data-index')
                 )
                 const tempBlocks = this.blocks.slice()
-
                 const cutOut = tempBlocks.splice(movingIndex, 1)[0]
                 tempBlocks.splice(targetIndex, 0, cutOut)
 
@@ -265,6 +317,7 @@ export default {
           })
         )
 
+        // Touch end event after long press
         window.addEventListener(
           'touchend',
           (LPTECB = e => {
@@ -290,6 +343,35 @@ export default {
             }, 300)
           })
         )
+
+        LLPTIMEOUT = setTimeout(() => {
+          // *** Long Long Press ***
+
+          // Remove event listeners for
+          // long press touchmove and touchend
+          window.removeEventListener('touchmove', LPTMCB)
+          window.removeEventListener('touchend', LPTECB)
+
+          clonedNode.classList.add('transition-all')
+          clonedNode.classList.add('popup-mode')
+          // eslint-disable-next-line no-unused-expressions
+          clonedNode.getBoundingClientRect().width
+
+          const clonedNodeRect = clonedNode.getBoundingClientRect()
+
+          clonedNode.style.top = clonedNodeRect.top - 50 + 'px'
+
+          // Activate blurry bg
+          CEM.dispatchEvent('activateblurrylayer')
+          CEM.dispatchEvent('activatecategorycontext', {
+            x: clonedNodeRect.left,
+            y: clonedNodeRect.top,
+            width: clonedNodeRect.width,
+            height: clonedNodeRect.height,
+            glueBoardId: target.getAttribute('data-category-id'),
+            glueBoardIndex: Number(target.getAttribute('data-category-index'))
+          })
+        }, 800)
       }, 400)
 
       // Touch move event
@@ -314,10 +396,13 @@ export default {
         (touchendCallback = e => {
           if (
             Math.abs(touchOrgX - e.pageX) < 5 &&
-            Math.abs(touchOrgY - e.pageY) < 5 &&
-            e.target &&
-            e.target.querySelector('.glueboard')
+            Math.abs(touchOrgY - (e.pageY - window.scrollY)) < 5 &&
+            target
           ) {
+            // Redirect to glueboard
+            location.href = target
+              .querySelector('.glueboard-link')
+              .getAttribute('href')
           }
           clearTimeout(timeout)
           this.$el.removeEventListener('touchmove', touchendCallback)
@@ -370,7 +455,7 @@ export default {
         // Set geometry
         clonedNode.style.width = orgRect.width + 'px'
         clonedNode.style.height = orgRect.height + 'px'
-        clonedNode.style.top = orgRect.top + 'px'
+        clonedNode.style.top = orgRect.top + window.scrollY + 'px'
         clonedNode.style.left = orgRect.left + 'px'
         clonedNode.style.position = 'absolute'
         document.body.appendChild(clonedNode)
@@ -492,7 +577,7 @@ export default {
         !target.closest('.color-picker') &&
         !target.closest('.add-category')
       ) {
-        this.isChangeColor = false
+        this.isColorPickerVisible = false
       }
     })
   },
@@ -501,21 +586,47 @@ export default {
       const blockElms = document.getElementsByClassName('real-category')
       blockElms[this.willChangeCatBlockIndex].style.backgroundColor = newColor
       blockElms[this.willChangeCatBlockIndex].style.backgroundImage = 'none'
+      const glueBoardId = this.blocks[this.willChangeCatBlockIndex].id
+
+      Axios({
+        ...ApiUrl.glueBoard.update(glueBoardId),
+        withCredentials: true,
+        data: {
+          color: newColor
+        }
+      })
+        .then(res => {})
+        .catch(err => {
+          console.error(err)
+        })
     },
     clickColorPicker() {
-      this.isChangeColor = true
+      this.isColorPickerVisible = true
     },
     selectColor(newColor) {
       this.blocks[this.willChangeCatBlockIndex].category.color = Color[newColor]
       const blockElms = document.getElementsByClassName('real-category')
       blockElms[this.willChangeCatBlockIndex].style.backgroundImage = ''
+      const glueBoardId = this.blocks[this.willChangeCatBlockIndex].id
+
+      Axios({
+        ...ApiUrl.glueBoard.update(glueBoardId),
+        withCredentials: true,
+        data: {
+          color: Color[newColor]
+        }
+      })
+        .then(res => {})
+        .catch(err => {
+          console.error(err)
+        })
     },
     inActivateColorPicker() {
-      this.isChangeColor = false
+      this.isColorPickerVisible = false
     },
     activateColorPicker(catElem, index) {
       this.willChangeCatBlockIndex = index
-      this.isChangeColor = true
+      this.isColorPickerVisible = true
       this.$nextTick(() => {
         const colorPickerElm = document.querySelector('.colorpicker')
         colorPickerElm.style.left =
@@ -566,7 +677,7 @@ export default {
         .catch(err => {
           console.error(err)
         })
-      this.isChangeColor = false
+      this.isColorPickerVisible = false
       const removeTarget = this.$el.querySelectorAll(
         '.category-box .grid-item-wrapper'
       )[index]
@@ -636,24 +747,6 @@ export default {
   position: absolute;
   -webkit-transform: scale(0);
   transform: scale(0);
-}
-
-@keyframes bounce {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(0.85);
-  }
-  100% {
-    transform: scale(1.04);
-  }
-}
-
-.bounce {
-  animation-name: bounce;
-  animation-duration: 700ms;
-  animation-fill-mode: forwards;
 }
 
 .webglue-category {

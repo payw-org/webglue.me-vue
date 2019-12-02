@@ -1,8 +1,17 @@
 <template>
   <div id="app">
     <Nuxt />
+    <BlurryLayer />
   </div>
 </template>
+
+<script>
+import BlurryLayer from '~/components/BlurryLayer'
+
+export default {
+  components: { BlurryLayer }
+}
+</script>
 
 <style lang="scss">
 @import '~/assets/scss/globalstyle';
