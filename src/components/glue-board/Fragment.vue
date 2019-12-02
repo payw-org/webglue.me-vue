@@ -379,7 +379,7 @@ export default {
             let mousemoveCallback, mouseupCallback
 
             const fragBody = webview.contentDocument.body
-            const transitionTime = 1300
+            const transitionTime = 1000
             webview.style.transition = `top ${transitionTime}ms ease, left ${transitionTime}ms ease`
             webview.style.position = 'absolute'
             webview.style.width = fragBody.clientWidth + 'px'
@@ -519,6 +519,10 @@ export default {
   border-radius: 0px;
   box-shadow: 0 0.2rem 0.4rem rgba(#000, 0.2);
   overflow: hidden;
+
+  &[is-subscribed] {
+    border: 1px solid #5ed02f;
+  }
 
   .top-line {
     position: absolute;
