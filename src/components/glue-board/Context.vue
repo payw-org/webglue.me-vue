@@ -51,16 +51,13 @@ export default {
     }).then(res => {
       this.glueBoards = res.data.glueBoards
     })
-    window.addEventListener('mouseup', e => {
-      /** @type {HTMLElement} */
-      const target = e.target
-      if (e.target.closest('.alarm')) {
-        return
+
+    window.addEventListener('mousedown', e => {
+      if (!e.target.closest('#glueboard-context')) {
+        CEM.dispatchEvent('closecontext')
       }
-      CEM.dispatchEvent('closecontext', {
-        target: this.$el
-      })
     })
+
     CEM.addEventListener('context', this.$el, e => {
       /** @type {HTMLElement} */
       const fragment = e.detail.target
@@ -68,8 +65,8 @@ export default {
       this.fragmentId = fragment.getAttribute('data-fragment-id')
       this.glueboardId = this.$route.params.category
       const fragRect = fragment.getBoundingClientRect()
-      this.$el.style.left = `${fragRect.left + fragRect.width}px`
-      this.$el.style.top = `${fragRect.top + fragRect.height}px`
+      this.$el.style.left = `${fragRect.left + fragRect.width / 2}px`
+      this.$el.style.top = `${fragRect.top + fragRect.height / 2}px`
       this.$el.classList.add('active')
     })
 
@@ -101,6 +98,7 @@ export default {
             this.targetFrag.getAttribute('data-fragment-index')
           )
           CEM.dispatchEvent('removefragment', updatingFragIndex)
+          CEM.dispatchEvent('closecontext')
         })
         .catch(err => {
           console.error(err)
@@ -116,6 +114,7 @@ export default {
             this.targetFrag.getAttribute('data-fragment-index')
           )
           CEM.dispatchEvent('removefragment', deletingFragIndex)
+          CEM.dispatchEvent('closecontext')
         })
         .catch(err => {
           console.error(err)
