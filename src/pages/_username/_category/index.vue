@@ -79,12 +79,15 @@ export default {
 .popup-field {
   display: flex;
   justify-content: center;
+  pointer-events: none;
+
   .popup-max {
     width: 100%;
     max-width: 80rem;
     z-index: 10001;
     height: 100%;
     position: fixed;
+
     .popup {
       right: 1.5rem;
       position: absolute;
@@ -101,6 +104,7 @@ export default {
         right: 50%;
         background-color: #fff;
       }
+
       .sharing-box {
         display: flex;
         align-items: center;
@@ -110,12 +114,15 @@ export default {
         border-radius: 0.84rem;
         background-color: #fff;
         box-shadow: 0 1rem 5rem rgba(#000, 0.2);
+        pointer-events: all;
+
         .input-group {
           width: 80%;
           height: 2rem;
           display: flex;
           align-items: center;
           justify-content: center;
+
           .url-link {
             border-left: 1px solid #d1d5da;
             border-top: 1px solid #d1d5da;
@@ -127,6 +134,7 @@ export default {
             height: 100%;
             box-shadow: inset 0 1px 2px rgba(27, 31, 35, 0.075);
           }
+
           .link-copy-btn {
             width: 2rem;
             height: 100%;
@@ -134,6 +142,7 @@ export default {
             display: flex;
             justify-content: center;
             align-items: center;
+
             .share-img {
               width: 55%;
               height: 55%;
