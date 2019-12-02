@@ -5,25 +5,7 @@
       :context-data="{
         glueBoardId
       }"
-      @selecttime="activateTimePopUp($event)"
-      @closeselector="deactivateTimePopUp"
     />
-    <div v-if="selectTime" class="selector">
-      <div class="speech-point" />
-      <div class="time-selector">
-        <div>
-          <button class="thirty-m" @click="deactivateTimePopUp">
-            30분
-          </button>
-          <button class="one-h" @click="deactivateTimePopUp">
-            1시간
-          </button>
-          <button class="three-h" @click="deactivateTimePopUp">
-            3시간
-          </button>
-        </div>
-      </div>
-    </div>
     <div class="glue-board-sentinel" />
     <div class="glue-board-fragment-container">
       <Fragment
@@ -33,6 +15,7 @@
         :frag-index="i"
         :class="`fragment-${frag.id}`"
         :is-read-only="glueBoardHash !== undefined"
+        :is-subscribed="frag.subscription ? true : false"
         @cancel="cancelNewFragment(i)"
         @sniff="updateSelector"
         @exitnewmode="changeModeTo($event, 'postit', i)"
@@ -221,24 +204,6 @@ export default {
     this.loadFragments()
   },
   methods: {
-    deactivateTimePopUp() {
-      this.selectTime = false
-    },
-    activateTimePopUp(conElem) {
-      this.selectTime = true
-      this.$nextTick(() => {
-        const timeSelectorElm = document.querySelector('.selector')
-        timeSelectorElm.style.left =
-          conElem.getBoundingClientRect().width +
-          conElem.getBoundingClientRect().left +
-          10 +
-          'px'
-        timeSelectorElm.style.top =
-          conElem.getBoundingClientRect().top +
-          conElem.getBoundingClientRect().height / 3 +
-          'px'
-      })
-    },
     fragmentSelect(payload, data) {
       this.willResizeElm = payload
       if (data === 'right') {
@@ -384,43 +349,15 @@ export default {
               y: frag.yPos
             },
             url: frag.url,
-            selector: frag.selector
+            selector: frag.selector,
+            subscription: frag.subscription
           }
         })
 
         this.fragments = fragments
-      })
 
-      // this.fragments = [
-      //   {
-      //     position: {
-      //       x: 50,
-      //       y: 100
-      //     },
-      //     size: {
-      //       width: 400,
-      //       height: 550
-      //     },
-      //     url: 'https://naver.com',
-      //     mode: 'postit',
-      //     selector: '',
-      //     id: this.generateRandomId()
-      //   },
-      //   {
-      //     position: {
-      //       x: 500,
-      //       y: 150
-      //     },
-      //     size: {
-      //       width: 400,
-      //       height: 550
-      //     },
-      //     url: 'https://naver.com',
-      //     mode: 'postit',
-      //     selector: '',
-      //     id: this.generateRandomId()
-      //   }
-      // ]
+        console.log(this.fragments)
+      })
     },
     updateSelector(payload) {
       this.rect = payload
