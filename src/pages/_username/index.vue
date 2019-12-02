@@ -166,17 +166,11 @@ export default {
       const posOrgX = targetRect.left
       const posOrgY = targetRect.top
 
-      console.log('touchstart on category block', touchOrgX, touchOrgY)
-
       let touchmoveCallback, touchendCallback
 
       // Set timeout for long press detection
       const timeout = setTimeout(() => {
-        console.log('long press')
-
-        setTimeout(() => {
-          console.log('long long press')
-        }, 900)
+        setTimeout(() => {}, 900)
 
         target.classList.add('long-pressed')
 
@@ -210,8 +204,6 @@ export default {
         window.addEventListener(
           'touchmove',
           (LPTMCB = e => {
-            console.log(e.pageX)
-            console.log(e)
             const moveX = e.pageX - touchOrgX
             const moveY = e.pageY - window.scrollY - touchOrgY
 
@@ -255,7 +247,6 @@ export default {
                 movingIndex = Number(
                   target.parentElement.getAttribute('data-index')
                 )
-                console.log('movingIndex', movingIndex)
                 const tempBlocks = this.blocks.slice()
 
                 const cutOut = tempBlocks.splice(movingIndex, 1)[0]
@@ -305,7 +296,6 @@ export default {
       this.$el.addEventListener(
         'touchmove',
         (touchmoveCallback = e => {
-          console.log('touchmove', e.pageX, e.pageY)
           // Clear timeout for long press detection
           // when touchmove
           if (
@@ -449,7 +439,6 @@ export default {
       if (original && !this.stat.move) {
         const glueBoardLink = original.querySelector('.glueboard-link').href
         window.location.href = glueBoardLink
-        console.log('move to link')
       }
 
       if (this.moving.elm) {
@@ -467,8 +456,6 @@ export default {
         this.moving.elm.style.left = giwRect.left + 'px'
         this.moving.elm.style.top = giwRect.top + window.scrollY + 'px'
 
-        console.log('updating category position')
-
         Axios({
           ...ApiUrl.glueBoard.update(
             this.moving.elm.getAttribute('data-category-id')
@@ -478,9 +465,7 @@ export default {
             position: this.moving.index
           }
         })
-          .then(() => {
-            console.log('Position updated')
-          })
+          .then(() => {})
           .catch(err => {
             console.error(err)
           })
@@ -613,12 +598,9 @@ export default {
         }
       })
         .then(res => {
-          console.log(res.data.createdID)
-          console.log('Created a category')
           this.blocks[payload.index].id = res.data.createdID
         })
         .catch(err => {
-          console.log('An error occurs while creating a category')
           console.error(err)
         })
         .finally(() => {
