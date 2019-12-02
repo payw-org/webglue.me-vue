@@ -218,9 +218,6 @@ export default {
         return
       }
 
-      console.log('mousedown')
-      console.log('mousedown')
-
       if (this.fragInfo.mode === 'postit') {
         if (e.target.closest('.boundary-line')) {
           return
@@ -239,17 +236,15 @@ export default {
     window.addEventListener(
       'mousemove',
       (mouseMoveCallback = e => {
-        if (!this.stat.catched || this.fragInfo.mode !== 'postit') {
+        if (!this.stat.catched) {
           return
         }
-        console.log('mousemove')
+
         if (this.stat.catched) {
           this.$store.commit('glueBoard/setMode', 'dragging')
           this.stat.isMoving = true
           const moveX = e.clientX - this.origin.pointer.x
           const moveY = e.clientY - this.origin.pointer.y
-
-          console.log(moveX, moveY)
 
           let newX = this.origin.position.x + moveX
           let newY = this.origin.position.y + moveY
@@ -303,10 +298,16 @@ export default {
     window.addEventListener(
       'mouseup',
       (mouseUpCallback = () => {
+        if (this.stat.catched) {
+          this.stat.catched = false
+        }
+
         if (!this.stat.isMoving || this.fragInfo.mode !== 'postit') {
           return
         }
+
         this.isfragmentmove = 0
+
         if (!this.stat.isValidPos) {
           this.stat.isTransitioning = true
           setTimeout(() => {
@@ -515,7 +516,7 @@ export default {
   transition: box-shadow 300ms ease, opacity 500ms ease;
   cursor: default;
   border-radius: 0px;
-  box-shadow: 0 0.3rem 0.5rem rgba(#000, 0.2);
+  box-shadow: 0 0.2rem 0.4rem rgba(#000, 0.2);
   overflow: hidden;
 
   .top-line {
@@ -588,12 +589,12 @@ export default {
 
   &.hover {
     overflow: hidden;
-    box-shadow: 0 2rem 5rem rgba(#000, 0.4);
+    box-shadow: 0 1rem 2rem rgba(#000, 0.2);
   }
 
   &.active {
     // transform: scale(0.92);
-    box-shadow: 0 1rem 2rem rgba(#000, 0.3);
+    // box-shadow: 0 1rem 2rem rgba(#000, 0.3);
     z-index: 10;
   }
 
