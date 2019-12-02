@@ -4,6 +4,14 @@
       <li class="delete" @click="deleteFragment">
         삭제
       </li>
+      <li class="alarm" @click="timeSelected">
+        <div class="alarm-btn">
+          <img src="~assets/images/bell.svg" class="alarm-image" />
+          <div class="alarm-text">
+            알림
+          </div>
+        </div>
+      </li>
       <li
         v-for="gBoard in glueBoards"
         :key="gBoard.id"
@@ -46,6 +54,9 @@ export default {
     window.addEventListener('mouseup', e => {
       /** @type {HTMLElement} */
       const target = e.target
+      if (e.target.closest('.alarm')) {
+        return
+      }
       CEM.dispatchEvent('closecontext', {
         target: this.$el
       })
@@ -54,7 +65,7 @@ export default {
       /** @type {HTMLElement} */
       const fragment = e.detail.target
       this.targetFrag = fragment
-      this.fragmentId = e.detail.target.classList[3]
+      this.fragmentId = fragment.getAttribute('data-fragment-id')
       this.glueboardId = this.$route.params.category
       const fragRect = fragment.getBoundingClientRect()
       this.$el.style.left = `${fragRect.left + fragRect.width}px`
@@ -63,10 +74,14 @@ export default {
     })
 
     CEM.addEventListener('closecontext', this.$el, e => {
+      this.$emit('closeselector')
       this.$el.classList.remove('active')
     })
   },
   methods: {
+    timeSelected() {
+      this.$emit('selecttime', this.$el)
+    },
     /**
      * @param {MouseEvent} e
      */
@@ -74,21 +89,17 @@ export default {
       /** @type {HTMLElement} */
       const target = e.target
       const gboardId = target.getAttribute('data-glueboard-id')
-      const splitFragId = this.fragmentId.split('-')
-      const fragId = splitFragId[1]
       Axios({
-        ...apiUrl.fragment.update(this.glueboardId, fragId),
+        ...apiUrl.fragment.update(this.glueboardId, this.fragmentId),
         data: {
           transferGlueBoardID: gboardId
         },
         withCredentials: true
       })
         .then(res => {
-          console.log('서버에 저장됨')
           const updatingFragIndex = Number(
             this.targetFrag.getAttribute('data-fragment-index')
           )
-          console.log('updating frag index', updatingFragIndex)
           CEM.dispatchEvent('removefragment', updatingFragIndex)
         })
         .catch(err => {
@@ -96,15 +107,11 @@ export default {
         })
     },
     deleteFragment() {
-      console.log(this.fragmentId)
-      const splitFragId = this.fragmentId.split('-')
-      const fragId = splitFragId[1]
       Axios({
-        ...apiUrl.fragment.delete(this.glueboardId, fragId),
+        ...apiUrl.fragment.delete(this.glueboardId, this.fragmentId),
         withCredentials: true
       })
         .then(res => {
-          console.log('deleted')
           const deletingFragIndex = Number(
             this.targetFrag.getAttribute('data-fragment-index')
           )
@@ -172,6 +179,31 @@ export default {
 
         &:hover {
           background-color: #ff2f2f;
+          color: #fff;
+        }
+      }
+      &.alarm {
+        color: #7dd666;
+        font-weight: fw(5);
+        background-color: rgba(#fff, 0.1);
+        align-items: center;
+        .alarm-btn {
+          display: flex;
+          padding-left: 2.5rem;
+          flex-direction: row;
+          align-items: center;
+          .alarm-image {
+            padding-right: 0.4rem;
+            width: 2rem;
+            height: 2rem;
+          }
+          .alarm-text {
+            padding-left: 0.1rem;
+          }
+        }
+
+        &:hover {
+          background-color: #7dd666;
           color: #fff;
         }
       }

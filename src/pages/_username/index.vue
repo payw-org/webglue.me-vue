@@ -524,7 +524,6 @@ export default {
       if (original && !this.stat.move) {
         const glueBoardLink = original.querySelector('.glueboard-link').href
         window.location.href = glueBoardLink
-        console.log('move to link')
       }
 
       if (this.moving.elm) {
@@ -542,8 +541,6 @@ export default {
         this.moving.elm.style.left = giwRect.left + 'px'
         this.moving.elm.style.top = giwRect.top + window.scrollY + 'px'
 
-        console.log('updating category position')
-
         Axios({
           ...ApiUrl.glueBoard.update(
             this.moving.elm.getAttribute('data-category-id')
@@ -553,9 +550,7 @@ export default {
             position: this.moving.index
           }
         })
-          .then(() => {
-            console.log('Position updated')
-          })
+          .then(() => {})
           .catch(err => {
             console.error(err)
           })
@@ -714,12 +709,9 @@ export default {
         }
       })
         .then(res => {
-          console.log(res.data.createdID)
-          console.log('Created a category')
           this.blocks[payload.index].id = res.data.createdID
         })
         .catch(err => {
-          console.log('An error occurs while creating a category')
           console.error(err)
         })
         .finally(() => {

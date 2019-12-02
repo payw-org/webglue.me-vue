@@ -5,12 +5,30 @@
       :context-data="{
         glueBoardId
       }"
+      @selecttime="activateTimePopUp($event)"
+      @closeselector="deactivateTimePopUp"
     />
+    <div v-if="selectTime" class="selector">
+      <div class="speech-point" />
+      <div class="time-selector">
+        <div>
+          <button class="thirty-m" @click="deactivateTimePopUp">
+            30분
+          </button>
+          <button class="one-h" @click="deactivateTimePopUp">
+            1시간
+          </button>
+          <button class="three-h" @click="deactivateTimePopUp">
+            3시간
+          </button>
+        </div>
+      </div>
+    </div>
     <div class="glue-board-sentinel" />
     <div class="glue-board-fragment-container">
       <Fragment
         v-for="(frag, i) in fragments"
-        :key="frag.id"
+        :key="frag.localId"
         :frag-info="frag"
         :frag-index="i"
         :class="`fragment-${frag.id}`"
@@ -47,6 +65,7 @@ import Context from '~/components/glue-board/Context'
 import apiUrl from '~/modules/api-url'
 import Axios from 'axios'
 import { CEM } from '~/modules/custom-event-manager'
+import Utils from '../../modules/utils'
 
 export default {
   components: { Fragment, UrlBar, Selector, Context },
@@ -85,13 +104,12 @@ export default {
       initialX: 0,
       initialY: 0,
       scrollLeft: 0,
-      scrollTop: 0
+      scrollTop: 0,
+      selectTime: false
     }
   },
   watch: {
-    fragments(frags) {
-      // console.log(frags)
-    }
+    fragments(frags) {}
   },
   mounted() {
     // Remove fragment custom event
@@ -100,8 +118,6 @@ export default {
       this.fragments.splice(index, 1)
     })
 
-    console.log('glueboard mounted')
-    console.log(this.glueBoardHash)
     if (this.glueBoardHash) {
       this.isReadOnly = true
       this.loadFragments()
@@ -167,7 +183,6 @@ export default {
       if (event.target.closest('.webglue-fragment')) {
         return
       }
-      console.log('aaa')
       this.initialX = event.clientX
       this.initialY = event.clientY
       const glueboardScroll = document.querySelector(
@@ -206,6 +221,24 @@ export default {
     this.loadFragments()
   },
   methods: {
+    deactivateTimePopUp() {
+      this.selectTime = false
+    },
+    activateTimePopUp(conElem) {
+      this.selectTime = true
+      this.$nextTick(() => {
+        const timeSelectorElm = document.querySelector('.selector')
+        timeSelectorElm.style.left =
+          conElem.getBoundingClientRect().width +
+          conElem.getBoundingClientRect().left +
+          10 +
+          'px'
+        timeSelectorElm.style.top =
+          conElem.getBoundingClientRect().top +
+          conElem.getBoundingClientRect().height / 3 +
+          'px'
+      })
+    },
     fragmentSelect(payload, data) {
       this.willResizeElm = payload
       if (data === 'right') {
@@ -266,7 +299,6 @@ export default {
       sentinel.style.top = this.minTop + 'px'
     },
     updateFragmentData(payload) {
-      console.log('position updated')
       Axios({
         ...apiUrl.fragment.update(this.glueBoardId, payload.fragmentId),
         withCredentials: true,
@@ -299,19 +331,24 @@ export default {
       this.fragments[index].mode = mode
       this.fragments[index].position = payload.position
       this.fragments[index].size = payload.size
-
+      const data = {
+        url: payload.url,
+        selector: {
+          name: payload.selector,
+          offset: payload.selectorIndex
+        },
+        xPos: payload.position.x,
+        yPos: payload.position.y
+      }
+      console.log('creating data', data)
       Axios({
         ...apiUrl.fragment.create(this.glueBoardId),
         withCredentials: true,
-        data: {
-          url: payload.url,
-          selector: payload.selector,
-          xPos: payload.position.x,
-          yPos: payload.position.y
-        }
+        data
       })
         .then(res => {
-          console.log('서버에 저장됨')
+          console.log('created')
+          this.fragments[index].id = res.data.createdID
         })
         .catch(err => {
           console.error(err)
@@ -326,10 +363,8 @@ export default {
       let api
       if (this.glueBoardHash) {
         api = apiUrl.glueBoard.shared(this.glueBoardHash)
-        console.log('load shared glueboard')
       } else {
         api = apiUrl.fragment.list(this.glueBoardId)
-        console.log('load glueboard')
       }
 
       Axios({
@@ -339,6 +374,7 @@ export default {
         /** @type {Array} */
         const fragments = res.data.fragments.map(frag => {
           return {
+            localId: Utils.makeId(),
             id: frag.id,
             mode: 'postit',
             position: {
@@ -402,7 +438,7 @@ export default {
         url,
         mode: 'new',
         selector: '',
-        id: this.generateRandomId()
+        localId: Utils.makeId()
       })
     },
     cancelNewFragment(index) {
@@ -489,6 +525,52 @@ export default {
         width: 45%;
         padding-right: 0.1rem;
       }
+    }
+  }
+}
+.selector {
+  display: flex;
+  flex-direction: row;
+  position: fixed;
+  width: 4rem;
+  height: 5.4rem;
+  z-index: 100000;
+
+  .speech-point {
+    width: 1rem;
+    height: 1rem;
+    transform: rotate(45deg) translateY(50%);
+    position: absolute;
+    top: 0.8rem;
+    left: 0rem;
+    background-color: #4e4e4e;
+    border-radius: 3px;
+    z-index: -1;
+  }
+  .time-selector {
+    background-color: #4e4e4e;
+    border-radius: 0.5rem;
+    width: 3rem;
+    .thirty-m,
+    .one-h,
+    .three-h {
+      font-size: 0.7rem;
+      width: 100%;
+      text-align: center;
+      color: white;
+      height: 1.8rem;
+      &:hover {
+        transition: transform 200ms ease;
+        background-color: #a7a6a6;
+      }
+    }
+    .thirty-m {
+      border-top-left-radius: 0.5rem;
+      border-top-right-radius: 0.5rem;
+    }
+    .three-h {
+      border-bottom-left-radius: 0.5rem;
+      border-bottom-right-radius: 0.5rem;
     }
   }
 }
