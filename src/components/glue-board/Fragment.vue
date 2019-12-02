@@ -320,7 +320,6 @@ export default {
         //   y: this.fragInfo.position.y
         // })
         this.$emit('fragmentmove')
-        console.log('fragment mouseup')
         this.$emit('donemove', {
           x: this.fragInfo.position.x,
           y: this.fragInfo.position.y,
@@ -403,10 +402,18 @@ export default {
             if (target.id) {
               selector = `#${target.id}`
             } else if (target.className) {
+              if (target.parentElement && target.parentElement.id) {
+                selector = `#${target.parentElement.id} `
+              }
               for (let i = 0; i < target.classList.length; i += 1) {
                 selector += `.${target.classList[i]}`
               }
             }
+
+            const selectorIndex = Array.from(
+              fragDocument.querySelectorAll(selector)
+            ).indexOf(target)
+
             const a = initialX - parseInt(this.$el.style.left)
             const b = initialY - parseInt(this.$el.style.top)
             let mouseX, mouseY
@@ -432,6 +439,7 @@ export default {
                     height: rect.height
                   },
                   selector,
+                  selectorIndex,
                   url: this.fragInfo.url
                 })
                 window.removeEventListener('mousemove', mousemoveCallback)

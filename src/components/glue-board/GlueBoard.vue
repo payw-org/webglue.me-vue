@@ -331,19 +331,24 @@ export default {
       this.fragments[index].mode = mode
       this.fragments[index].position = payload.position
       this.fragments[index].size = payload.size
+      const data = {
+        url: payload.url,
+        selector: {
+          name: payload.selector,
+          offset: payload.selectorIndex
+        },
+        xPos: payload.position.x,
+        yPos: payload.position.y
+      }
+      console.log('creating data', data)
       Axios({
         ...apiUrl.fragment.create(this.glueBoardId),
         withCredentials: true,
-        data: {
-          url: payload.url,
-          selector: payload.selector,
-          xPos: payload.position.x,
-          yPos: payload.position.y
-        }
+        data
       })
         .then(res => {
+          console.log('created')
           this.fragments[index].id = res.data.createdID
-          console.log('서버에 저장됨')
         })
         .catch(err => {
           console.error(err)
@@ -358,10 +363,8 @@ export default {
       let api
       if (this.glueBoardHash) {
         api = apiUrl.glueBoard.shared(this.glueBoardHash)
-        console.log('load shared glueboard')
       } else {
         api = apiUrl.fragment.list(this.glueBoardId)
-        console.log('load glueboard')
       }
 
       Axios({
