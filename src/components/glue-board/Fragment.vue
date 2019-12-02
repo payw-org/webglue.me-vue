@@ -404,7 +404,21 @@ export default {
             } else if (target.className) {
               if (target.parentElement && target.parentElement.id) {
                 selector = `#${target.parentElement.id} `
+              } else if (
+                target.parentElement &&
+                target.parentElement.className
+              ) {
+                for (
+                  let i = 0;
+                  i < target.parentElement.classList.length;
+                  i += 1
+                ) {
+                  selector += `.${target.parentElement.classList[i]}`
+                }
+
+                selector += ' '
               }
+
               for (let i = 0; i < target.classList.length; i += 1) {
                 selector += `.${target.classList[i]}`
               }
