@@ -410,7 +410,6 @@ export default {
             const a = initialX - parseInt(this.$el.style.left)
             const b = initialY - parseInt(this.$el.style.top)
             let mouseX, mouseY
-            console.log(a)
             window.addEventListener(
               'mousemove',
               (mousemoveCallback = e => {

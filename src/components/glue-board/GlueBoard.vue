@@ -287,7 +287,6 @@ export default {
       sentinel.style.top = this.minTop + 'px'
     },
     updateFragmentData(payload) {
-      console.log('position updated')
       Axios({
         ...apiUrl.fragment.update(this.glueBoardId, payload.fragmentId),
         withCredentials: true,

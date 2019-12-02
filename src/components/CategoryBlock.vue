@@ -137,7 +137,6 @@ export default {
     edit() {
       this.categoryNameBackup = this.catName
       this.isEditMode = true
-      console.log('edit', this.catName)
       this.$refs.categoryName.innerHTML = this.catName
       this.$emit('colorchange', this.$el)
       this.focusInput()
@@ -207,7 +206,6 @@ export default {
      * @param {KeyboardEvent} e
      */
     updateCategory(e) {
-      console.log('update category')
       if (e) {
         e.preventDefault()
       }
@@ -221,7 +219,6 @@ export default {
         this.blurInput()
         const newCategoryName = this.$refs.categoryName.textContent.trim()
         if (newCategoryName === '') {
-          console.log('Category name is empty')
           this.$refs.categoryName.innerHTML = this.categoryNameBackup
           return
         } else {
@@ -238,9 +235,7 @@ export default {
               name: this.$refs.categoryName.textContent.trim()
             }
           })
-            .then(() => {
-              console.log('Category name updated')
-            })
+            .then(() => {})
             .catch(err => {
               console.error(err)
             })
