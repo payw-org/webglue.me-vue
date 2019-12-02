@@ -151,7 +151,7 @@ export default {
         const fBody = fDocument.body
 
         fHtml.style.width = '1280px'
-        fHtml.style.height = '800px'
+        fHtml.style.height = '1000px'
         fHtml.style.position = 'absolute'
         fHtml.style.left = '0px'
         fHtml.style.top = '0px'
@@ -176,8 +176,8 @@ export default {
           const userTargetHeight = userTargetRect.height
 
           // fHtml.style.transform = `translateX(-${userTargetX}px) translateY(-${userTargetY}px)`
-          fHtml.style.left = -userTargetX + 'px'
-          fHtml.style.top = -userTargetY + 'px'
+          webview.style.left = -userTargetX + 'px'
+          webview.style.top = -userTargetY + 'px'
 
           rootElm.style.width = `${userTargetWidth}px`
           rootElm.style.height = `${userTargetHeight}px`
@@ -218,9 +218,6 @@ export default {
         return
       }
 
-      console.log('mousedown')
-      console.log('mousedown')
-
       if (this.fragInfo.mode === 'postit') {
         if (e.target.closest('.boundary-line')) {
           return
@@ -239,17 +236,15 @@ export default {
     window.addEventListener(
       'mousemove',
       (mouseMoveCallback = e => {
-        if (!this.stat.catched || this.fragInfo.mode !== 'postit') {
+        if (!this.stat.catched) {
           return
         }
-        console.log('mousemove')
+
         if (this.stat.catched) {
           this.$store.commit('glueBoard/setMode', 'dragging')
           this.stat.isMoving = true
           const moveX = e.clientX - this.origin.pointer.x
           const moveY = e.clientY - this.origin.pointer.y
-
-          console.log(moveX, moveY)
 
           let newX = this.origin.position.x + moveX
           let newY = this.origin.position.y + moveY
@@ -303,10 +298,16 @@ export default {
     window.addEventListener(
       'mouseup',
       (mouseUpCallback = () => {
+        if (this.stat.catched) {
+          this.stat.catched = false
+        }
+
         if (!this.stat.isMoving || this.fragInfo.mode !== 'postit') {
           return
         }
+
         this.isfragmentmove = 0
+
         if (!this.stat.isValidPos) {
           this.stat.isTransitioning = true
           setTimeout(() => {
@@ -378,10 +379,12 @@ export default {
             let mousemoveCallback, mouseupCallback
 
             const fragBody = webview.contentDocument.body
-            webview.style.transition = 'top 300ms ease, left 300ms ease'
+            const transitionTime = 1000
+            webview.style.transition = `top ${transitionTime}ms ease, left ${transitionTime}ms ease`
             webview.style.position = 'absolute'
             webview.style.width = fragBody.clientWidth + 'px'
-            webview.style.height = fragBody.clientHeight + 'px'
+            // webview.style.height = fragBody.clientHeight + 'px'
+            webview.style.height = webview.contentWindow.innerHeight + 'px'
             webview.style.left = 0
             webview.style.top = 0
             // eslint-disable-next-line no-unused-expressions
@@ -390,8 +393,7 @@ export default {
             webview.style.left = -moveX + 'px'
             webview.style.top = -moveY + 'px'
 
-            rootElm.style.transition =
-              'top 300ms ease, left 300ms ease, width 300ms ease, height 300ms ease'
+            rootElm.style.transition = `all ${transitionTime}ms`
             // eslint-disable-next-line no-unused-expressions
             rootElm.getBoundingClientRect().left
             rootElm.classList.remove('new')
@@ -402,7 +404,7 @@ export default {
 
             setTimeout(() => {
               rootElm.style.transition = ''
-            }, 300)
+            }, 1300)
 
             this.fragInfo.mode = 'postit'
 
@@ -515,8 +517,12 @@ export default {
   transition: box-shadow 300ms ease, opacity 500ms ease;
   cursor: default;
   border-radius: 0px;
-  box-shadow: 0 0.3rem 0.5rem rgba(#000, 0.2);
+  box-shadow: 0 0.2rem 0.4rem rgba(#000, 0.2);
   overflow: hidden;
+
+  &[is-subscribed] {
+    border: 1px solid #5ed02f;
+  }
 
   .top-line {
     position: absolute;
@@ -588,12 +594,12 @@ export default {
 
   &.hover {
     overflow: hidden;
-    box-shadow: 0 2rem 5rem rgba(#000, 0.4);
+    box-shadow: 0 1rem 2rem rgba(#000, 0.2);
   }
 
   &.active {
     // transform: scale(0.92);
-    box-shadow: 0 1rem 2rem rgba(#000, 0.3);
+    // box-shadow: 0 1rem 2rem rgba(#000, 0.3);
     z-index: 10;
   }
 

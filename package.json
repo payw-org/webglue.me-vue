@@ -1,6 +1,6 @@
 {
   "name": "webglue.me-vue",
-  "version": "1.0.0",
+  "version": "v1.0.0-beta.1",
   "description": "webglue.me implemented with Vue",
   "author": "PAYW",
   "private": true,

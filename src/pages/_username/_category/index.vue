@@ -23,7 +23,6 @@
 <script>
 import Navigation from '~/components/Navigation'
 import GlueBoard from '~/components/glue-board/GlueBoard'
-import { text } from 'body-parser'
 
 export default {
   components: { Navigation, GlueBoard },
