@@ -139,19 +139,19 @@ export default {
     // and adjust its position to the right place
     if (this.fragInfo.mode === 'postit') {
       rootElm.style.opacity = '0'
-      rootElm.style.width = '1280px'
-      rootElm.style.height = '800px'
+      rootElm.style.width = '1400px'
+      rootElm.style.height = '1200px'
       rootElm.style.pointerEvents = 'none'
-      webview.style.width = '1280px'
-      webview.style.height = '800px'
+      webview.style.width = '1400px'
+      webview.style.height = '1200px'
 
       webview.addEventListener('load', e => {
         const fDocument = webview.contentDocument
         const fHtml = fDocument.documentElement
         const fBody = fDocument.body
 
-        fHtml.style.width = '1280px'
-        fHtml.style.height = '1000px'
+        fHtml.style.width = '1400px'
+        fHtml.style.height = '1200px'
         fHtml.style.position = 'absolute'
         fHtml.style.left = '0px'
         fHtml.style.top = '0px'
@@ -186,6 +186,12 @@ export default {
           rootElm.style.pointerEvents = 'all'
         } catch (error) {
           console.error('WEBGLUE Error', error)
+          rootElm.style.opacity = '1'
+          rootElm.style.pointerEvents = 'all'
+          window.alert(
+            '프래그먼트를 찾지 못했습니다. 문서의 구조가 변경되었을 수 있습니다.'
+          )
+          rootElm.classList.add('error')
         }
       })
     }
@@ -522,6 +528,11 @@ export default {
 
   &[is-subscribed] {
     border: 1px solid #5ed02f;
+  }
+
+  &.error {
+    border: 1px solid red;
+    filter: invert(1);
   }
 
   .top-line {
